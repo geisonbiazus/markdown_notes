@@ -1,0 +1,17 @@
+{
+  "name": "markdown_notes_backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "jest.config.js",
+  "dependencies": {
+    "jest": "^26.1.0",
+    "ts-jest": "^26.1.3",
+    "typescript": "^3.9.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "jest --watch"
+  },
+  "author": "Geison Biazus",
+  "license": "ISC"
+}
