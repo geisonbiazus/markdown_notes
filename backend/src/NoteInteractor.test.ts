@@ -2,7 +2,6 @@ import {
   NoteInteractor,
   Note,
   CreateNoteParams,
-  InteractorResponse,
   CreateNoteResponse,
   ValidationError,
 } from './NoteInteractor';
@@ -13,15 +12,17 @@ describe('NoteInteractor', () => {
     it('creates a new note', () => {
       const noteInteractor = new NoteInteractor();
       const noteId = uuid();
-      const params = createNoteParams({ id: noteId, title: 'Title', body: 'body' });
-      const response = createNoteSuccessResponse({ id: noteId, title: 'Title', body: 'body' });
+      const params = new CreateNoteParams({ id: noteId, title: 'Title', body: 'body' });
+      const response = createNoteSuccessResponse(
+        new Note({ id: noteId, title: 'Title', body: 'body' })
+      );
 
       expect(noteInteractor.createNote(params)).toEqual(response);
     });
 
     it('validates required id', () => {
       const noteInteractor = new NoteInteractor();
-      const params = createNoteParams({ id: '', title: 'Title', body: 'Body' });
+      const params = new CreateNoteParams({ id: '', title: 'Title', body: 'Body' });
       const response = createNoteErrorResponse([{ field: 'id', type: 'required' }]);
 
       expect(noteInteractor.createNote(params)).toEqual(response);
@@ -29,7 +30,7 @@ describe('NoteInteractor', () => {
 
     it('validates required title', () => {
       const noteInteractor = new NoteInteractor();
-      const params = createNoteParams({ id: uuid(), title: '', body: 'Body' });
+      const params = new CreateNoteParams({ id: uuid(), title: '', body: 'Body' });
       const response = createNoteErrorResponse([{ field: 'title', type: 'required' }]);
 
       expect(noteInteractor.createNote(params)).toEqual(response);
@@ -37,7 +38,7 @@ describe('NoteInteractor', () => {
 
     it('returns all invalid fields', () => {
       const noteInteractor = new NoteInteractor();
-      const params = createNoteParams({ id: '', title: '', body: 'Body' });
+      const params = new CreateNoteParams({ id: '', title: '', body: 'Body' });
       const response = createNoteErrorResponse([
         { field: 'id', type: 'required' },
         { field: 'title', type: 'required' },
@@ -47,14 +48,6 @@ describe('NoteInteractor', () => {
     });
   });
 });
-
-function createNoteParams(params: Partial<CreateNoteParams> = {}): CreateNoteParams {
-  return {
-    id: params.id || '',
-    title: params.title || '',
-    body: params.body || '',
-  };
-}
 
 function createNoteSuccessResponse(note: Note): CreateNoteResponse {
   return {
