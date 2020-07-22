@@ -1,8 +1,15 @@
 import { Note } from './entities';
 import { ValidationError, InteractorResponse } from './commons';
 
+export interface Repository {
+  getNoteById(id: string): Promise<Note | null>;
+  createNote(note: Note): Promise<void>;
+}
+
 export class NoteInteractor {
-  createNote(request: CreateNoteRequest): CreateNoteResponse {
+  constructor(private repo: Repository) {}
+
+  public async createNote(request: CreateNoteRequest): Promise<CreateNoteResponse> {
     request.validate();
     if (!request.isValid()) {
       return new CreateNoteResponse({
@@ -11,9 +18,13 @@ export class NoteInteractor {
       });
     }
 
+    const note = new Note(request);
+
+    this.repo.createNote(note);
+
     return new CreateNoteResponse({
       status: 'success',
-      data: new Note(request),
+      data: note,
     });
   }
 }
