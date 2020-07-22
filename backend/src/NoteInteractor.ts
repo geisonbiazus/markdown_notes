@@ -1,67 +1,54 @@
+import { Note } from './entities';
+import { ValidationError, InteractorResponse } from './commons';
+
 export class NoteInteractor {
-  createNote(params: CreateNoteParams): CreateNoteResponse {
-    if (!params.isValid()) {
-      return {
+  createNote(request: CreateNoteRequest): CreateNoteResponse {
+    request.validate();
+    if (!request.isValid()) {
+      return new CreateNoteResponse({
         status: 'error',
-        errors: params.errors,
-      };
+        errors: request.errors,
+      });
     }
 
-    return {
+    return new CreateNoteResponse({
       status: 'success',
-      data: new Note(params),
-    };
+      data: new Note(request),
+    });
   }
 }
 
-export type CreateNoteResponse = InteractorResponse<CreateNoteParams, Note>;
+export interface CreateNoteRequestParams {
+  id?: string;
+  title?: string;
+  body?: string;
+}
 
-export class CreateNoteParams {
+export class CreateNoteRequest {
   public id: string;
   public title: string;
   public body: string;
-  public errors: ValidationError<CreateNoteParams>[] = [];
+  public errors: ValidationError<CreateNoteRequest>[] = [];
 
-  constructor(params: { id?: string; title?: string; body?: string }) {
-    this.id = params.id || '';
-    this.title = params.title || '';
-    this.body = params.body || '';
+  constructor({ id = '', title = '', body = '' }: CreateNoteRequestParams) {
+    this.id = id;
+    this.title = title;
+    this.body = body;
   }
 
-  isValid(): boolean {
+  validate(): void {
     if (this.id === '') {
-      this.errors.push({ field: 'id', type: 'required' });
+      this.errors.push(new ValidationError('id', 'required'));
     }
 
     if (this.title === '') {
-      this.errors.push({ field: 'title', type: 'required' });
+      this.errors.push(new ValidationError('title', 'required'));
     }
+  }
 
+  isValid(): boolean {
     return this.errors.length == 0;
   }
 }
 
-export class Note {
-  public id: string;
-  public title: string;
-  public body: string;
-
-  constructor(params: { id?: string; title?: string; body?: string }) {
-    this.id = params.id || '';
-    this.title = params.title || '';
-    this.body = params.body || '';
-  }
-}
-
-export interface InteractorResponse<TParams, TEntity> {
-  status: 'error' | 'success';
-  data?: TEntity;
-  errors?: ValidationError<TParams>[];
-}
-
-export interface ValidationError<TParams> {
-  field: keyof TParams;
-  type: ValidationErrorType;
-}
-
-export type ValidationErrorType = 'required';
+export class CreateNoteResponse extends InteractorResponse<CreateNoteRequest, Note> {}
