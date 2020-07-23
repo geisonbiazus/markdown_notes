@@ -1,7 +1,7 @@
 import { NoteInteractor, SaveNoteRequest, SaveNoteResponse, Repository } from './NoteInteractor';
-import { uuid } from './utils';
-import { Note } from './entities';
-import { InMemoryRepository } from './InMemoryRepository';
+import { uuid } from '../utils/uuid';
+import { Note } from '../entities/Note';
+import { InMemoryRepository } from '../repositories/InMemoryRepository';
 
 describe('NoteInteractor', () => {
   let noteInteractor: NoteInteractor;

@@ -1,5 +1,5 @@
-import { Repository } from './NoteInteractor';
-import { Note } from './entities';
+import { Repository } from '../interactors/NoteInteractor';
+import { Note } from '../entities/Note';
 
 export class InMemoryRepository implements Repository {
   private notes: Record<string, Note> = {};

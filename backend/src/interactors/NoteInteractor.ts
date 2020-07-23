@@ -1,5 +1,5 @@
-import { Note } from './entities';
-import { ValidationError, InteractorResponse } from './commons';
+import { Note } from '../entities/Note';
+import { ValidationError, InteractorResponse } from './InteractorResponse';
 
 export interface Repository {
   getNoteById(id: string): Promise<Note | null>;
@@ -37,15 +37,16 @@ export class SaveNoteRequest {
   }
 
   isValid(): boolean {
-    if (this.id === '') {
-      this.errors.push(new ValidationError('id', 'required'));
-    }
-
-    if (this.title === '') {
-      this.errors.push(new ValidationError('title', 'required'));
-    }
+    this.validateRequired('id');
+    this.validateRequired('title');
 
     return this.errors.length == 0;
+  }
+
+  private validateRequired(field: keyof SaveNoteRequest): void {
+    if (this[field] === '') {
+      this.errors.push(new ValidationError(field, 'required'));
+    }
   }
 }
 
