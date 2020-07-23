@@ -6,7 +6,6 @@ import {
 } from './NoteInteractor';
 import { uuid } from './utils';
 import { Note } from './entities';
-import { ValidationError } from './commons';
 
 describe('NoteInteractor', () => {
   let noteInteractor: NoteInteractor;
@@ -20,21 +19,21 @@ describe('NoteInteractor', () => {
   describe('createNote', () => {
     it('validates required id', async () => {
       const params = new CreateNoteRequest({ id: '', title: 'Title', body: 'Body' });
-      const response = createNoteErrorResponse([{ field: 'id', type: 'required' }]);
+      const response = CreateNoteResponse.error([{ field: 'id', type: 'required' }]);
 
       expect(await noteInteractor.createNote(params)).toEqual(response);
     });
 
     it('validates required title', async () => {
       const params = new CreateNoteRequest({ id: uuid(), title: '', body: 'Body' });
-      const response = createNoteErrorResponse([{ field: 'title', type: 'required' }]);
+      const response = CreateNoteResponse.error([{ field: 'title', type: 'required' }]);
 
       expect(await noteInteractor.createNote(params)).toEqual(response);
     });
 
     it('returns all invalid fields', async () => {
       const params = new CreateNoteRequest({ id: '', title: '', body: 'Body' });
-      const response = createNoteErrorResponse([
+      const response = CreateNoteResponse.error([
         { field: 'id', type: 'required' },
         { field: 'title', type: 'required' },
       ]);
@@ -45,7 +44,7 @@ describe('NoteInteractor', () => {
     it('creates a new note', async () => {
       const noteId = uuid();
       const params = new CreateNoteRequest({ id: noteId, title: 'Title', body: 'body' });
-      const response = createNoteSuccessResponse(
+      const response = CreateNoteResponse.success(
         new Note({ id: noteId, title: 'Title', body: 'body' })
       );
 
@@ -54,30 +53,15 @@ describe('NoteInteractor', () => {
 
     it('persists the created note', async () => {
       const noteId = uuid();
-      const params = new CreateNoteRequest({ id: noteId, title: 'Title', body: 'body' });
+      const expectedNote = new Note({ id: noteId, title: 'Title', body: 'body' });
+      const request = new CreateNoteRequest({ id: noteId, title: 'Title', body: 'body' });
 
-      await noteInteractor.createNote(params);
+      await noteInteractor.createNote(request);
 
-      const note = new Note({ id: noteId, title: 'Title', body: 'body' });
-
-      expect(await repo.getNoteById(noteId)).toEqual(note);
+      expect(await repo.getNoteById(noteId)).toEqual(expectedNote);
     });
   });
 });
-
-function createNoteSuccessResponse(note: Note): CreateNoteResponse {
-  return new CreateNoteResponse({
-    status: 'success',
-    data: note,
-  });
-}
-
-function createNoteErrorResponse(errors: ValidationError<CreateNoteRequest>[]): CreateNoteResponse {
-  return new CreateNoteResponse({
-    status: 'error',
-    errors: errors,
-  });
-}
 
 export class FakeRepository implements Repository {
   private notes: Record<string, Note> = {};

@@ -1,21 +1,31 @@
-export class InteractorResponse<TParams, TEntity> {
+export class InteractorResponse<TRequest, TResponse> {
   public status: 'error' | 'success';
-  public data?: TEntity;
-  public errors: ValidationError<TParams>[];
+  public data?: TResponse;
+  public errors: ValidationError<TRequest>[];
 
   constructor(params: {
     status: 'error' | 'success';
-    data?: TEntity;
-    errors?: ValidationError<TParams>[];
+    data?: TResponse;
+    errors?: ValidationError<TRequest>[];
   }) {
     this.status = params.status;
     this.data = params.data;
     this.errors = params.errors || [];
   }
+
+  static success<TRequest, TResponse>(data: TResponse): InteractorResponse<TRequest, TResponse> {
+    return new InteractorResponse({ status: 'success', data });
+  }
+
+  static error<TRequest, TResponse>(
+    errors: ValidationError<TRequest>[]
+  ): InteractorResponse<TRequest, TResponse> {
+    return new InteractorResponse({ status: 'error', errors });
+  }
 }
 
-export class ValidationError<TParams> {
-  constructor(public field: keyof TParams, public type: ValidationErrorType) {}
+export class ValidationError<TRequest> {
+  constructor(public field: keyof TRequest, public type: ValidationErrorType) {}
 }
 
 export type ValidationErrorType = 'required';

@@ -12,20 +12,14 @@ export class NoteInteractor {
   public async createNote(request: CreateNoteRequest): Promise<CreateNoteResponse> {
     request.validate();
     if (!request.isValid()) {
-      return new CreateNoteResponse({
-        status: 'error',
-        errors: request.errors,
-      });
+      return CreateNoteResponse.error(request.errors);
     }
 
     const note = new Note(request);
 
     this.repo.createNote(note);
 
-    return new CreateNoteResponse({
-      status: 'success',
-      data: note,
-    });
+    return CreateNoteResponse.success(note);
   }
 }
 
