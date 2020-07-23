@@ -3,39 +3,39 @@ import { ValidationError, InteractorResponse } from './commons';
 
 export interface Repository {
   getNoteById(id: string): Promise<Note | null>;
-  createNote(note: Note): Promise<void>;
+  saveNote(note: Note): Promise<void>;
 }
 
 export class NoteInteractor {
   constructor(private repo: Repository) {}
 
-  public async createNote(request: CreateNoteRequest): Promise<CreateNoteResponse> {
+  public async saveNote(request: SaveNoteRequest): Promise<SaveNoteResponse> {
     request.validate();
     if (!request.isValid()) {
-      return CreateNoteResponse.error(request.errors);
+      return SaveNoteResponse.error(request.errors);
     }
 
     const note = new Note(request);
 
-    this.repo.createNote(note);
+    this.repo.saveNote(note);
 
-    return CreateNoteResponse.success(note);
+    return SaveNoteResponse.success(note);
   }
 }
 
-export interface CreateNoteRequestParams {
+export interface SaveNoteRequestParams {
   id?: string;
   title?: string;
   body?: string;
 }
 
-export class CreateNoteRequest {
+export class SaveNoteRequest {
   public id: string;
   public title: string;
   public body: string;
-  public errors: ValidationError<CreateNoteRequest>[] = [];
+  public errors: ValidationError<SaveNoteRequest>[] = [];
 
-  constructor({ id = '', title = '', body = '' }: CreateNoteRequestParams) {
+  constructor({ id = '', title = '', body = '' }: SaveNoteRequestParams) {
     this.id = id;
     this.title = title;
     this.body = body;
@@ -56,4 +56,4 @@ export class CreateNoteRequest {
   }
 }
 
-export class CreateNoteResponse extends InteractorResponse<CreateNoteRequest, Note> {}
+export class SaveNoteResponse extends InteractorResponse<SaveNoteRequest, Note> {}
