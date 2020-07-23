@@ -10,15 +10,10 @@ export class NoteInteractor {
   constructor(private repo: Repository) {}
 
   public async saveNote(request: SaveNoteRequest): Promise<SaveNoteResponse> {
-    request.validate();
-    if (!request.isValid()) {
-      return SaveNoteResponse.error(request.errors);
-    }
+    if (!request.isValid()) return SaveNoteResponse.error(request.errors);
 
     const note = new Note(request);
-
-    this.repo.saveNote(note);
-
+    await this.repo.saveNote(note);
     return SaveNoteResponse.success(note);
   }
 }
@@ -41,7 +36,7 @@ export class SaveNoteRequest {
     this.body = body;
   }
 
-  validate(): void {
+  isValid(): boolean {
     if (this.id === '') {
       this.errors.push(new ValidationError('id', 'required'));
     }
@@ -49,9 +44,7 @@ export class SaveNoteRequest {
     if (this.title === '') {
       this.errors.push(new ValidationError('title', 'required'));
     }
-  }
 
-  isValid(): boolean {
     return this.errors.length == 0;
   }
 }

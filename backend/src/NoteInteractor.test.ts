@@ -1,13 +1,14 @@
 import { NoteInteractor, SaveNoteRequest, SaveNoteResponse, Repository } from './NoteInteractor';
 import { uuid } from './utils';
 import { Note } from './entities';
+import { InMemoryRepository } from './InMemoryRepository';
 
 describe('NoteInteractor', () => {
   let noteInteractor: NoteInteractor;
-  let repo: FakeRepository;
+  let repo: InMemoryRepository;
 
   beforeEach(() => {
-    repo = new FakeRepository();
+    repo = new InMemoryRepository();
     noteInteractor = new NoteInteractor(repo);
   });
 
@@ -69,17 +70,20 @@ describe('NoteInteractor', () => {
       );
       expect(await repo.getNoteById(noteId)).toEqual(expectedNote);
     });
+
+    it('stores different ids independently', async () => {
+      const noteId1 = uuid();
+      const noteId2 = uuid();
+      const expectedNote1 = new Note({ id: noteId1, title: 'Title', body: 'Body' });
+      const expectedNote2 = new Note({ id: noteId2, title: 'Title', body: 'Body' });
+      const request1 = new SaveNoteRequest({ id: noteId1, title: 'Title', body: 'Body' });
+      const request2 = new SaveNoteRequest({ id: noteId2, title: 'Title', body: 'Body' });
+
+      await noteInteractor.saveNote(request1);
+      await noteInteractor.saveNote(request2);
+
+      expect(await repo.getNoteById(noteId1)).toEqual(expectedNote1);
+      expect(await repo.getNoteById(noteId2)).toEqual(expectedNote2);
+    });
   });
 });
-
-export class FakeRepository implements Repository {
-  private notes: Record<string, Note> = {};
-
-  async getNoteById(id: string): Promise<Note | null> {
-    return this.notes[id] || null;
-  }
-
-  async saveNote(note: Note): Promise<void> {
-    this.notes[note.id] = note;
-  }
-}
