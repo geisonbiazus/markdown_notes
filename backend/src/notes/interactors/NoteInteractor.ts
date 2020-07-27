@@ -1,4 +1,4 @@
-import { Note } from '../entities/Note';
+import { Note } from '../entities';
 import { ValidationError, InteractorResponse } from './InteractorResponse';
 
 export interface Repository {
