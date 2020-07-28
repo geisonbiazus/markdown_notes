@@ -1,12 +1,15 @@
+import express from 'express';
 import request from 'supertest';
-import { router } from './router';
+import { Router } from './router';
 import { uuid } from '../utils';
+
+const app = express().use('/', new Router().router);
 
 describe('PUT /notes/:id', () => {
   it('returns errors when invalid', (done) => {
     const noteId = uuid();
 
-    request(router)
+    request(app)
       .put(`/notes/${noteId}`)
       .expect('Content-Type', /json/)
       .expect(

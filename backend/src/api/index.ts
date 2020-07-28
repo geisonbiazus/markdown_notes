@@ -1,14 +1,14 @@
 import express, { Express } from 'express';
+import { Router } from './router';
 
 export class App {
   private server: Express;
   private port = 4000;
 
   constructor() {
+    const router = new Router();
     this.server = express();
-    this.server.get('/', (_req, res) => {
-      res.send('Hello World!');
-    });
+    this.server.use(router.router);
   }
 
   start() {
