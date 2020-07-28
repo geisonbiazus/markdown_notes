@@ -6,6 +6,7 @@ export class Router {
 
   constructor() {
     this.router = express.Router();
+    this.router.use(express.json());
     this.assignRoutes();
   }
 
@@ -16,11 +17,19 @@ export class Router {
 
     this.router.put('/notes/:id', async (req, res) => {
       const interactor = new NoteInteractor(new InMemoryRepository());
-      const request = new SaveNoteRequest({ id: req.param('id') });
+      const request = new SaveNoteRequest({
+        id: req.param('id'),
+        title: req.param('title'),
+        body: req.param('body'),
+      });
       const response = await interactor.saveNote(request);
 
-      res.status(422);
-      res.json({ status: 'validation_error', errors: response.errors });
+      if (response.status === 'error') {
+        res.status(422);
+        res.json({ status: 'validation_error', errors: response.errors });
+      } else {
+        res.json({ status: 'success', note: response.data });
+      }
     });
   }
 }

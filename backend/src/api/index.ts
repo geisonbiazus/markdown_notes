@@ -2,8 +2,8 @@ import express, { Express } from 'express';
 import { Router } from './router';
 
 export class App {
-  private server: Express;
-  private port = 4000;
+  public server: Express;
+  public port = 4000;
 
   constructor() {
     const router = new Router();
