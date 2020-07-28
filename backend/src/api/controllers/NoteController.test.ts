@@ -1,7 +1,7 @@
 import express from 'express';
 import request from 'supertest';
-import { Router } from './router';
-import { uuid } from '../utils';
+import { Router } from '../router';
+import { uuid } from '../../utils';
 
 const app = express().use(new Router().router);
 

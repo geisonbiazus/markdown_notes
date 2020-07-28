@@ -1,5 +1,6 @@
 import express from 'express';
 import { NoteInteractor, InMemoryRepository, SaveNoteRequest } from '../notes';
+import { NoteController } from './controllers';
 
 export class Router {
   public router: express.Router;
@@ -11,25 +12,12 @@ export class Router {
   }
 
   private assignRoutes(): void {
+    const noteController = new NoteController();
+
     this.router.get('/', (_req, res) => {
       res.send('Hello World!');
     });
 
-    this.router.put('/notes/:id', async (req, res) => {
-      const interactor = new NoteInteractor(new InMemoryRepository());
-      const request = new SaveNoteRequest({
-        id: req.param('id'),
-        title: req.param('title'),
-        body: req.param('body'),
-      });
-      const response = await interactor.saveNote(request);
-
-      if (response.status === 'error') {
-        res.status(422);
-        res.json({ status: 'validation_error', errors: response.errors });
-      } else {
-        res.json({ status: 'success', note: response.data });
-      }
-    });
+    this.router.put('/notes/:id', noteController.saveNote);
   }
 }
