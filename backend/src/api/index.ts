@@ -1,12 +1,17 @@
 import express, { Express } from 'express';
 import { Router } from './router';
+import { NoteInteractor, InMemoryRepository } from '../notes';
+import { NoteController } from './controllers';
 
 export class App {
   public server: Express;
   public port = 4000;
 
   constructor() {
-    const router = new Router();
+    const interactor = new NoteInteractor(new InMemoryRepository());
+    const noteController = new NoteController(interactor);
+    const router = new Router(noteController);
+
     this.server = express();
     this.server.use(router.router);
   }
