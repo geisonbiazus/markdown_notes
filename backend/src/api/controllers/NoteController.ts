@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { NoteInteractor, InMemoryRepository, SaveNoteRequest } from '../../notes';
+import { NoteInteractor, SaveNoteRequest, SaveNoteResponse } from '../../notes';
 
 export class NoteController {
   private noteInteractor: NoteInteractor;
@@ -9,18 +9,25 @@ export class NoteController {
   }
 
   saveNote = async (req: Request, res: Response): Promise<void> => {
-    const request = new SaveNoteRequest({
-      id: req.param('id'),
-      title: req.param('title'),
-      body: req.param('body'),
-    });
+    const request = this.buildSaveNoteRequest(req);
     const response = await this.noteInteractor.saveNote(request);
+    this.sendSaveNoteResponse(res, response);
+  };
 
+  private buildSaveNoteRequest(req: Request): SaveNoteRequest {
+    return new SaveNoteRequest({
+      id: req.params.id,
+      title: req.body.title,
+      body: req.body.body,
+    });
+  }
+
+  private sendSaveNoteResponse(res: Response, response: SaveNoteResponse): void {
     if (response.status === 'error') {
       res.status(422);
       res.json({ status: 'validation_error', errors: response.errors });
     } else {
       res.json({ status: 'success', note: response.data });
     }
-  };
+  }
 }

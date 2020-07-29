@@ -1,3 +1,3 @@
-import { App } from './api';
+import { Server } from './api';
 
-new App().start();
+new Server().start();

@@ -1,15 +1,15 @@
 import request from 'supertest';
-import { App } from '../index';
+import { Server } from '../index';
 import { uuid } from '../../utils';
 
-const app = new App().server;
+const server = new Server().server;
 
 describe('NoteController', () => {
   describe('PUT /notes/:id', () => {
     it('returns errors when invalid', (done) => {
       const noteId = uuid();
 
-      request(app)
+      request(server)
         .put(`/notes/${noteId}`)
         .expect('Content-Type', /json/)
         .expect(
@@ -22,7 +22,7 @@ describe('NoteController', () => {
     it('returns the created note when valid', (done) => {
       const noteId = uuid();
 
-      request(app)
+      request(server)
         .put(`/notes/${noteId}`)
         .send({ title: 'title', body: 'body' })
         .expect('Content-Type', /application\/json/)
