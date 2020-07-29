@@ -1,25 +1,33 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Switch, Route, Link, useHistory } from 'react-router-dom';
+import { EditNote } from './notes';
+import { uuid } from './utils';
 
 function App() {
+  const history = useHistory();
+
+  const newNote = () => {
+    history.push(`/notes/${uuid()}`);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <p>
+        <Link to="/">Home</Link>
+      </p>
+      <p>
+        <button type="button" onClick={newNote}>
+          New Note
+        </button>
+      </p>
+
+      <Switch>
+        <Route exact path="/notes/:id" component={EditNote} />
+        <Route exact path="/">
+          Home
+        </Route>
+      </Switch>
+    </>
   );
 }
 
