@@ -1,8 +1,12 @@
 import React, { useState, ChangeEvent, SyntheticEvent } from 'react';
+import { useParams } from 'react-router-dom';
+import { useNote } from '../context/NoteContext';
 
 export const EditNote: React.FC = () => {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
+  const { id } = useParams();
+  const { saveNote } = useNote();
 
   const onChangeTitle = (event: ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
@@ -14,7 +18,11 @@ export const EditNote: React.FC = () => {
 
   const onSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    console.log(title, body);
+    saveNote({
+      id,
+      title,
+      body,
+    });
   };
 
   return (
