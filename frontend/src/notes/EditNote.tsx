@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent, SyntheticEvent } from 'react';
 import { useParams } from 'react-router-dom';
-import { useNote } from '../context/NoteContext';
+import { useNote } from './NoteContext';
 
 export const EditNote: React.FC = () => {
   const [title, setTitle] = useState('');
@@ -38,14 +38,7 @@ export const EditNote: React.FC = () => {
           <label htmlFor="body">Content</label>
         </p>
         <p>
-          <textarea
-            id="body"
-            name="body"
-            rows={20}
-            cols={100}
-            value={body}
-            onChange={onChangeBody}
-          ></textarea>
+          <textarea id="body" name="body" rows={20} cols={100} onChange={onChangeBody} />
         </p>
         <p>
           <input type="submit" value="Save" />

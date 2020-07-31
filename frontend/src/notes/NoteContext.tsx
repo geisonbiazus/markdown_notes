@@ -16,8 +16,8 @@ export interface NoteContextValue {
 
 const NoteContext = React.createContext<NoteContextValue>({ saveNote });
 
-export const NoteProvider: React.FC = () => {
-  return <NoteContext.Provider value={{ saveNote }} />;
+export const NoteProvider: React.FC = (props) => {
+  return <NoteContext.Provider value={{ saveNote }} {...props} />;
 };
 
 export const useNote = () => useContext(NoteContext);
