@@ -1,2 +1,1 @@
-export * from './EditNote';
-export * from './NoteContext';
+export * from './ui';

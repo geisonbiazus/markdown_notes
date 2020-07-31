@@ -1,14 +1,5 @@
 import React, { useContext } from 'react';
-
-export interface Note {
-  id: string;
-  title: string;
-  body: string;
-}
-
-const saveNote = async (note: Note): Promise<void> => {
-  console.log(note);
-};
+import { saveNote, Note } from '../core';
 
 export interface NoteContextValue {
   saveNote: (note: Note) => Promise<void>;
