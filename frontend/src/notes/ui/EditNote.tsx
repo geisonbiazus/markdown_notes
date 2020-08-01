@@ -3,10 +3,10 @@ import { useParams } from 'react-router-dom';
 import { useNote } from './NoteContext';
 
 export const EditNote: React.FC = () => {
+  const { saveNote } = useNote();
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const { id } = useParams();
-  const { saveNote } = useNote();
 
   const onChangeTitle = (event: ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
