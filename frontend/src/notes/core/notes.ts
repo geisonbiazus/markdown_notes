@@ -38,3 +38,11 @@ export const init = () => {
 
   return { getState, saveNote, subscribe };
 };
+
+export const initialEditNoteState = (): EditNoteState => {
+  return { note: {}, errors: {} };
+};
+
+export const saveNote = async (state: EditNoteState, note: Note): Promise<EditNoteState> => {
+  return { ...state, errors: { title: 'required' } };
+};

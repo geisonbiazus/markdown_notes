@@ -25,8 +25,6 @@ export const EditNote: React.FC = () => {
     });
   };
 
-  console.log(editNoteState);
-
   return (
     <>
       <form onSubmit={onSubmit}>
