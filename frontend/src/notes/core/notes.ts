@@ -13,6 +13,7 @@ export interface EditNoteState {
 
 export const init = () => {
   let state: EditNoteState = { note: {}, errors: {} };
+  const subscribers: ((state: EditNoteState) => void)[] = [];
 
   const getState = (): EditNoteState => {
     return state;
@@ -20,11 +21,20 @@ export const init = () => {
 
   const updateState = (newState: Partial<EditNoteState>): void => {
     state = { ...state, ...newState };
+    notify();
   };
 
   const saveNote = async (note: Note): Promise<void> => {
-    updateState({ errors: { id: 'required' } });
+    updateState({ errors: { title: 'required' } });
   };
 
-  return { getState, saveNote };
+  const notify = () => {
+    subscribers.forEach((cb) => cb(state));
+  };
+
+  const subscribe = (cb: (state: EditNoteState) => void): void => {
+    subscribers.push(cb);
+  };
+
+  return { getState, saveNote, subscribe };
 };

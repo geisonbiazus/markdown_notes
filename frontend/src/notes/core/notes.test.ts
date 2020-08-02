@@ -15,6 +15,6 @@ describe('saveNote', () => {
     await saveNote({});
 
     const { errors } = getState();
-    expect(errors).toEqual({ id: 'required' });
+    expect(errors).toEqual({ title: 'required' });
   });
 });

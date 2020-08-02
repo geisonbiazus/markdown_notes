@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useNote } from './NoteContext';
 
 export const EditNote: React.FC = () => {
-  const { saveNote } = useNote();
+  const { editNoteState, saveNote } = useNote();
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const { id } = useParams();
@@ -25,6 +25,8 @@ export const EditNote: React.FC = () => {
     });
   };
 
+  console.log(editNoteState);
+
   return (
     <>
       <form onSubmit={onSubmit}>
@@ -33,6 +35,7 @@ export const EditNote: React.FC = () => {
         </p>
         <p>
           <input type="text" id="title" name="title" value={title} onChange={onChangeTitle} />
+          {editNoteState.errors.title}
         </p>
         <p>
           <label htmlFor="body">Content</label>
