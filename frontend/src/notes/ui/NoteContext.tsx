@@ -1,5 +1,7 @@
-import React, { useContext, useState, useCallback } from 'react';
-import { Note, EditNoteState, initialEditNoteState, saveNote } from '../core';
+import React, { useContext, useMemo } from 'react';
+import { Note, EditNoteState, initialEditNoteState } from '../core';
+import { NoteStore } from '../store';
+import { useObserver } from 'mobx-react-lite';
 
 export interface NoteContextValue {
   editNoteState: EditNoteState;
@@ -12,14 +14,13 @@ const NoteContext = React.createContext<NoteContextValue>({
 });
 
 export const NoteProvider: React.FC = (props) => {
-  const [editNoteState, setEditNoteState] = useState(initialEditNoteState());
+  const noteStore = useMemo(() => new NoteStore(), []);
 
-  const saveNoteCb = useCallback(
-    async (note: Note) => setEditNoteState(await saveNote(editNoteState, note)),
-    [setEditNoteState]
-  );
+  return useObserver(() => {
+    const { editNoteState, saveNote } = noteStore;
 
-  return <NoteContext.Provider value={{ editNoteState, saveNote: saveNoteCb }} {...props} />;
+    return <NoteContext.Provider value={{ editNoteState, saveNote }} {...props} />;
+  });
 };
 
 export const useNote = () => useContext(NoteContext);
