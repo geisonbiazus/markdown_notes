@@ -33,27 +33,34 @@ export const saveNote = async (
   note: Note,
   saveNoteClientFn: SaveNoteClientFn
 ): Promise<EditNoteState> => {
-  let updatedState = state;
-  updatedState = validateNote(state, note);
-
-  if (Object.keys(updatedState.errors).length === 0) {
-    const response = await saveNoteClientFn(note);
-    if (response.status == 'validation_error') {
-      updatedState = extractSaveNoteClientErrors(updatedState, response);
-    }
-  }
-
-  return { ...updatedState, note };
+  let updatedState = { ...state, note };
+  updatedState = validateNote(updatedState);
+  return maybeSaveNoteInTheClient(updatedState, saveNoteClientFn);
 };
 
-const validateNote = (state: EditNoteState, note: Note): EditNoteState => {
+const validateNote = (state: EditNoteState): EditNoteState => {
   let errors: Errors = {};
 
-  if (!note.title?.trim()) {
+  if (!state.note.title?.trim()) {
     errors = { ...errors, title: 'required' };
   }
 
   return { ...state, errors };
+};
+
+const maybeSaveNoteInTheClient = async (
+  state: EditNoteState,
+  saveNoteClientFn: SaveNoteClientFn
+): Promise<EditNoteState> => {
+  if (isEmpty(state.errors)) {
+    const response = await saveNoteClientFn(state.note);
+    if (response.status == 'validation_error') return extractSaveNoteClientErrors(state, response);
+  }
+  return state;
+};
+
+const isEmpty = (record: Record<any, any>): boolean => {
+  return Object.keys(record).length === 0;
 };
 
 const extractSaveNoteClientErrors = (
