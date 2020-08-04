@@ -21,31 +21,52 @@ export interface ValidationError {
   type: string;
 }
 
-export interface SaveNoteResponse {
+export interface SaveNoteClientFnResponse {
   status: 'success' | 'validation_error';
   note?: Note;
   errors?: ValidationError[];
 }
-export type SaveNoteClientFn = (note: Note) => Promise<SaveNoteResponse>;
+export type SaveNoteClientFn = (note: Note) => Promise<SaveNoteClientFnResponse>;
 
 export const saveNote = async (
   state: EditNoteState,
   note: Note,
   saveNoteClientFn: SaveNoteClientFn
 ): Promise<EditNoteState> => {
+  let updatedState = state;
+  updatedState = validateNote(state, note);
+
+  if (Object.keys(updatedState.errors).length === 0) {
+    const response = await saveNoteClientFn(note);
+    if (response.status == 'validation_error') {
+      updatedState = extractSaveNoteClientErrors(updatedState, response);
+    }
+  }
+
+  return { ...updatedState, note };
+};
+
+const validateNote = (state: EditNoteState, note: Note): EditNoteState => {
   let errors: Errors = {};
 
   if (!note.title?.trim()) {
     errors = { ...errors, title: 'required' };
   }
 
-  const response = await saveNoteClientFn?.(note);
+  return { ...state, errors };
+};
 
-  if (response && response.status === 'validation_error') {
+const extractSaveNoteClientErrors = (
+  state: EditNoteState,
+  response: SaveNoteClientFnResponse
+): EditNoteState => {
+  let errors = state.errors;
+
+  if (response.status === 'validation_error') {
     response.errors?.forEach((error) => {
       errors = { ...errors, [error.field]: error.type as ErrorType };
     });
   }
 
-  return { ...state, note, errors };
+  return { ...state, errors };
 };

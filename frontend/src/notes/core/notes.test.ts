@@ -1,4 +1,4 @@
-import { initialEditNoteState, saveNote, Note, SaveNoteResponse, SaveNoteClientFn } from './notes';
+import { initialEditNoteState, saveNote, SaveNoteClientFn } from './notes';
 import { uuid } from '../../utils';
 import { InMemoryNoteClient } from '../clients';
 
@@ -55,6 +55,16 @@ describe('saveNote', () => {
     await saveNote(initialEditNoteState(), expectedNote, client.saveNote);
 
     expect(await client.getNoteById(id)).toEqual(expectedNote);
+  });
+
+  it('does not save the note in the client when invalid', async () => {
+    const id = uuid();
+    const expectedNote = { id, title: '', body: 'body' };
+    const client = new InMemoryNoteClient();
+
+    await saveNote(initialEditNoteState(), expectedNote, client.saveNote);
+
+    expect(await client.getNoteById(id)).toEqual(null);
   });
 
   it('returns errors from client when is fails to save', async () => {
