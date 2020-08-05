@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from 'react';
-import { Note, EditNoteState, initialEditNoteState } from '../core';
-import { NoteStore } from '../store';
+import { Note, EditNoteState, initialEditNoteState, NoteInteractor } from '../interactors';
+import { NoteStore } from '../stores';
 import { useObserver } from 'mobx-react-lite';
 import { InMemoryNoteClient } from '../clients';
 
@@ -15,7 +15,7 @@ const NoteContext = React.createContext<NoteContextValue>({
 });
 
 export const NoteProvider: React.FC = (props) => {
-  const noteStore = useMemo(() => new NoteStore(new InMemoryNoteClient()), []);
+  const noteStore = useMemo(() => new NoteStore(new NoteInteractor(new InMemoryNoteClient())), []);
 
   return useObserver(() => {
     const { editNoteState, saveNote } = noteStore;

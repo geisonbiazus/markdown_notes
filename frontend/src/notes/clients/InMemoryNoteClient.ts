@@ -1,4 +1,4 @@
-import { SaveNoteClientFn, Note } from '../core';
+import { SaveNoteClientFn, Note } from '../interactors';
 
 export class InMemoryNoteClient {
   private notes: Record<string, Note> = {};
