@@ -72,7 +72,7 @@ describe('saveNote', () => {
     const id = uuid();
     const expectedNote = { id, title: 'title', body: 'body' };
 
-    client.saveNote = async (note) => ({
+    client.saveNote = async (_note) => ({
       status: 'validation_error',
       errors: [{ field: 'title', type: 'required' }],
     });

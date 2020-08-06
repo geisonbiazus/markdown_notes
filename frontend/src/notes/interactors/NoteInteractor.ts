@@ -23,12 +23,14 @@ export interface ValidationError {
   type: string;
 }
 
-export interface SaveNoteClientFnResponse {
+export interface SaveNoteResponse {
   status: 'success' | 'validation_error';
   note?: Note;
   errors?: ValidationError[];
 }
-export type SaveNoteClientFn = (note: Note) => Promise<SaveNoteClientFnResponse>;
+export interface NoteClient {
+  saveNote(note: Note): Promise<SaveNoteResponse>;
+}
 
 const isEmpty = (record: Record<any, any>): boolean => {
   return Object.keys(record).length === 0;
@@ -64,7 +66,7 @@ export class NoteInteractor {
 
   private extractSaveNoteClientErrors(
     state: EditNoteState,
-    response: SaveNoteClientFnResponse
+    response: SaveNoteResponse
   ): EditNoteState {
     let errors = state.errors;
 

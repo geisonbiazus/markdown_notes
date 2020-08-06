@@ -1,14 +1,14 @@
-import { SaveNoteClientFn, Note } from '../interactors';
+import { Note, NoteClient, SaveNoteResponse } from '../interactors';
 
-export class InMemoryNoteClient {
+export class InMemoryNoteClient implements NoteClient {
   private notes: Record<string, Note> = {};
 
-  saveNote: SaveNoteClientFn = async (note) => {
+  public async saveNote(note: Note): Promise<SaveNoteResponse> {
     this.notes[note.id!] = note;
     return { status: 'success', note: note };
-  };
+  }
 
-  getNoteById = async (id: string): Promise<Note | null> => {
+  public async getNoteById(id: string): Promise<Note | null> {
     return this.notes[id] || null;
-  };
+  }
 }
