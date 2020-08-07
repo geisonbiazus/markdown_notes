@@ -2,6 +2,7 @@ import express, { Express } from 'express';
 import { Router } from './router';
 import { NoteInteractor, InMemoryRepository } from '../notes';
 import { NoteController } from './controllers';
+import cors from 'cors';
 
 export class Server {
   public server: Express;
@@ -13,6 +14,7 @@ export class Server {
     const router = new Router(noteController);
 
     this.server = express();
+    this.server.use(cors());
     this.server.use(router.router);
   }
 
