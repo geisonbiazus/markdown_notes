@@ -18,8 +18,10 @@ export class APINoteClient implements NoteClient {
 
       return response.data;
     } catch (e) {
+      console.log(e);
       const error = e as AxiosError<SaveNoteResponse>;
-      return e.response.data;
+      if (error.response) return error.response.data;
+      throw e;
     }
   }
 }
