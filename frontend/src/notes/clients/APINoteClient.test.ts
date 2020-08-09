@@ -1,12 +1,12 @@
 import nock from 'nock';
-import axios from 'axios';
 
 import { APINoteClient } from './APINoteClient';
 import { Note } from '../interactors';
-import { uuid } from '../../utils';
+import { uuid, HTTPClient } from '../../utils';
+
+HTTPClient.useNodeAdapter();
 
 describe('APINoteClient', () => {
-  axios.defaults.adapter = require('axios/lib/adapters/http');
   let client: APINoteClient;
   const nockScope = nock('http://localhost:4000');
 
