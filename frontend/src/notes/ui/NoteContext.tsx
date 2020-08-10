@@ -1,24 +1,23 @@
 import React, { useContext } from 'react';
 import { useObserver } from 'mobx-react-lite';
-import { Note, EditNoteState, newEditNoteState, NoteInteractor } from '../interactors';
+import { NoteInteractor } from '../interactors';
 import { HTTPClient } from '../../utils';
 import { APINoteClient } from '../clients';
 import { NoteStore } from '../stores';
+import { getAppConfig } from '../../AppConfig';
 
-export interface NoteContextValue {
-  editNoteState: EditNoteState;
-  saveNote: (note: Note) => Promise<void>;
-}
-
-const NoteContext = React.createContext<NoteContextValue>({
-  editNoteState: newEditNoteState(),
-  saveNote: async (n) => {},
-});
-
-const httpClient = new HTTPClient('http://localhost:4000');
+const appConfig = getAppConfig();
+const httpClient = new HTTPClient(appConfig.apiURL);
 const noteClient = new APINoteClient(httpClient);
 const noteInteractor = new NoteInteractor(noteClient);
 const noteStore = new NoteStore(noteInteractor);
+
+export interface NoteContextValue {
+  editNoteState: typeof noteStore.editNoteState;
+  saveNote: typeof noteStore.saveNote;
+}
+
+const NoteContext = React.createContext<NoteContextValue>(noteStore);
 
 export const NoteProvider: React.FC = ({ children }) => {
   return useObserver(() => {
