@@ -8,10 +8,11 @@ HTTPClient.useNodeAdapter();
 
 describe('APINoteClient', () => {
   let client: APINoteClient;
-  const nockScope = nock('http://localhost:4000');
+  const baseURL = 'http://localhost:4000';
+  const nockScope = nock(baseURL);
 
   beforeEach(() => {
-    client = new APINoteClient();
+    client = new APINoteClient(new HTTPClient(baseURL));
     nock.cleanAll();
   });
 

@@ -1,8 +1,8 @@
 import { observable, action, runInAction } from 'mobx';
-import { EditNoteState, initialEditNoteState, Note, NoteInteractor } from '../interactors';
+import { EditNoteState, newEditNoteState, Note, NoteInteractor } from '../interactors';
 
 export class NoteStore {
-  @observable editNoteState: EditNoteState = initialEditNoteState();
+  @observable editNoteState: EditNoteState = newEditNoteState();
 
   constructor(private noteInteractor: NoteInteractor) {}
 

@@ -1,5 +1,3 @@
-import { InMemoryNoteClient } from '../clients';
-
 export interface Note {
   id?: string;
   title?: string;
@@ -14,7 +12,7 @@ export interface EditNoteState {
   errors: Record<string, ErrorType>;
 }
 
-export const initialEditNoteState = (): EditNoteState => {
+export const newEditNoteState = (): EditNoteState => {
   return { note: {}, errors: {} };
 };
 
@@ -37,7 +35,7 @@ const isEmpty = (record: Record<any, any>): boolean => {
 };
 
 export class NoteInteractor {
-  constructor(private noteClient: InMemoryNoteClient) {}
+  constructor(private noteClient: NoteClient) {}
 
   public async saveNote(state: EditNoteState, note: Note): Promise<EditNoteState> {
     let updatedState = { ...state, note };

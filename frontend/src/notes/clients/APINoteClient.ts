@@ -4,8 +4,8 @@ import { HTTPClient } from '../../utils';
 export class APINoteClient implements NoteClient {
   private httpClient: HTTPClient;
 
-  constructor() {
-    this.httpClient = new HTTPClient('http://localhost:4000');
+  constructor(httpClient: HTTPClient) {
+    this.httpClient = httpClient;
   }
 
   async saveNote(note: Note): Promise<SaveNoteResponse> {

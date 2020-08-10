@@ -1,8 +1,9 @@
-import React, { useContext, useMemo } from 'react';
-import { Note, EditNoteState, initialEditNoteState, NoteInteractor } from '../interactors';
-import { NoteStore } from '../stores';
+import React, { useContext } from 'react';
 import { useObserver } from 'mobx-react-lite';
-import { InMemoryNoteClient } from '../clients';
+import { Note, EditNoteState, newEditNoteState, NoteInteractor } from '../interactors';
+import { HTTPClient } from '../../utils';
+import { APINoteClient } from '../clients';
+import { NoteStore } from '../stores';
 
 export interface NoteContextValue {
   editNoteState: EditNoteState;
@@ -10,17 +11,22 @@ export interface NoteContextValue {
 }
 
 const NoteContext = React.createContext<NoteContextValue>({
-  editNoteState: initialEditNoteState(),
+  editNoteState: newEditNoteState(),
   saveNote: async (n) => {},
 });
 
-export const NoteProvider: React.FC = (props) => {
-  const noteStore = useMemo(() => new NoteStore(new NoteInteractor(new InMemoryNoteClient())), []);
+const httpClient = new HTTPClient('http://localhost:4000');
+const noteClient = new APINoteClient(httpClient);
+const noteInteractor = new NoteInteractor(noteClient);
+const noteStore = new NoteStore(noteInteractor);
 
+export const NoteProvider: React.FC = ({ children }) => {
   return useObserver(() => {
     const { editNoteState, saveNote } = noteStore;
 
-    return <NoteContext.Provider value={{ editNoteState, saveNote }} {...props} />;
+    return (
+      <NoteContext.Provider value={{ editNoteState, saveNote }}>{children}</NoteContext.Provider>
+    );
   });
 };
 

@@ -1,10 +1,10 @@
-import { initialEditNoteState, NoteInteractor } from './NoteInteractor';
+import { newEditNoteState, NoteInteractor } from './NoteInteractor';
 import { uuid } from '../../utils';
 import { InMemoryNoteClient } from '../clients';
 
-describe('initialEditNoteState', () => {
+describe('newEditNoteState', () => {
   it('returns an empty state', () => {
-    expect(initialEditNoteState()).toEqual({ note: {}, errors: {} });
+    expect(newEditNoteState()).toEqual({ note: {}, errors: {} });
   });
 });
 
@@ -18,13 +18,13 @@ describe('saveNote', () => {
   });
 
   it('validates required title', async () => {
-    let state = await noteInteractor.saveNote(initialEditNoteState(), {});
+    let state = await noteInteractor.saveNote(newEditNoteState(), {});
     expect(state.errors).toEqual({ title: 'required' });
 
-    state = await noteInteractor.saveNote(initialEditNoteState(), { title: '' });
+    state = await noteInteractor.saveNote(newEditNoteState(), { title: '' });
     expect(state.errors).toEqual({ title: 'required' });
 
-    state = await noteInteractor.saveNote(initialEditNoteState(), { title: ' ' });
+    state = await noteInteractor.saveNote(newEditNoteState(), { title: ' ' });
     expect(state.errors).toEqual({ title: 'required' });
   });
 
@@ -32,14 +32,14 @@ describe('saveNote', () => {
     const id = uuid();
     const expectedNote = { id, title: 'title', body: 'body' };
 
-    const { note, errors } = await noteInteractor.saveNote(initialEditNoteState(), expectedNote);
+    const { note, errors } = await noteInteractor.saveNote(newEditNoteState(), expectedNote);
 
     expect(note).toEqual(expectedNote);
     expect(errors).toEqual({});
   });
 
   it('cleans up past error when validating again', async () => {
-    let state = await noteInteractor.saveNote(initialEditNoteState(), {});
+    let state = await noteInteractor.saveNote(newEditNoteState(), {});
 
     const id = uuid();
     const expectedNote = { id, title: 'title', body: 'body' };
@@ -53,7 +53,7 @@ describe('saveNote', () => {
     const id = uuid();
     const expectedNote = { id, title: 'title', body: 'body' };
 
-    await noteInteractor.saveNote(initialEditNoteState(), expectedNote);
+    await noteInteractor.saveNote(newEditNoteState(), expectedNote);
 
     expect(await client.getNoteById(id)).toEqual(expectedNote);
   });
@@ -63,7 +63,7 @@ describe('saveNote', () => {
     const expectedNote = { id, title: '', body: 'body' };
     const client = new InMemoryNoteClient();
 
-    await noteInteractor.saveNote(initialEditNoteState(), expectedNote);
+    await noteInteractor.saveNote(newEditNoteState(), expectedNote);
 
     expect(await client.getNoteById(id)).toEqual(null);
   });
@@ -77,7 +77,7 @@ describe('saveNote', () => {
       errors: [{ field: 'title', type: 'required' }],
     });
 
-    const state = await noteInteractor.saveNote(initialEditNoteState(), expectedNote);
+    const state = await noteInteractor.saveNote(newEditNoteState(), expectedNote);
 
     expect(state.errors).toEqual({ title: 'required' });
   });
