@@ -23,6 +23,8 @@
     "uuid": "^8.3.0"
   },
   "scripts": {
+    "start:prod": "node server.js",
+    "start:prod:local": "PORT=3000 MONITORING_PORT=3001 API_URL=https://localhost:4000 APP_ENV=production node server.js",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
