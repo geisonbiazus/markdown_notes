@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface ErrorMessageProps {
   field: string;
@@ -6,11 +7,9 @@ export interface ErrorMessageProps {
 }
 
 export const ErrorMessage: React.FC<ErrorMessageProps> = ({ field, type }) => {
+  const { t } = useTranslation();
+
   if (!type) return null;
 
-  return (
-    <div>
-      {field} {type}
-    </div>
-  );
+  return <div>{t(`validation.${type}`, { field: t(field) })}</div>;
 };
