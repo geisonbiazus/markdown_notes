@@ -1,4 +1,5 @@
 import React from 'react';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import { Switch, Route, Link, useHistory } from 'react-router-dom';
 import { EditNote } from './notes';
 import { uuid } from './utils';
@@ -11,15 +12,19 @@ function App() {
   };
 
   return (
-    <>
-      <p>
-        <Link to="/">Home</Link>
-      </p>
-      <p>
-        <button type="button" onClick={newNote}>
-          New Note
-        </button>
-      </p>
+    <Container fluid>
+      <Row>
+        <Col>
+          <Link to="/">Home</Link>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Button variant="primary" onClick={newNote}>
+            New Note
+          </Button>
+        </Col>
+      </Row>
 
       <Switch>
         <Route exact path="/notes/:id" component={EditNote} />
@@ -27,7 +32,7 @@ function App() {
           Home
         </Route>
       </Switch>
-    </>
+    </Container>
   );
 }
 
