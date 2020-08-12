@@ -3,14 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Form } from 'react-bootstrap';
 
 export interface ErrorMessageProps {
-  field: string;
+  field?: string;
   type?: string;
 }
 
 export const ErrorMessage: React.FC<ErrorMessageProps> = ({ field, type }) => {
   const { t } = useTranslation();
 
-  // if (!type) return null;
+  if (!type || !field) return null;
 
   return (
     <Form.Control.Feedback type="invalid">
