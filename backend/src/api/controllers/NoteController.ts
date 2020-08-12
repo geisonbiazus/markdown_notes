@@ -15,15 +15,14 @@ export class NoteController {
   };
 
   private buildSaveNoteRequest(req: Request): SaveNoteRequest {
-    return new SaveNoteRequest({
+    return {
       id: req.params.id,
       title: req.body.title,
       body: req.body.body,
-    });
+    };
   }
 
   private sendSaveNoteResponse(res: Response, response: SaveNoteResponse): void {
-    console.log(response);
     if (response.status === 'error') {
       res.status(422);
       res.json({ status: 'validation_error', errors: response.errors });
