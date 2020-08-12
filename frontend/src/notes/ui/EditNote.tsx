@@ -1,8 +1,7 @@
 import React, { useState, ChangeEvent, SyntheticEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNote } from './NoteContext';
-import { Form, FormRow, TextField, TextArea } from '../../shared/components';
-import { Button } from 'react-bootstrap';
+import { Form, FormRow, TextField, TextArea, Button } from '../../shared/components';
 
 export const EditNote: React.FC = () => {
   const { editNoteState, saveNote } = useNote();

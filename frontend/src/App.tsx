@@ -1,8 +1,8 @@
 import React from 'react';
-import { Container, Row, Col, Button } from 'react-bootstrap';
 import { Switch, Route, Link, useHistory } from 'react-router-dom';
 import { EditNote } from './notes';
 import { uuid } from './utils';
+import { Container, Row, Col, Button } from './shared/components';
 
 function App() {
   const history = useHistory();
