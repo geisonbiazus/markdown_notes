@@ -2,6 +2,7 @@ import React, { useState, ChangeEvent, SyntheticEvent } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNote } from './NoteContext';
 import { ErrorMessage } from '../../shared/components';
+import { Form, Button } from 'react-bootstrap';
 
 export const EditNote: React.FC = () => {
   const { editNoteState, saveNote } = useNote();
@@ -28,25 +29,34 @@ export const EditNote: React.FC = () => {
 
   return (
     <>
-      <form onSubmit={onSubmit}>
-        <p>
-          <label htmlFor="title">Title</label>
-        </p>
-        <p>
-          <input type="text" id="title" name="title" value={title} onChange={onChangeTitle} />
+      <Form noValidate onSubmit={onSubmit}>
+        <Form.Group controlId="validationFormik02">
+          <Form.Label>Title</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter title"
+            value={title}
+            onChange={onChangeTitle}
+            isInvalid={!!editNoteState.errors.title}
+          />
           <ErrorMessage field="title" type={editNoteState.errors.title} />
-        </p>
-        <p>
-          <label htmlFor="body">Content</label>
-        </p>
-        <p>
-          <textarea id="body" name="body" rows={20} cols={100} onChange={onChangeBody} />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>Content</Form.Label>
+          <Form.Control
+            as="textarea"
+            placeholder="Enter content"
+            rows={20}
+            value={body}
+            onChange={onChangeBody}
+            isInvalid={!!editNoteState.errors.title}
+          />
           <ErrorMessage field="title" type={editNoteState.errors.body} />
-        </p>
-        <p>
-          <input type="submit" value="Save" />
-        </p>
-      </form>
+        </Form.Group>
+        <Button variant="primary" type="submit">
+          Save
+        </Button>
+      </Form>
     </>
   );
 };

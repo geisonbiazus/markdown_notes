@@ -1,3 +1,5 @@
+import { isEmpty } from '../../utils';
+
 export interface Note {
   id?: string;
   title?: string;
@@ -29,10 +31,6 @@ export interface SaveNoteResponse {
 export interface NoteClient {
   saveNote(note: Note): Promise<SaveNoteResponse>;
 }
-
-const isEmpty = (record: Record<any, any>): boolean => {
-  return Object.keys(record).length === 0;
-};
 
 export class NoteInteractor {
   constructor(private noteClient: NoteClient) {}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Form } from 'react-bootstrap';
 
 export interface ErrorMessageProps {
   field: string;
@@ -9,7 +10,11 @@ export interface ErrorMessageProps {
 export const ErrorMessage: React.FC<ErrorMessageProps> = ({ field, type }) => {
   const { t } = useTranslation();
 
-  if (!type) return null;
+  // if (!type) return null;
 
-  return <div>{t(`validation.${type}`, { field: t(field) })}</div>;
+  return (
+    <Form.Control.Feedback type="invalid">
+      {t(`validation.${type}`, { field: t(field) })}
+    </Form.Control.Feedback>
+  );
 };
