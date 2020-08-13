@@ -30,4 +30,15 @@ export class NoteController {
       res.json({ status: 'success', note: response.data });
     }
   }
+
+  getNote = async (req: Request, res: Response): Promise<void> => {
+    const response = await this.noteInteractor.getNote(req.params.id);
+
+    if (response.status == 'error') {
+      res.status(404);
+      res.json({ status: 'error', type: 'not_found' });
+    } else {
+      res.json({ status: 'success', note: response.data });
+    }
+  };
 }

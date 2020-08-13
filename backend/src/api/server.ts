@@ -1,6 +1,6 @@
 import express, { Express } from 'express';
 import { Router } from './router';
-import { NoteInteractor, InMemoryRepository } from '../notes';
+import { NoteInteractor, InMemoryRepository, Repository } from '../notes';
 import { NoteController } from './controllers';
 import cors from 'cors';
 
@@ -8,8 +8,8 @@ export class Server {
   public server: Express;
   public port = 4000;
 
-  constructor() {
-    const interactor = new NoteInteractor(new InMemoryRepository());
+  constructor(repo: Repository = new InMemoryRepository()) {
+    const interactor = new NoteInteractor(repo);
     const noteController = new NoteController(interactor);
     const router = new Router(noteController);
 
