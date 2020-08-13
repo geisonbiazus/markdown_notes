@@ -2,6 +2,7 @@ import { NoteInteractor, SaveNoteRequest, SaveNoteResponse } from './NoteInterac
 import { uuid } from '../../utils';
 import { Note } from '../entities';
 import { InMemoryRepository } from '../repositories';
+import { InteractorResponse } from './InteractorResponse';
 
 describe('NoteInteractor', () => {
   let noteInteractor: NoteInteractor;
@@ -84,6 +85,23 @@ describe('NoteInteractor', () => {
 
       expect(await repo.getNoteById(noteId1)).toEqual(expectedNote1);
       expect(await repo.getNoteById(noteId2)).toEqual(expectedNote2);
+    });
+  });
+
+  describe('getNote', () => {
+    it('returns note not found when note does not exist', async () => {
+      const response = { status: 'error', type: 'not_found' };
+
+      expect(await noteInteractor.getNote(uuid())).toEqual(response);
+    });
+
+    it('returns note not found when note does not exist', async () => {
+      const note = new Note({ id: uuid(), title: 'title', body: 'body' });
+      const response = { status: 'success', data: note };
+
+      repo.saveNote(note);
+
+      expect(await noteInteractor.getNote(note.id)).toEqual(response);
     });
   });
 });

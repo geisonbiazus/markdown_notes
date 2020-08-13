@@ -29,3 +29,23 @@ export class ValidationError<TRequest> {
 }
 
 export type ValidationErrorType = 'required';
+
+export class QueryResponse<T> {
+  public status: 'success' | 'error';
+  public data?: T;
+  public type?: string;
+
+  constructor(params: { status: 'success' | 'error'; data?: T; type?: string }) {
+    this.status = params.status;
+    this.data = params.data;
+    this.type = params.type;
+  }
+
+  public static success<T>(data: T) {
+    return new QueryResponse({ status: 'success', data: data });
+  }
+
+  public static notFound() {
+    return new QueryResponse({ status: 'error', type: 'not_found' });
+  }
+}

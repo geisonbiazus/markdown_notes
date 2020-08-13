@@ -1,5 +1,5 @@
 import { Note } from '../entities';
-import { InteractorResponse } from './InteractorResponse';
+import { InteractorResponse, QueryResponse } from './InteractorResponse';
 import { SaveNoteValidator } from '../validators';
 
 export interface Repository {
@@ -18,6 +18,14 @@ export class NoteInteractor {
     const note = new Note(request);
     await this.repo.saveNote(note);
     return SaveNoteResponse.success(note);
+  }
+
+  public async getNote(id: string) {
+    const note = await this.repo.getNoteById(id);
+
+    if (!note) return QueryResponse.notFound();
+
+    return QueryResponse.success(note);
   }
 }
 
