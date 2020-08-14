@@ -1,13 +1,17 @@
-import React, { useState, ChangeEvent, SyntheticEvent } from 'react';
+import React, { useState, ChangeEvent, SyntheticEvent, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNote } from './NoteContext';
 import { Form, FormRow, TextField, TextArea, Button } from '../../shared/components';
 
 export const EditNote: React.FC = () => {
-  const { editNoteState, saveNote } = useNote();
+  const { editNoteState, saveNote, getNote } = useNote();
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const { id } = useParams();
+
+  useEffect(() => {
+    getNote(id);
+  }, [getNote, id]);
 
   const onChangeTitle = (event: ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);

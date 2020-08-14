@@ -7,6 +7,15 @@ export class NoteStore {
   constructor(private noteInteractor: NoteInteractor) {}
 
   @action.bound
+  async getNote(id: string): Promise<void> {
+    const nextState = await this.noteInteractor.getNote(this.editNoteState, id);
+
+    runInAction(() => {
+      this.editNoteState = nextState;
+    });
+  }
+
+  @action.bound
   async saveNote(note: Note): Promise<void> {
     const nextState = await this.noteInteractor.saveNote(this.editNoteState, note);
 
