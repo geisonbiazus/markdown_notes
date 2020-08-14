@@ -14,8 +14,8 @@ export interface EditNoteState {
   errors: Record<string, ErrorType>;
 }
 
-export const newEditNoteState = (): EditNoteState => {
-  return { note: {}, errors: {} };
+export const newEditNoteState = (initialState: Partial<EditNoteState> = {}): EditNoteState => {
+  return { note: {}, errors: {}, ...initialState };
 };
 
 export interface ValidationError {
@@ -30,10 +30,21 @@ export interface SaveNoteResponse {
 }
 export interface NoteClient {
   saveNote(note: Note): Promise<SaveNoteResponse>;
+  getNote(id: string): Promise<Note | null>;
 }
 
 export class NoteInteractor {
-  constructor(private noteClient: NoteClient) {}
+  private noteClient: NoteClient;
+
+  constructor(noteClient: NoteClient) {
+    this.noteClient = noteClient;
+  }
+
+  public async getNote(state: EditNoteState, id: string): Promise<EditNoteState> {
+    const note = await this.noteClient.getNote(id);
+    if (!note) return { ...state, note: {} };
+    return { ...state, note };
+  }
 
   public async saveNote(state: EditNoteState, note: Note): Promise<EditNoteState> {
     let updatedState = { ...state, note };

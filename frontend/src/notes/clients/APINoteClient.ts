@@ -8,6 +8,10 @@ export class APINoteClient implements NoteClient {
     this.httpClient = httpClient;
   }
 
+  async getNote(id: string): Promise<Note | null> {
+    throw new Error('Method not implemented.');
+  }
+
   async saveNote(note: Note): Promise<SaveNoteResponse> {
     const response = await this.httpClient.put<SaveNoteResponse>(`/notes/${note.id}`, {
       title: note.title,

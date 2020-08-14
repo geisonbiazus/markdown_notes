@@ -8,7 +8,7 @@ export class InMemoryNoteClient implements NoteClient {
     return { status: 'success', note: note };
   }
 
-  public async getNoteById(id: string): Promise<Note | null> {
+  public async getNote(id: string): Promise<Note | null> {
     return this.notes[id] || null;
   }
 }
