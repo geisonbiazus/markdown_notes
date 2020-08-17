@@ -23,11 +23,7 @@ export const EditNote: React.FC = () => {
 
   const onSubmit = (event: SyntheticEvent) => {
     event.preventDefault();
-    saveNote({
-      id,
-      title,
-      body,
-    });
+    saveNote();
   };
 
   return (

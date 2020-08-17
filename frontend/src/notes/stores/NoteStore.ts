@@ -1,5 +1,5 @@
 import { observable, action, runInAction } from 'mobx';
-import { EditNoteState, newEditNoteState, Note, NoteInteractor } from '../interactors';
+import { EditNoteState, newEditNoteState, NoteInteractor } from '../interactors';
 
 export class NoteStore {
   @observable editNoteState: EditNoteState = newEditNoteState();
@@ -26,8 +26,8 @@ export class NoteStore {
   }
 
   @action.bound
-  async saveNote(note: Note): Promise<void> {
-    const nextState = await this.noteInteractor.saveNote(this.editNoteState, note);
+  async saveNote(): Promise<void> {
+    const nextState = await this.noteInteractor.saveNote(this.editNoteState);
 
     runInAction(() => {
       this.editNoteState = nextState;

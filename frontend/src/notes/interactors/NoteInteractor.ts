@@ -54,9 +54,8 @@ export class NoteInteractor {
     return { ...state, note: { ...state.note, body } };
   }
 
-  public async saveNote(state: EditNoteState, note: Note): Promise<EditNoteState> {
-    let updatedState = { ...state, note };
-    updatedState = this.validateNote(updatedState);
+  public async saveNote(state: EditNoteState): Promise<EditNoteState> {
+    const updatedState = this.validateNote(state);
     return this.maybeSaveNoteInTheClient(updatedState);
   }
 
