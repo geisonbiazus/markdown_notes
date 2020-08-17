@@ -1,9 +1,9 @@
 import { isEmpty } from '../../utils';
 
 export interface Note {
-  id?: string;
-  title?: string;
-  body?: string;
+  id: string;
+  title: string;
+  body: string;
 }
 
 export type ErrorType = 'required';
@@ -15,7 +15,7 @@ export interface EditNoteState {
 }
 
 export const newEditNoteState = (initialState: Partial<EditNoteState> = {}): EditNoteState => {
-  return { note: {}, errors: {}, ...initialState };
+  return { note: { id: '', title: '', body: '' }, errors: {}, ...initialState };
 };
 
 export interface ValidationError {
@@ -42,8 +42,16 @@ export class NoteInteractor {
 
   public async getNote(state: EditNoteState, id: string): Promise<EditNoteState> {
     const note = await this.noteClient.getNote(id);
-    if (!note) return { ...state, note: {} };
+    if (!note) return { ...state, note: { id, title: '', body: '' } };
     return { ...state, note };
+  }
+
+  public setTitle(state: EditNoteState, title: string): EditNoteState {
+    return { ...state, note: { ...state.note, title } };
+  }
+
+  public setBody(state: EditNoteState, body: string): EditNoteState {
+    return { ...state, note: { ...state.note, body } };
   }
 
   public async saveNote(state: EditNoteState, note: Note): Promise<EditNoteState> {

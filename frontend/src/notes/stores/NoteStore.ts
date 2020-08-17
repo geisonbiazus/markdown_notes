@@ -16,6 +16,16 @@ export class NoteStore {
   }
 
   @action.bound
+  async setTitle(title: string): Promise<void> {
+    this.editNoteState = this.noteInteractor.setTitle(this.editNoteState, title);
+  }
+
+  @action.bound
+  async setBody(body: string): Promise<void> {
+    this.editNoteState = this.noteInteractor.setBody(this.editNoteState, body);
+  }
+
+  @action.bound
   async saveNote(note: Note): Promise<void> {
     const nextState = await this.noteInteractor.saveNote(this.editNoteState, note);
 

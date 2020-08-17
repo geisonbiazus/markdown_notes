@@ -1,13 +1,13 @@
-import React, { useState, ChangeEvent, SyntheticEvent, useEffect } from 'react';
+import React, { ChangeEvent, SyntheticEvent, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNote } from './NoteContext';
 import { Form, FormRow, TextField, TextArea, Button } from '../../shared/components';
 
 export const EditNote: React.FC = () => {
-  const { editNoteState, saveNote, getNote } = useNote();
-  const [title, setTitle] = useState('');
-  const [body, setBody] = useState('');
+  const { editNoteState, saveNote, getNote, setTitle, setBody } = useNote();
   const { id } = useParams();
+
+  const { title, body } = editNoteState.note;
 
   useEffect(() => {
     getNote(id);

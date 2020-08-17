@@ -15,16 +15,18 @@ export interface NoteContextValue {
   editNoteState: typeof noteStore.editNoteState;
   saveNote: typeof noteStore.saveNote;
   getNote: typeof noteStore.getNote;
+  setTitle: typeof noteStore.setTitle;
+  setBody: typeof noteStore.setBody;
 }
 
 const NoteContext = React.createContext<NoteContextValue>(noteStore);
 
 export const NoteProvider: React.FC = ({ children }) => {
   return useObserver(() => {
-    const { editNoteState, saveNote, getNote } = noteStore;
+    const { editNoteState, saveNote, getNote, setTitle, setBody } = noteStore;
 
     return (
-      <NoteContext.Provider value={{ editNoteState, saveNote, getNote }}>
+      <NoteContext.Provider value={{ editNoteState, saveNote, getNote, setTitle, setBody }}>
         {children}
       </NoteContext.Provider>
     );

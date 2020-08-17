@@ -4,7 +4,7 @@ import { InMemoryNoteClient } from '../clients';
 
 describe('newEditNoteState', () => {
   it('returns an empty state', () => {
-    expect(newEditNoteState()).toEqual({ note: {}, errors: {} });
+    expect(newEditNoteState()).toEqual({ note: { id: '', title: '', body: '' }, errors: {} });
   });
 });
 
@@ -18,17 +18,17 @@ describe(NoteInteractor, () => {
   });
 
   describe('getNote', () => {
-    it('sets an empty note when note does not exist', async () => {
+    it('sets an empty note with the given id when note does not exist', async () => {
       const noteId = uuid();
       const state = await noteInteractor.getNote(newEditNoteState(), noteId);
-      expect(state.note).toEqual({});
+      expect(state.note).toEqual({ id: noteId, title: '', body: '' });
     });
 
     it('sets an empty note when note does not exist and there was a note in the state before', async () => {
       const noteId = uuid();
       let state = newEditNoteState({ note: { id: uuid(), title: 'title', body: 'body' } });
       state = await noteInteractor.getNote(state, noteId);
-      expect(state.note).toEqual({});
+      expect(state.note).toEqual({ id: noteId, title: '', body: '' });
     });
 
     it('sets the note in the state when it exists in the client', async () => {
@@ -40,15 +40,47 @@ describe(NoteInteractor, () => {
     });
   });
 
+  describe('setTitle', () => {
+    it('sets the title in the state', () => {
+      const noteId = uuid();
+
+      let state = newEditNoteState({
+        note: { id: noteId, title: 'not changed', body: 'not changed' },
+      });
+
+      state = noteInteractor.setTitle(state, 'changed');
+
+      expect(state.note).toEqual({ id: noteId, title: 'changed', body: 'not changed' });
+    });
+  });
+
+  describe('setBody', () => {
+    it('sets the body in the state', () => {
+      const noteId = uuid();
+
+      let state = newEditNoteState({
+        note: { id: noteId, title: 'not changed', body: 'not changed' },
+      });
+
+      state = noteInteractor.setBody(state, 'changed');
+
+      expect(state.note).toEqual({ id: noteId, title: 'not changed', body: 'changed' });
+    });
+  });
+
   describe('saveNote', () => {
     it('validates required title', async () => {
-      let state = await noteInteractor.saveNote(newEditNoteState(), {});
+      let state = await noteInteractor.saveNote(newEditNoteState(), {
+        id: '',
+        title: '',
+        body: '',
+      });
       expect(state.errors).toEqual({ title: 'required' });
 
-      state = await noteInteractor.saveNote(newEditNoteState(), { title: '' });
+      state = await noteInteractor.saveNote(newEditNoteState(), { id: '', title: '', body: '' });
       expect(state.errors).toEqual({ title: 'required' });
 
-      state = await noteInteractor.saveNote(newEditNoteState(), { title: ' ' });
+      state = await noteInteractor.saveNote(newEditNoteState(), { id: '', title: '', body: '' });
       expect(state.errors).toEqual({ title: 'required' });
     });
 
@@ -63,7 +95,11 @@ describe(NoteInteractor, () => {
     });
 
     it('cleans up past error when validating again', async () => {
-      let state = await noteInteractor.saveNote(newEditNoteState(), {});
+      let state = await noteInteractor.saveNote(newEditNoteState(), {
+        id: '',
+        title: '',
+        body: '',
+      });
 
       const id = uuid();
       const expectedNote = { id, title: 'title', body: 'body' };
