@@ -23,6 +23,17 @@ export class HTTPClient {
     }
   }
 
+  public async get<T>(url: string): Promise<HTTPResponse<T>> {
+    try {
+      const response = await this.axios.get<T>(url);
+      return response;
+    } catch (e) {
+      const error = e as AxiosError<T>;
+      if (error.response) return error.response;
+      throw e;
+    }
+  }
+
   public static useNodeAdapter() {
     axios.defaults.adapter = require('axios/lib/adapters/http');
   }

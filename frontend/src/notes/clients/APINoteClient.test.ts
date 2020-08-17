@@ -50,4 +50,26 @@ describe('APINoteClient', () => {
       expect(response).toEqual(expectedResponse);
     });
   });
+
+  describe('getNote', () => {
+    it('reteurns null when the note is not found', async () => {
+      const id = uuid();
+
+      nockScope.get(`/notes/${id}`).reply(404, { status: 'error', type: 'not_found' });
+
+      const response = await client.getNote(id);
+
+      expect(response).toEqual(null);
+    });
+
+    it('reteurns the note when the note is found', async () => {
+      const note: Note = { id: uuid(), body: 'body', title: '' };
+
+      nockScope.get(`/notes/${note.id}`).reply(404, { status: 'success', note });
+
+      const response = await client.getNote(note.id);
+
+      expect(response).toEqual(note);
+    });
+  });
 });

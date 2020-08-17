@@ -9,7 +9,11 @@ export class APINoteClient implements NoteClient {
   }
 
   async getNote(id: string): Promise<Note | null> {
-    throw new Error('Method not implemented.');
+    const response = await this.httpClient.get<GetNoteResponse>(`/notes/${id}`);
+
+    if (response.data.status == 'error' && response.data.type == 'not_found') return null;
+    if (response.data.status == 'success') return response.data.note as Note;
+    throw new Error('Something went wrong');
   }
 
   async saveNote(note: Note): Promise<SaveNoteResponse> {
@@ -20,4 +24,10 @@ export class APINoteClient implements NoteClient {
 
     return response.data;
   }
+}
+
+export interface GetNoteResponse {
+  status: 'success' | 'error';
+  type?: string;
+  note?: Note;
 }
