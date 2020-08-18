@@ -11,8 +11,8 @@ export class APINoteClient implements NoteClient {
   async getNote(id: string): Promise<Note | null> {
     const response = await this.httpClient.get<GetNoteResponse>(`/notes/${id}`);
 
-    if (response.data.status == 'error' && response.data.type == 'not_found') return null;
-    if (response.data.status == 'success') return response.data.note as Note;
+    if (response.data.status === 'error' && response.data.type === 'not_found') return null;
+    if (response.data.status === 'success') return response.data.note as Note;
     throw new Error('Something went wrong');
   }
 
