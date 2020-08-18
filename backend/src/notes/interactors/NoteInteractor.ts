@@ -5,6 +5,7 @@ import { SaveNoteValidator } from '../validators';
 export interface Repository {
   getNoteById(id: string): Promise<Note | null>;
   saveNote(note: Note): Promise<void>;
+  getNotesSortedTitle(): Promise<Note[]>;
 }
 
 export class NoteInteractor {
@@ -20,12 +21,18 @@ export class NoteInteractor {
     return SaveNoteResponse.success(note);
   }
 
-  public async getNote(id: string) {
+  public async getNote(id: string): Promise<QueryResponse<Note>> {
     const note = await this.repo.getNoteById(id);
 
-    if (!note) return QueryResponse.notFound();
+    if (!note) return QueryResponse.notFound<Note>();
 
     return QueryResponse.success(note);
+  }
+
+  public async getNotes(): Promise<QueryResponse<Note[]>> {
+    const notes = await this.repo.getNotesSortedTitle();
+
+    return QueryResponse.success(notes);
   }
 }
 

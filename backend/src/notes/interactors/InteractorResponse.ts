@@ -45,7 +45,7 @@ export class QueryResponse<T> {
     return new QueryResponse({ status: 'success', data: data });
   }
 
-  public static notFound() {
-    return new QueryResponse({ status: 'error', type: 'not_found' });
+  public static notFound<T>() {
+    return new QueryResponse<T>({ status: 'error', type: 'not_found' });
   }
 }

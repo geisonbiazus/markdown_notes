@@ -3,6 +3,7 @@ import { uuid } from '../../utils';
 import { Note } from '../entities';
 import { InMemoryRepository } from '../repositories';
 import { InteractorResponse } from './InteractorResponse';
+import { response } from 'express';
 
 describe('NoteInteractor', () => {
   let noteInteractor: NoteInteractor;
@@ -102,6 +103,35 @@ describe('NoteInteractor', () => {
       repo.saveNote(note);
 
       expect(await noteInteractor.getNote(note.id)).toEqual(response);
+    });
+  });
+
+  describe('getNotes', () => {
+    it('returns an empty list when there is no note', async () => {
+      const response = { status: 'success', data: [] };
+      expect(await noteInteractor.getNotes()).toEqual(response);
+    });
+
+    it('returns a note when it is saved', async () => {
+      const note = new Note({ id: uuid(), title: 'title', body: 'body' });
+
+      repo.saveNote(note);
+
+      const response = { status: 'success', data: [note] };
+      expect(await noteInteractor.getNotes()).toEqual(response);
+    });
+
+    it('returns a list of notes sorted alphabetically', async () => {
+      const note1 = new Note({ id: uuid(), title: 'Note B', body: 'body' });
+      const note2 = new Note({ id: uuid(), title: 'Note C', body: 'body' });
+      const note3 = new Note({ id: uuid(), title: 'Note A', body: 'body' });
+
+      repo.saveNote(note1);
+      repo.saveNote(note2);
+      repo.saveNote(note3);
+
+      const response = { status: 'success', data: [note3, note1, note2] };
+      expect(await noteInteractor.getNotes()).toEqual(response);
     });
   });
 });

@@ -11,4 +11,10 @@ export class InMemoryRepository implements Repository {
   async saveNote(note: Note): Promise<void> {
     this.notes[note.id] = note;
   }
+
+  async getNotesSortedTitle(): Promise<Note[]> {
+    return Object.values(this.notes).sort(
+      (a, b) => (a.title < b.title && -1) || (a.title < b.title && 1) || 0
+    );
+  }
 }
