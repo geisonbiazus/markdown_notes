@@ -19,6 +19,7 @@ export class Router {
       res.send('Hello World!');
     });
 
+    this.router.get('/notes', this.noteController.getNotes);
     this.router.get('/notes/:id', this.noteController.getNote);
     this.router.put('/notes/:id', this.noteController.saveNote);
   }

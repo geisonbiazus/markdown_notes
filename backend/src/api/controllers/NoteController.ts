@@ -41,4 +41,10 @@ export class NoteController {
       res.json({ status: 'success', note: response.data });
     }
   };
+
+  getNotes = async (req: Request, res: Response): Promise<void> => {
+    const response = await this.noteInteractor.getNotes();
+
+    res.json({ status: 'success', notes: response.data });
+  };
 }

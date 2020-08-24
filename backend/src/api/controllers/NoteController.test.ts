@@ -1,7 +1,7 @@
 import { Express } from 'express';
 import request from 'supertest';
 import { Server } from '../index';
-import { uuid } from '../../utils';
+import { uuid, json } from '../../utils';
 import { InMemoryRepository, Note } from '../../notes';
 
 describe('NoteController', () => {
@@ -64,6 +64,28 @@ describe('NoteController', () => {
           { status: 'success', note: { id: noteId, title: 'title', body: 'body' } },
           done
         );
+    });
+  });
+
+  describe('GET /notes', () => {
+    it('returns  an empty list when there is no note', (done) => {
+      request(server)
+        .get(`/notes/`)
+        .expect('Content-Type', /json/)
+        .expect(200, { status: 'success', notes: [] }, done);
+    });
+
+    it('returns all notes when they exist', (done) => {
+      const note1 = new Note({ id: uuid(), title: 'title 1', body: 'body' });
+      const note2 = new Note({ id: uuid(), title: 'title 2', body: 'body' });
+
+      repo.saveNote(note1);
+      repo.saveNote(note2);
+
+      request(server)
+        .get(`/notes`)
+        .expect('Content-Type', /json/)
+        .expect(200, { status: 'success', notes: json([note1, note2]) }, done);
     });
   });
 });
