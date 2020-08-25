@@ -27,33 +27,31 @@ export const EditNote: React.FC = () => {
   };
 
   return (
-    <>
-      <Form onSubmit={onSubmit}>
-        <FormRow>
-          <TextField
-            label="Title"
-            placeholder="Enter title"
-            value={title}
-            onChange={onChangeTitle}
-            errorField="title"
-            errorType={editNoteState.errors.title}
-          />
-        </FormRow>
-        <FormRow>
-          <TextArea
-            label="Content"
-            placeholder="Enter content"
-            value={body}
-            onChange={onChangeBody}
-            rows={20}
-            errorField="body"
-            errorType={editNoteState.errors.body}
-          />
-        </FormRow>
-        <Button variant="primary" type="submit">
-          Save
-        </Button>
-      </Form>
-    </>
+    <Form onSubmit={onSubmit}>
+      <FormRow>
+        <TextField
+          label="Title"
+          placeholder="Enter title"
+          value={title}
+          onChange={onChangeTitle}
+          errorField="title"
+          errorType={editNoteState.errors.title}
+        />
+      </FormRow>
+      <FormRow>
+        <TextArea
+          label="Content"
+          placeholder="Enter content"
+          value={body}
+          onChange={onChangeBody}
+          rows={20}
+          errorField="body"
+          errorType={editNoteState.errors.body}
+        />
+      </FormRow>
+      <Button variant="primary" type="submit">
+        Save
+      </Button>
+    </Form>
   );
 };

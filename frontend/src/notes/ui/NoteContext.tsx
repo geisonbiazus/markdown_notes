@@ -1,15 +1,12 @@
 import React, { useContext } from 'react';
 import { useObserver } from 'mobx-react-lite';
 import { NoteInteractor } from '../interactors';
-import { APINoteClient } from '../clients';
 import { NoteStore } from '../stores';
-import { getAppConfig } from '../../AppConfig';
-import { HTTPClient } from '../../utils';
+import { InMemoryNoteClient } from '../clients';
 
-const appConfig = getAppConfig();
-const httpClient = new HTTPClient(appConfig.apiURL);
-const noteClient = new APINoteClient(httpClient);
-// const noteClient = new InMemoryNoteClient();
+// const httpClient = new HTTPClient(appConfig.apiURL);
+// const noteClient = new APINoteClient(httpClient);
+const noteClient = new InMemoryNoteClient();
 const noteInteractor = new NoteInteractor(noteClient);
 const noteStore = new NoteStore(noteInteractor);
 
