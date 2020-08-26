@@ -16,6 +16,10 @@ export class APINoteClient implements NoteClient {
     throw new Error('Something went wrong');
   }
 
+  getNotes(): Promise<Note[]> {
+    throw new Error('Method not implemented.');
+  }
+
   async saveNote(note: Note): Promise<SaveNoteResponse> {
     const response = await this.httpClient.put<SaveNoteResponse>(`/notes/${note.id}`, {
       title: note.title,

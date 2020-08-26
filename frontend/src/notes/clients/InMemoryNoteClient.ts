@@ -11,4 +11,8 @@ export class InMemoryNoteClient implements NoteClient {
   public async getNote(id: string): Promise<Note | null> {
     return this.notes[id] || null;
   }
+
+  public async getNotes(): Promise<Note[]> {
+    return Object.values(this.notes);
+  }
 }

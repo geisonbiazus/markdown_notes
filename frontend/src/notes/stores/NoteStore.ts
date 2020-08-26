@@ -8,6 +8,8 @@ export class NoteStore {
 
   @action.bound
   async getNote(id: string): Promise<void> {
+    this.editNoteState = newEditNoteState();
+
     const nextState = await this.editNoteInteractor.getNote(this.editNoteState, id);
 
     runInAction(() => {

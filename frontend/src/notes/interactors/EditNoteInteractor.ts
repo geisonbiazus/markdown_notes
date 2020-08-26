@@ -31,6 +31,7 @@ export interface SaveNoteResponse {
 export interface NoteClient {
   saveNote(note: Note): Promise<SaveNoteResponse>;
   getNote(id: string): Promise<Note | null>;
+  getNotes(): Promise<Note[]>;
 }
 
 export class EditNoteInteractor {
