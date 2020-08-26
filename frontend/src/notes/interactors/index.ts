@@ -1,1 +1,1 @@
-export * from './NoteInteractor';
+export * from './EditNoteInteractor';

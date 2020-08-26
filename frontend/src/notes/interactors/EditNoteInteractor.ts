@@ -33,7 +33,7 @@ export interface NoteClient {
   getNote(id: string): Promise<Note | null>;
 }
 
-export class NoteInteractor {
+export class EditNoteInteractor {
   private noteClient: NoteClient;
 
   constructor(noteClient: NoteClient) {

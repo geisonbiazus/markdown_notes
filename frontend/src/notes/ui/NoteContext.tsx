@@ -1,14 +1,14 @@
 import React, { useContext } from 'react';
 import { useObserver } from 'mobx-react-lite';
-import { NoteInteractor } from '../interactors';
+import { EditNoteInteractor } from '../interactors';
 import { NoteStore } from '../stores';
 import { InMemoryNoteClient } from '../clients';
 
 // const httpClient = new HTTPClient(appConfig.apiURL);
 // const noteClient = new APINoteClient(httpClient);
 const noteClient = new InMemoryNoteClient();
-const noteInteractor = new NoteInteractor(noteClient);
-const noteStore = new NoteStore(noteInteractor);
+const editNoteInteractor = new EditNoteInteractor(noteClient);
+const noteStore = new NoteStore(editNoteInteractor);
 
 export interface NoteContextValue {
   editNoteState: typeof noteStore.editNoteState;
