@@ -52,7 +52,7 @@ describe('APINoteClient', () => {
   });
 
   describe('getNote', () => {
-    it('reteurns null when the note is not found', async () => {
+    it('returns null when the note is not found', async () => {
       const id = uuid();
 
       nockScope.get(`/notes/${id}`).reply(404, { status: 'error', type: 'not_found' });
@@ -62,14 +62,42 @@ describe('APINoteClient', () => {
       expect(response).toEqual(null);
     });
 
-    it('reteurns the note when the note is found', async () => {
+    it('returns the note when the note is found', async () => {
       const note: Note = { id: uuid(), body: 'body', title: '' };
 
-      nockScope.get(`/notes/${note.id}`).reply(404, { status: 'success', note });
+      nockScope.get(`/notes/${note.id}`).reply(200, { status: 'success', note });
 
       const response = await client.getNote(note.id);
 
       expect(response).toEqual(note);
+    });
+  });
+
+  describe('getNotes', () => {
+    it('returns a list of notes when request is successful', async () => {
+      const notes: Note[] = [
+        { id: uuid(), body: 'body 1', title: 'title 1' },
+        { id: uuid(), body: 'body 2', title: 'title 2' },
+      ];
+
+      nockScope.get(`/notes`).reply(200, { status: 'success', notes: notes });
+
+      const response = await client.getNotes();
+
+      expect(response).toEqual(notes);
+    });
+
+    it('throws error when request is not successfull', async () => {
+      nockScope.get(`/notes`).reply(500, 'Anything');
+      let error: Error | null = null;
+
+      try {
+        await client.getNotes();
+      } catch (e) {
+        error = e;
+      }
+
+      expect(error).toEqual(new Error('Something went wrong. Status: 500. Body: Anything'));
     });
   });
 });
