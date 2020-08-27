@@ -50,6 +50,7 @@ export class NoteStore {
   @action.bound
   async saveNote(): Promise<void> {
     const nextState = await this.editNoteInteractor.saveNote(this.editNoteState);
+    this.getNotes();
 
     runInAction(() => {
       this.editNoteState = nextState;
