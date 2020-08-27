@@ -1,34 +1,28 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { NewNoteButton } from './NewNoteButton';
 import './NoteList.css';
+import { useNoteContext } from './NoteContext';
 
 export const NoteList: React.FC = () => {
+  const { listNoteState, getNotes } = useNoteContext();
+
+  useEffect(() => {
+    getNotes();
+  }, [getNotes]);
+
   return (
     <div className="note-list-container">
       <NewNoteButton />
       <Nav defaultActiveKey="/home" className="flex-column" as="ul">
-        <Nav.Item as="li">
-          <Nav.Link active={true} as={Link} to="/notes/123">
-            Note 1
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item as="li">
-          <Nav.Link as={Link} to="/notes/123">
-            Note 1
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item as="li">
-          <Nav.Link as={Link} to="/notes/123">
-            Note 1
-          </Nav.Link>
-        </Nav.Item>
-        <Nav.Item as="li">
-          <Nav.Link as={Link} to="/notes/123">
-            Note 1
-          </Nav.Link>
-        </Nav.Item>
+        {listNoteState.notes.map((note) => (
+          <Nav.Item as="li">
+            <Nav.Link active={false} as={Link} to={`/notes/${note.id}`}>
+              {note.title}
+            </Nav.Link>
+          </Nav.Item>
+        ))}
       </Nav>
     </div>
   );

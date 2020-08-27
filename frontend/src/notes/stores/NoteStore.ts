@@ -1,10 +1,30 @@
 import { observable, action, runInAction } from 'mobx';
-import { EditNoteState, newEditNoteState, EditNoteInteractor } from '../interactors';
+import {
+  EditNoteState,
+  newEditNoteState,
+  EditNoteInteractor,
+  ListNoteState,
+  newListNoteState,
+  ListNoteInteractor,
+} from '../interactors';
 
 export class NoteStore {
+  @observable listNoteState: ListNoteState = newListNoteState();
   @observable editNoteState: EditNoteState = newEditNoteState();
 
-  constructor(private editNoteInteractor: EditNoteInteractor) {}
+  constructor(
+    private listNoteInteractor: ListNoteInteractor,
+    private editNoteInteractor: EditNoteInteractor
+  ) {}
+
+  @action.bound
+  async getNotes(): Promise<void> {
+    const nextState = await this.listNoteInteractor.getNotes(this.listNoteState);
+
+    runInAction(() => {
+      this.listNoteState = nextState;
+    });
+  }
 
   @action.bound
   async getNote(id: string): Promise<void> {
