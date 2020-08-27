@@ -1,6 +1,7 @@
-import { newEditNoteState, EditNoteInteractor, Note } from './EditNoteInteractor';
+import { newEditNoteState, EditNoteInteractor } from './EditNoteInteractor';
 import { uuid } from '../../utils';
 import { InMemoryNoteClient } from '../clients';
+import { Note } from './entities';
 
 describe('newEditNoteState', () => {
   it('returns an empty state', () => {

@@ -1,4 +1,4 @@
-import { Note, NoteClient } from './EditNoteInteractor';
+import { Note, NoteClient } from './entities';
 
 export interface ListNoteState {
   notes: Note[];

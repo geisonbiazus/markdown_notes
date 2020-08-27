@@ -1,13 +1,5 @@
 import { isEmpty } from '../../utils';
-
-export interface Note {
-  id: string;
-  title: string;
-  body: string;
-}
-
-export type ErrorType = 'required';
-export type Errors = Record<string, ErrorType>;
+import { Note, ErrorType, NoteClient, Errors, SaveNoteResponse } from './entities';
 
 export interface EditNoteState {
   note: Note;
@@ -17,22 +9,6 @@ export interface EditNoteState {
 export const newEditNoteState = (initialState: Partial<EditNoteState> = {}): EditNoteState => {
   return { note: { id: '', title: '', body: '' }, errors: {}, ...initialState };
 };
-
-export interface ValidationError {
-  field: string;
-  type: string;
-}
-
-export interface SaveNoteResponse {
-  status: 'success' | 'validation_error';
-  note?: Note;
-  errors?: ValidationError[];
-}
-export interface NoteClient {
-  saveNote(note: Note): Promise<SaveNoteResponse>;
-  getNote(id: string): Promise<Note | null>;
-  getNotes(): Promise<Note[]>;
-}
 
 export class EditNoteInteractor {
   private noteClient: NoteClient;
