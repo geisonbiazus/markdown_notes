@@ -6,7 +6,7 @@ import './NoteList.css';
 import { useNoteContext } from './NoteContext';
 
 export const NoteList: React.FC = () => {
-  const { listNoteState, getNotes } = useNoteContext();
+  const { listNoteState, editNoteState, getNotes } = useNoteContext();
 
   useEffect(() => {
     getNotes();
@@ -18,7 +18,7 @@ export const NoteList: React.FC = () => {
       <Nav defaultActiveKey="/home" className="flex-column" as="ul">
         {listNoteState.notes.map((note) => (
           <Nav.Item as="li">
-            <Nav.Link active={false} as={Link} to={`/notes/${note.id}`}>
+            <Nav.Link active={note.id === editNoteState.note.id} as={Link} to={`/notes/${note.id}`}>
               {note.title}
             </Nav.Link>
           </Nav.Item>
