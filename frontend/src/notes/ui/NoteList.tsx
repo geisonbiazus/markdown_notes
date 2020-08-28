@@ -1,9 +1,7 @@
 import React, { useEffect } from 'react';
-import { Nav } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import { NewNoteButton } from './NewNoteButton';
-import './NoteList.css';
 import { useNoteContext } from './NoteContext';
+import { VerticalNav, NavItem } from '../../shared/components';
 
 export const NoteList: React.FC = () => {
   const { listNoteState, editNoteState, getNotes } = useNoteContext();
@@ -13,17 +11,17 @@ export const NoteList: React.FC = () => {
   }, [getNotes]);
 
   return (
-    <div className="note-list-container">
+    <>
       <NewNoteButton />
-      <Nav defaultActiveKey="/home" className="flex-column" as="ul">
+      <VerticalNav>
         {listNoteState.notes.map((note) => (
-          <Nav.Item as="li">
-            <Nav.Link active={note.id === editNoteState.note.id} as={Link} to={`/notes/${note.id}`}>
-              {note.title}
-            </Nav.Link>
-          </Nav.Item>
+          <NavItem
+            text={note.title}
+            href={`/notes/${note.id}`}
+            active={note.id === editNoteState.note.id}
+          />
         ))}
-      </Nav>
-    </div>
+      </VerticalNav>
+    </>
   );
 };
