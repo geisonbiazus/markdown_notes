@@ -6,6 +6,7 @@ export interface Repository {
   getNoteById(id: string): Promise<Note | null>;
   saveNote(note: Note): Promise<void>;
   getNotesSortedTitle(): Promise<Note[]>;
+  removeNote(note: Note): Promise<void>;
 }
 
 export class NoteInteractor {
@@ -33,6 +34,16 @@ export class NoteInteractor {
     const notes = await this.repo.getNotesSortedTitle();
 
     return QueryResponse.success(notes);
+  }
+
+  public async removeNote(id: string): Promise<QueryResponse> {
+    const note = await this.repo.getNoteById(id);
+
+    if (!note) return QueryResponse.notFound();
+
+    await this.repo.removeNote(note);
+
+    return QueryResponse.success();
   }
 }
 

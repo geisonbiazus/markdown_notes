@@ -30,7 +30,7 @@ export class ValidationError<TRequest> {
 
 export type ValidationErrorType = 'required';
 
-export class QueryResponse<T> {
+export class QueryResponse<T = undefined> {
   public status: 'success' | 'error';
   public data?: T;
   public type?: string;
@@ -41,7 +41,7 @@ export class QueryResponse<T> {
     this.type = params.type;
   }
 
-  public static success<T>(data: T) {
+  public static success<T>(data?: T) {
     return new QueryResponse({ status: 'success', data: data });
   }
 

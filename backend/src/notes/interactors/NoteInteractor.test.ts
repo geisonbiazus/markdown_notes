@@ -134,4 +134,22 @@ describe('NoteInteractor', () => {
       expect(await noteInteractor.getNotes()).toEqual(response);
     });
   });
+
+  describe('removeNote', () => {
+    it('returns not found error when note does not exit', async () => {
+      const response = { status: 'error', type: 'not_found' };
+
+      expect(await noteInteractor.removeNote(uuid())).toEqual(response);
+    });
+
+    it('removes the note when it exists', async () => {
+      const note = new Note({ id: uuid(), title: 'title', body: 'body' });
+      repo.saveNote(note);
+
+      const response = { status: 'success' };
+
+      expect(await noteInteractor.removeNote(note.id)).toEqual(response);
+      expect(await repo.getNoteById(note.id)).toEqual(null);
+    });
+  });
 });

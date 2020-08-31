@@ -17,4 +17,8 @@ export class InMemoryRepository implements Repository {
       (a, b) => (a.title < b.title && -1) || (a.title < b.title && 1) || 0
     );
   }
+
+  async removeNote(note: Note): Promise<void> {
+    delete this.notes[note.id];
+  }
 }
