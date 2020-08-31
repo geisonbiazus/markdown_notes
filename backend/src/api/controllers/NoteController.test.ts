@@ -88,4 +88,23 @@ describe('NoteController', () => {
         .expect(200, { status: 'success', notes: json([note1, note2]) }, done);
     });
   });
+
+  describe('DELETE /notes/:id', () => {
+    it('returns not found error when note does not exist', (done) => {
+      request(server)
+        .delete(`/notes/${uuid()}`)
+        .expect('Content-Type', /json/)
+        .expect(404, { status: 'error', type: 'not_found' }, done);
+    });
+
+    it('returns success and removes the note when it exists', (done) => {
+      const id = uuid();
+      repo.saveNote(new Note({ id, title: 'title', body: 'body' }));
+
+      request(server)
+        .delete(`/notes/${id}`)
+        .expect('Content-Type', /json/)
+        .expect(200, { status: 'success' }, done);
+    });
+  });
 });

@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { NoteInteractor, SaveNoteRequest, SaveNoteResponse } from '../../notes';
+import { Request, Response, response } from 'express';
+import { NoteInteractor, SaveNoteRequest, InteractorResponse, Note } from '../../notes';
 
 export class NoteController {
   private noteInteractor: NoteInteractor;
@@ -22,29 +22,45 @@ export class NoteController {
     };
   }
 
-  private sendSaveNoteResponse(res: Response, response: SaveNoteResponse): void {
-    if (response.status === 'validation_error') {
-      res.status(422);
-      res.json({ status: 'validation_error', errors: response.validationErrors });
-    } else {
-      res.json({ status: 'success', note: response.data });
-    }
+  private sendSaveNoteResponse(res: Response, response: InteractorResponse<Note>): void {
+    const { status, validationErrors, data } = response;
+
+    res.status(resolveHttpStatus(response));
+    res.json({ status, errors: validationErrors, note: data });
   }
 
   getNote = async (req: Request, res: Response): Promise<void> => {
     const response = await this.noteInteractor.getNote(req.params.id);
+    const { status, type, data } = response;
 
-    if (response.status == 'error') {
-      res.status(404);
-      res.json({ status: 'error', type: 'not_found' });
-    } else {
-      res.json({ status: 'success', note: response.data });
-    }
+    res.status(resolveHttpStatus(response));
+    res.json({ status, type, note: data });
   };
 
-  getNotes = async (req: Request, res: Response): Promise<void> => {
+  getNotes = async (_req: Request, res: Response): Promise<void> => {
     const response = await this.noteInteractor.getNotes();
+    const { status, data } = response;
 
-    res.json({ status: 'success', notes: response.data });
+    res.status(resolveHttpStatus(response));
+    res.json({ status, notes: data });
+  };
+
+  removeNote = async (req: Request, res: Response): Promise<void> => {
+    const response = await this.noteInteractor.removeNote(req.params.id);
+    const { status, type } = response;
+
+    res.status(resolveHttpStatus(response));
+    res.json({ status, type });
   };
 }
+
+const resolveHttpStatus = <T>(response: InteractorResponse<T>): number => {
+  const { status, type } = response;
+
+  return (
+    (status === 'success' && 200) ||
+    (status === 'error' && type === 'not_found' && 404) ||
+    (status === 'validation_error' && 422) ||
+    500
+  );
+};

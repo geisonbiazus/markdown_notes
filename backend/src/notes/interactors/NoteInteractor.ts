@@ -12,14 +12,14 @@ export interface Repository {
 export class NoteInteractor {
   constructor(private repo: Repository) {}
 
-  public async saveNote(request: SaveNoteRequest): Promise<SaveNoteResponse> {
+  public async saveNote(request: SaveNoteRequest): Promise<InteractorResponse<Note>> {
     const validator = new SaveNoteValidator(request);
 
-    if (!validator.isValid()) return SaveNoteResponse.validationError(validator.errors);
+    if (!validator.isValid()) return InteractorResponse.validationError(validator.errors);
 
     const note = new Note(request);
     await this.repo.saveNote(note);
-    return SaveNoteResponse.success(note);
+    return InteractorResponse.success(note);
   }
 
   public async getNote(id: string): Promise<InteractorResponse<Note>> {
@@ -52,5 +52,3 @@ export interface SaveNoteRequest {
   title?: string;
   body?: string;
 }
-
-export class SaveNoteResponse extends InteractorResponse<Note> {}

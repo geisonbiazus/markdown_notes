@@ -1,9 +1,8 @@
-import { NoteInteractor, SaveNoteRequest, SaveNoteResponse } from './NoteInteractor';
+import { NoteInteractor } from './NoteInteractor';
 import { uuid } from '../../utils';
 import { Note } from '../entities';
 import { InMemoryRepository } from '../repositories';
 import { InteractorResponse } from './InteractorResponse';
-import { response } from 'express';
 
 describe('NoteInteractor', () => {
   let noteInteractor: NoteInteractor;
@@ -17,21 +16,21 @@ describe('NoteInteractor', () => {
   describe('saveNote', () => {
     it('validates required id', async () => {
       const params = { id: '', title: 'Title', body: 'Body' };
-      const response = SaveNoteResponse.validationError([{ field: 'id', type: 'required' }]);
+      const response = InteractorResponse.validationError([{ field: 'id', type: 'required' }]);
 
       expect(await noteInteractor.saveNote(params)).toEqual(response);
     });
 
     it('validates required title', async () => {
       const params = { id: uuid(), title: '', body: 'Body' };
-      const response = SaveNoteResponse.validationError([{ field: 'title', type: 'required' }]);
+      const response = InteractorResponse.validationError([{ field: 'title', type: 'required' }]);
 
       expect(await noteInteractor.saveNote(params)).toEqual(response);
     });
 
     it('returns all invalid fields', async () => {
       const params = { id: '', title: '', body: 'Body' };
-      const response = SaveNoteResponse.validationError([
+      const response = InteractorResponse.validationError([
         { field: 'id', type: 'required' },
         { field: 'title', type: 'required' },
       ]);
@@ -42,7 +41,7 @@ describe('NoteInteractor', () => {
     it('creates a new note', async () => {
       const noteId = uuid();
       const params = { id: noteId, title: 'Title', body: 'body' };
-      const response = SaveNoteResponse.success(
+      const response = InteractorResponse.success(
         new Note({ id: noteId, title: 'Title', body: 'body' })
       );
 
@@ -68,7 +67,7 @@ describe('NoteInteractor', () => {
       await noteInteractor.saveNote(request1);
 
       expect(await noteInteractor.saveNote(request2)).toEqual(
-        SaveNoteResponse.success(expectedNote)
+        InteractorResponse.success(expectedNote)
       );
       expect(await repo.getNoteById(noteId)).toEqual(expectedNote);
     });

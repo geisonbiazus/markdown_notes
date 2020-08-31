@@ -22,5 +22,6 @@ export class Router {
     this.router.get('/notes', this.noteController.getNotes);
     this.router.get('/notes/:id', this.noteController.getNote);
     this.router.put('/notes/:id', this.noteController.saveNote);
+    this.router.delete('/notes/:id', this.noteController.removeNote);
   }
 }
