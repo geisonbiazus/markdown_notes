@@ -17,21 +17,21 @@ describe('NoteInteractor', () => {
   describe('saveNote', () => {
     it('validates required id', async () => {
       const params = { id: '', title: 'Title', body: 'Body' };
-      const response = SaveNoteResponse.error([{ field: 'id', type: 'required' }]);
+      const response = SaveNoteResponse.validationError([{ field: 'id', type: 'required' }]);
 
       expect(await noteInteractor.saveNote(params)).toEqual(response);
     });
 
     it('validates required title', async () => {
       const params = { id: uuid(), title: '', body: 'Body' };
-      const response = SaveNoteResponse.error([{ field: 'title', type: 'required' }]);
+      const response = SaveNoteResponse.validationError([{ field: 'title', type: 'required' }]);
 
       expect(await noteInteractor.saveNote(params)).toEqual(response);
     });
 
     it('returns all invalid fields', async () => {
       const params = { id: '', title: '', body: 'Body' };
-      const response = SaveNoteResponse.error([
+      const response = SaveNoteResponse.validationError([
         { field: 'id', type: 'required' },
         { field: 'title', type: 'required' },
       ]);

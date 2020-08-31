@@ -23,9 +23,9 @@ export class NoteController {
   }
 
   private sendSaveNoteResponse(res: Response, response: SaveNoteResponse): void {
-    if (response.status === 'error') {
+    if (response.status === 'validation_error') {
       res.status(422);
-      res.json({ status: 'validation_error', errors: response.errors });
+      res.json({ status: 'validation_error', errors: response.validationErrors });
     } else {
       res.json({ status: 'success', note: response.data });
     }

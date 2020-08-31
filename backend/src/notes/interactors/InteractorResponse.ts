@@ -1,51 +1,36 @@
-export class InteractorResponse<TRequest, TResponse> {
-  public status: 'error' | 'success';
-  public data?: TResponse;
-  public errors: ValidationError<TRequest>[];
+export class InteractorResponse<T = undefined> {
+  public status: 'error' | 'success' | 'validation_error';
+  public data?: T;
+  public type?: string;
+  public validationErrors?: ValidationError[];
 
   constructor(params: {
-    status: 'error' | 'success';
-    data?: TResponse;
-    errors?: ValidationError<TRequest>[];
+    status: 'error' | 'success' | 'validation_error';
+    data?: T;
+    type?: string;
+    validationErrors?: ValidationError[];
   }) {
     this.status = params.status;
     this.data = params.data;
-    this.errors = params.errors || [];
+    this.type = params.type;
+    this.validationErrors = params.validationErrors;
   }
 
-  static success<TRequest, TResponse>(data: TResponse): InteractorResponse<TRequest, TResponse> {
+  static success<T>(data?: T): InteractorResponse<T> {
     return new InteractorResponse({ status: 'success', data });
   }
 
-  static error<TRequest, TResponse>(
-    errors: ValidationError<TRequest>[]
-  ): InteractorResponse<TRequest, TResponse> {
-    return new InteractorResponse({ status: 'error', errors });
+  static validationError<T>(validationErrors: ValidationError[]): InteractorResponse<T> {
+    return new InteractorResponse({ status: 'validation_error', validationErrors });
+  }
+
+  static notFound<T>() {
+    return new InteractorResponse<T>({ status: 'error', type: 'not_found' });
   }
 }
 
-export class ValidationError<TRequest> {
-  constructor(public field: keyof TRequest, public type: ValidationErrorType) {}
+export class ValidationError {
+  constructor(public field: string, public type: ValidationErrorType) {}
 }
 
 export type ValidationErrorType = 'required';
-
-export class QueryResponse<T = undefined> {
-  public status: 'success' | 'error';
-  public data?: T;
-  public type?: string;
-
-  constructor(params: { status: 'success' | 'error'; data?: T; type?: string }) {
-    this.status = params.status;
-    this.data = params.data;
-    this.type = params.type;
-  }
-
-  public static success<T>(data?: T) {
-    return new QueryResponse({ status: 'success', data: data });
-  }
-
-  public static notFound<T>() {
-    return new QueryResponse<T>({ status: 'error', type: 'not_found' });
-  }
-}

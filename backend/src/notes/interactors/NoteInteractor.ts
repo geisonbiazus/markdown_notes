@@ -1,5 +1,5 @@
 import { Note } from '../entities';
-import { InteractorResponse, QueryResponse } from './InteractorResponse';
+import { InteractorResponse } from './InteractorResponse';
 import { SaveNoteValidator } from '../validators';
 
 export interface Repository {
@@ -15,35 +15,35 @@ export class NoteInteractor {
   public async saveNote(request: SaveNoteRequest): Promise<SaveNoteResponse> {
     const validator = new SaveNoteValidator(request);
 
-    if (!validator.isValid()) return SaveNoteResponse.error(validator.errors);
+    if (!validator.isValid()) return SaveNoteResponse.validationError(validator.errors);
 
     const note = new Note(request);
     await this.repo.saveNote(note);
     return SaveNoteResponse.success(note);
   }
 
-  public async getNote(id: string): Promise<QueryResponse<Note>> {
+  public async getNote(id: string): Promise<InteractorResponse<Note>> {
     const note = await this.repo.getNoteById(id);
 
-    if (!note) return QueryResponse.notFound<Note>();
+    if (!note) return InteractorResponse.notFound<Note>();
 
-    return QueryResponse.success(note);
+    return InteractorResponse.success(note);
   }
 
-  public async getNotes(): Promise<QueryResponse<Note[]>> {
+  public async getNotes(): Promise<InteractorResponse<Note[]>> {
     const notes = await this.repo.getNotesSortedTitle();
 
-    return QueryResponse.success(notes);
+    return InteractorResponse.success(notes);
   }
 
-  public async removeNote(id: string): Promise<QueryResponse> {
+  public async removeNote(id: string): Promise<InteractorResponse> {
     const note = await this.repo.getNoteById(id);
 
-    if (!note) return QueryResponse.notFound();
+    if (!note) return InteractorResponse.notFound();
 
     await this.repo.removeNote(note);
 
-    return QueryResponse.success();
+    return InteractorResponse.success();
   }
 }
 
@@ -53,4 +53,4 @@ export interface SaveNoteRequest {
   body?: string;
 }
 
-export class SaveNoteResponse extends InteractorResponse<SaveNoteRequest, Note> {}
+export class SaveNoteResponse extends InteractorResponse<Note> {}
