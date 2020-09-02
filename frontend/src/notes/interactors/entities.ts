@@ -16,6 +16,7 @@ export interface NoteClient {
   saveNote(note: Note): Promise<SaveNoteResponse>;
   getNote(id: string): Promise<Note | null>;
   getNotes(): Promise<Note[]>;
+  removeNote(id: string): Promise<void>;
 }
 
 export interface SaveNoteResponse {

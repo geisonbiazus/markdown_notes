@@ -31,6 +31,10 @@ export class APINoteClient implements NoteClient {
 
     return response.data;
   }
+
+  removeNote(_id: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
 }
 
 export interface GetNoteResponse {
