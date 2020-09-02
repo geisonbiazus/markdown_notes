@@ -12,20 +12,33 @@ export class HTTPClient {
     this.axios = axios.create({ baseURL: baseURL });
   }
 
+  public async post<T>(url: string, data: any): Promise<HTTPResponse<T>> {
+    return this.request('POST', url, data);
+  }
+
   public async put<T>(url: string, data: any): Promise<HTTPResponse<T>> {
-    try {
-      const response = await this.axios.put<T>(url, data);
-      return response;
-    } catch (e) {
-      const error = e as AxiosError<T>;
-      if (error.response) return error.response;
-      throw e;
-    }
+    return this.request('PUT', url, data);
+  }
+
+  public async patch<T>(url: string, data: any): Promise<HTTPResponse<T>> {
+    return this.request('PATCH', url, data);
   }
 
   public async get<T>(url: string): Promise<HTTPResponse<T>> {
+    return this.request('GET', url);
+  }
+
+  public async delete<T>(url: string): Promise<HTTPResponse<T>> {
+    return this.request('DELETE', url);
+  }
+
+  public async request<T>(
+    method: HTTPMethod,
+    url: string,
+    data: any = undefined
+  ): Promise<HTTPResponse<T>> {
     try {
-      const response = await this.axios.get<T>(url);
+      const response = await this.axios.request<T>({ url, method, data });
       return response;
     } catch (e) {
       const error = e as AxiosError<T>;
@@ -38,3 +51,5 @@ export class HTTPClient {
     axios.defaults.adapter = require('axios/lib/adapters/http');
   }
 }
+
+export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';

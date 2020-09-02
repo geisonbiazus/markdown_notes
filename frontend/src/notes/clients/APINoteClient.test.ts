@@ -97,7 +97,35 @@ describe('APINoteClient', () => {
         error = e;
       }
 
-      expect(error).toEqual(new Error('Something went wrong. Status: 500. Body: Anything'));
+      expect(error).toEqual(new Error('Something went wrong. Status: 500. Body: "Anything"'));
+    });
+  });
+
+  describe('removeNote', () => {
+    it('requests to remove a note', async () => {
+      const id = uuid();
+
+      nockScope.delete(`/notes/${id}`).reply(200, { status: 'success' });
+
+      await client.removeNote(id);
+    });
+
+    it('throws error if not successful', async () => {
+      const id = uuid();
+
+      nockScope.delete(`/notes/${id}`).reply(400, { status: 'error', type: 'not_found' });
+
+      let error: Error | null = null;
+
+      try {
+        await client.removeNote(id);
+      } catch (e) {
+        error = e;
+      }
+
+      expect(error).toEqual(
+        new Error('Something went wrong. Status: 400. Body: {"status":"error","type":"not_found"}')
+      );
     });
   });
 });
