@@ -16,6 +16,7 @@ export const NoteList: React.FC = () => {
       <VerticalNav>
         {listNoteState.notes.map((note) => (
           <NavItem
+            key={note.id}
             text={note.title}
             href={`/notes/${note.id}`}
             active={note.id === editNoteState.note.id}
