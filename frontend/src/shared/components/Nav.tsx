@@ -19,22 +19,34 @@ export interface NavItemProps {
 }
 
 export const NavItem: React.FC<NavItemProps> = (props) => {
-  const { text, active = false, href = '#' } = props;
-
-  const onClickIcon = (e: SyntheticEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    window.confirm('Are you sure?');
-  };
+  const { text, active = false, href = '#', children } = props;
 
   return (
     <Nav.Item as="li">
       <Nav.Link className="nav-item" active={active} as={Link} to={href}>
         {text}
-        <div style={{ float: 'right' }}>
-          <BsTrash onClick={onClickIcon} />
-        </div>
+        {children}
       </Nav.Link>
     </Nav.Item>
+  );
+};
+
+export interface NavIconProps {
+  onClick?: () => void;
+}
+
+export const NavIcon: React.FC<NavIconProps> = (props) => {
+  const { onClick } = props;
+
+  const onClickIcon = (e: SyntheticEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    onClick?.();
+  };
+
+  return (
+    <div className="float-right" onClick={onClickIcon}>
+      <BsTrash />
+    </div>
   );
 };

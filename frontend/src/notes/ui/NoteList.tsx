@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { NewNoteButton } from './NewNoteButton';
 import { useNoteContext } from './NoteContext';
-import { VerticalNav, NavItem } from '../../shared/components';
+import { VerticalNav, NavItem, NavIcon } from '../../shared/components';
 
 export const NoteList: React.FC = () => {
   const { listNoteState, editNoteState, getNotes } = useNoteContext();
@@ -20,7 +20,9 @@ export const NoteList: React.FC = () => {
             text={note.title}
             href={`/notes/${note.id}`}
             active={note.id === editNoteState.note.id}
-          />
+          >
+            <NavIcon />
+          </NavItem>
         ))}
       </VerticalNav>
     </>
