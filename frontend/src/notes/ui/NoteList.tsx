@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { NewNoteButton } from './NewNoteButton';
 import { useNoteContext } from './NoteContext';
-import { VerticalNav, NavItem, NavIcon } from '../../shared/components';
-import { Modal, Button } from 'react-bootstrap';
+import { VerticalNav, NavItem, NavIcon, ConfirmModal } from '../../shared/components';
+import { useTranslation } from 'react-i18next';
 
 export const NoteList: React.FC = () => {
   const { listNoteState, editNoteState, getNotes, requestNoteRemoval } = useNoteContext();
@@ -34,22 +34,19 @@ export const NoteList: React.FC = () => {
 export interface RemoveNoteConfirmModalProps {}
 
 export const RemoveNoteConfirmModal: React.FC = () => {
-  const handleClose = () => {};
+  const { t } = useTranslation();
+  const { removeNoteState, cancelNoteRemoval, confirmNoteRemoval } = useNoteContext();
 
   return (
-    <Modal show={true} onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Remove note</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>Are you sure you want to remove this note?</Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button variant="danger" onClick={handleClose}>
-          Remove Note
-        </Button>
-      </Modal.Footer>
-    </Modal>
+    <ConfirmModal
+      open={removeNoteState.promptConfirmation}
+      title={t('Remove note')}
+      message={t('Are you sure you want to remove the note "{{name}}"?', {
+        name: removeNoteState.note?.title,
+      })}
+      confirmLabel={t('Remove note')}
+      onCancel={cancelNoteRemoval}
+      onConfirm={confirmNoteRemoval}
+    />
   );
 };
