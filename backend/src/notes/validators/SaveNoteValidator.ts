@@ -4,7 +4,7 @@ export class SaveNoteValidator {
   public id: string;
   public title: string;
   public body: string;
-  public errors: ValidationError<SaveNoteRequest>[] = [];
+  public errors: ValidationError[] = [];
 
   constructor({ id = '', title = '', body = '' }: SaveNoteRequest) {
     this.id = id;
