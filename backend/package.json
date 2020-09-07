@@ -29,7 +29,8 @@
     "build": "npm run build:clean && tsc",
     "build:clean": "rm -rf build",
     "start:prod": "npm run build && node build/index.js",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js"
   },
   "author": "Geison Biazus",
   "license": "ISC"
