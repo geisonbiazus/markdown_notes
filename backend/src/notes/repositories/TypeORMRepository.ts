@@ -1,13 +1,13 @@
 import { Repository } from '../interactors';
 import { Note } from '../entities';
-import { Connection } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { NoteDB } from './typeORM/entities/NoteDB';
 
 export class TypeORMRepository implements Repository {
-  constructor(private connection: Connection) {}
+  constructor(private entityManager: EntityManager) {}
 
   async getNoteById(id: string): Promise<Note | null> {
-    const record = await this.connection.manager.findOne(NoteDB, id);
+    const record = await this.entityManager.findOne(NoteDB, id);
 
     if (!record) return null;
 
@@ -20,11 +20,11 @@ export class TypeORMRepository implements Repository {
     record.title = note.title;
     record.body = note.body;
 
-    await this.connection.manager.save(record);
+    await this.entityManager.save(record);
   }
 
   async getNotesSortedByTitle(): Promise<Note[]> {
-    const records = await this.connection.manager.find(NoteDB, { order: { title: 'ASC' } });
+    const records = await this.entityManager.find(NoteDB, { order: { title: 'ASC' } });
     return records.map((record) => new Note(record));
   }
 
