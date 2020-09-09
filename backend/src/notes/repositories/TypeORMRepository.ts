@@ -24,7 +24,8 @@ export class TypeORMRepository implements Repository {
   }
 
   async getNotesSortedByTitle(): Promise<Note[]> {
-    throw new Error('Method not implemented.');
+    const records = await this.connection.manager.find(NoteDB, { order: { title: 'ASC' } });
+    return records.map((record) => new Note(record));
   }
 
   async removeNote(note: Note): Promise<void> {

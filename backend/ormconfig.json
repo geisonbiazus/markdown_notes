@@ -6,7 +6,7 @@
    "password": "postgres",
    "database": "markdown_notes_test",
    "synchronize": false,
-   "logging": true,
+   "logging": false,
    "entities": [
       "src/notes/repositories/typeORM/entities/**/*.ts"
    ],
