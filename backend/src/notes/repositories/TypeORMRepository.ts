@@ -29,6 +29,6 @@ export class TypeORMRepository implements Repository {
   }
 
   async removeNote(note: Note): Promise<void> {
-    throw new Error('Method not implemented.');
+    this.entityManager.delete(NoteDB, note.id);
   }
 }
