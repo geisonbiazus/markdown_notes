@@ -8,7 +8,7 @@ export class Server {
   public server: Express;
   public port = 4000;
 
-  constructor(repo: Repository = new InMemoryRepository()) {
+  constructor(repo: Repository) {
     const interactor = new NoteInteractor(repo);
     const noteController = new NoteController(interactor);
     const router = new Router(noteController);

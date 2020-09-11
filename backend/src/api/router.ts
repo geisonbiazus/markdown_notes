@@ -1,5 +1,4 @@
 import express from 'express';
-import { NoteInteractor, InMemoryRepository, SaveNoteRequest } from '../notes';
 import { NoteController } from './controllers';
 
 export class Router {

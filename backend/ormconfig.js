@@ -6,7 +6,7 @@ const defaultConfig = {
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_NAME || 'markdown_notes',
   synchronize: false,
-  logging: false,
+  logging: true,
   entities: ['src/notes/repositories/typeORM/entities/**/*.ts'],
   migrations: ['src/migrations/**/*.ts'],
   cli: {
@@ -23,6 +23,7 @@ const envConfig =
         username: 'postgres',
         password: 'postgres',
         database: 'markdown_notes_test',
+        logging: false,
       }
     : {};
 

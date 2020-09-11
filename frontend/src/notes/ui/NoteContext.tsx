@@ -2,16 +2,17 @@ import React, { useContext } from 'react';
 import { useObserver } from 'mobx-react-lite';
 import { EditNoteInteractor, ListNoteInteractor, RemoveNoteInteractor } from '../interactors';
 import { NoteStore } from '../stores';
-import { InMemoryNoteClient } from '../clients';
-import { uuid } from '../../utils';
+import { APINoteClient } from '../clients';
+import { HTTPClient } from '../../utils';
+import { getAppConfig } from '../../AppConfig';
 
-// const appConfig = getAppConfig();
-// const httpClient = new HTTPClient(appConfig.apiURL);
-// const noteClient = new APINoteClient(httpClient);
-const noteClient = new InMemoryNoteClient();
-noteClient.saveNote({ id: uuid(), title: 'Title 1', body: 'Body 1' });
-noteClient.saveNote({ id: uuid(), title: 'Title 2', body: 'Body 2' });
-noteClient.saveNote({ id: uuid(), title: 'Title 3', body: 'Body 3' });
+const appConfig = getAppConfig();
+const httpClient = new HTTPClient(appConfig.apiURL);
+const noteClient = new APINoteClient(httpClient);
+// const noteClient = new InMemoryNoteClient();
+// noteClient.saveNote({ id: uuid(), title: 'Title 1', body: 'Body 1' });
+// noteClient.saveNote({ id: uuid(), title: 'Title 2', body: 'Body 2' });
+// noteClient.saveNote({ id: uuid(), title: 'Title 3', body: 'Body 3' });
 
 const listNoteInteractor = new ListNoteInteractor(noteClient);
 const editNoteInteractor = new EditNoteInteractor(noteClient);
