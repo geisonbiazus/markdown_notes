@@ -1,1 +1,1 @@
-export { Button, Row, Col } from 'react-bootstrap';
+export { Row, Col } from 'react-bootstrap';

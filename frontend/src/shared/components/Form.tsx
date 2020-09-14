@@ -19,10 +19,11 @@ export interface TextFieldProps {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   errorField?: string;
   errorType?: string;
+  disabled?: boolean;
 }
 
 export const TextField: React.FC<TextFieldProps> = (props) => {
-  const { label, placeholder, value, onChange, errorField, errorType } = props;
+  const { label, placeholder, value, onChange, errorField, errorType, disabled } = props;
 
   return (
     <>
@@ -33,6 +34,7 @@ export const TextField: React.FC<TextFieldProps> = (props) => {
         value={value}
         onChange={onChange}
         isInvalid={!!errorType}
+        disabled={disabled}
       />
       <ErrorMessage field={errorField} type={errorType} />
     </>
@@ -47,10 +49,11 @@ export interface TextAreaProps {
   rows?: number;
   errorField?: string;
   errorType?: string;
+  disabled?: boolean;
 }
 
 export const TextArea: React.FC<TextAreaProps> = (props) => {
-  const { label, placeholder, value, onChange, rows, errorField, errorType } = props;
+  const { label, placeholder, value, onChange, rows, errorField, errorType, disabled } = props;
 
   return (
     <>
@@ -62,6 +65,7 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
         rows={rows}
         onChange={onChange}
         isInvalid={!!errorType}
+        disabled={disabled}
       />
       <ErrorMessage field={errorField} type={errorType} />
     </>
