@@ -1,12 +1,14 @@
-import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, SyntheticEvent, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNoteContext } from './NoteContext';
 import { Form, FormRow, TextField, TextArea, Button } from '../../shared/components';
+import { useAsyncAction } from '../../shared/hooks';
 
 export const EditNote: React.FC = () => {
   const { editNoteState, saveNote, getNote, setTitle, setBody } = useNoteContext();
   const { id } = useParams();
-  const [saveNoteLoading, setSaveNoteLoading] = useState(false);
+
+  const { pending: SaveNotePending, execute: saveNoteAction } = useAsyncAction(saveNote);
 
   const { title, body } = editNoteState.note;
 
@@ -24,9 +26,7 @@ export const EditNote: React.FC = () => {
 
   const onSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-    setSaveNoteLoading(true);
-    await saveNote();
-    setSaveNoteLoading(false);
+    await saveNoteAction();
   };
 
   return (
@@ -39,7 +39,7 @@ export const EditNote: React.FC = () => {
           onChange={onChangeTitle}
           errorField="title"
           errorType={editNoteState.errors.title}
-          disabled={saveNoteLoading}
+          disabled={SaveNotePending}
         />
       </FormRow>
       <FormRow>
@@ -51,10 +51,10 @@ export const EditNote: React.FC = () => {
           rows={20}
           errorField="body"
           errorType={editNoteState.errors.body}
-          disabled={saveNoteLoading}
+          disabled={SaveNotePending}
         />
       </FormRow>
-      <Button variant="primary" type="submit" loading={saveNoteLoading} disabled={saveNoteLoading}>
+      <Button variant="primary" type="submit" loading={SaveNotePending} disabled={SaveNotePending}>
         Save
       </Button>
     </Form>
