@@ -1,31 +1,38 @@
 import React, { useEffect } from 'react';
 import { NewNoteButton } from './NewNoteButton';
 import { useNoteContext } from './NoteContext';
-import { VerticalNav, NavItem, NavIcon, ConfirmModal } from '../../shared/components';
+import { VerticalNav, NavItem, NavIcon, ConfirmModal, Loading } from '../../shared/components';
 import { useTranslation } from 'react-i18next';
+import { useAsyncAction } from '../../shared/hooks';
 
 export const NoteList: React.FC = () => {
   const { listNoteState, editNoteState, getNotes, requestNoteRemoval } = useNoteContext();
 
+  const { pending: getNotesPending, execute: getNotesAction } = useAsyncAction(getNotes);
+
   useEffect(() => {
-    getNotes();
-  }, [getNotes]);
+    getNotesAction();
+  }, [getNotesAction]);
 
   return (
     <>
       <RemoveNoteConfirmModal />
       <NewNoteButton />
       <VerticalNav>
-        {listNoteState.notes.map((note) => (
-          <NavItem
-            key={note.id}
-            text={note.title}
-            href={`/notes/${note.id}`}
-            active={note.id === editNoteState.note.id}
-          >
-            <NavIcon onClick={() => requestNoteRemoval(note)} />
-          </NavItem>
-        ))}
+        {getNotesPending ? (
+          <Loading />
+        ) : (
+          listNoteState.notes.map((note) => (
+            <NavItem
+              key={note.id}
+              text={note.title}
+              href={`/notes/${note.id}`}
+              active={note.id === editNoteState.note.id}
+            >
+              <NavIcon onClick={() => requestNoteRemoval(note)} />
+            </NavItem>
+          ))
+        )}
       </VerticalNav>
     </>
   );
