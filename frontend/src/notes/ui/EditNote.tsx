@@ -1,7 +1,7 @@
 import React, { ChangeEvent, SyntheticEvent, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNoteContext } from './NoteContext';
-import { Form, FormRow, TextField, TextArea, Button } from '../../shared/components';
+import { Form, FormRow, TextField, TextArea, Button, Loading } from '../../shared/components';
 import { useAsyncAction } from '../../shared/hooks';
 import { useTranslation } from 'react-i18next';
 
@@ -10,13 +10,18 @@ export const EditNote: React.FC = () => {
   const { id } = useParams();
   const { t } = useTranslation();
 
-  const { pending: SaveNotePending, execute: saveNoteAction } = useAsyncAction(saveNote);
+  const { pending: getNotePending, execute: getNoteAction } = useAsyncAction(getNote);
+  const { pending: saveNotePending, execute: saveNoteAction } = useAsyncAction(saveNote);
 
   const { title, body } = editNoteState.note;
 
   useEffect(() => {
-    getNote(id);
-  }, [getNote, id]);
+    getNoteAction(id);
+  }, [getNoteAction, id]);
+
+  if (getNotePending) {
+    return <Loading />;
+  }
 
   const onChangeTitle = (event: ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
@@ -41,7 +46,7 @@ export const EditNote: React.FC = () => {
           onChange={onChangeTitle}
           errorField="title"
           errorType={editNoteState.errors.title}
-          disabled={SaveNotePending}
+          disabled={saveNotePending}
         />
       </FormRow>
       <FormRow>
@@ -53,10 +58,10 @@ export const EditNote: React.FC = () => {
           rows={20}
           errorField="body"
           errorType={editNoteState.errors.body}
-          disabled={SaveNotePending}
+          disabled={saveNotePending}
         />
       </FormRow>
-      <Button variant="primary" type="submit" loading={SaveNotePending} disabled={SaveNotePending}>
+      <Button variant="primary" type="submit" loading={saveNotePending} disabled={saveNotePending}>
         {t('Save')}
       </Button>
     </Form>

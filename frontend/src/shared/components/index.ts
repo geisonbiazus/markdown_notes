@@ -5,3 +5,4 @@ export * from './Layout';
 export * from './Nav';
 export * from './ConfirmModal';
 export * from './Button';
+export * from './Loading';
