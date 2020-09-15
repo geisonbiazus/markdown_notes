@@ -3,10 +3,12 @@ import { useParams } from 'react-router-dom';
 import { useNoteContext } from './NoteContext';
 import { Form, FormRow, TextField, TextArea, Button } from '../../shared/components';
 import { useAsyncAction } from '../../shared/hooks';
+import { useTranslation } from 'react-i18next';
 
 export const EditNote: React.FC = () => {
   const { editNoteState, saveNote, getNote, setTitle, setBody } = useNoteContext();
   const { id } = useParams();
+  const { t } = useTranslation();
 
   const { pending: SaveNotePending, execute: saveNoteAction } = useAsyncAction(saveNote);
 
@@ -33,8 +35,8 @@ export const EditNote: React.FC = () => {
     <Form onSubmit={onSubmit}>
       <FormRow>
         <TextField
-          label="Title"
-          placeholder="Enter title"
+          label={t('Title')}
+          placeholder={t('Enter title')}
           value={title}
           onChange={onChangeTitle}
           errorField="title"
@@ -44,8 +46,8 @@ export const EditNote: React.FC = () => {
       </FormRow>
       <FormRow>
         <TextArea
-          label="Content"
-          placeholder="Enter content"
+          label={t('Content')}
+          placeholder={t('Enter content')}
           value={body}
           onChange={onChangeBody}
           rows={20}
@@ -55,7 +57,7 @@ export const EditNote: React.FC = () => {
         />
       </FormRow>
       <Button variant="primary" type="submit" loading={SaveNotePending} disabled={SaveNotePending}>
-        Save
+        {t('Save')}
       </Button>
     </Form>
   );
