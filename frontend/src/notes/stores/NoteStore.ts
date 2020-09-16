@@ -56,7 +56,7 @@ export class NoteStore {
   @action.bound
   async saveNote(): Promise<void> {
     const nextState = await this.editNoteInteractor.saveNote(this.editNoteState);
-    this.getNotes();
+    await this.getNotes();
 
     runInAction(() => {
       this.editNoteState = nextState;
@@ -76,7 +76,7 @@ export class NoteStore {
   @action.bound
   async confirmNoteRemoval(): Promise<void> {
     const nextState = await this.removeNoteInteractor.confirmNoteRemoval(this.removeNoteState);
-    this.getNotes();
+    await this.getNotes();
 
     runInAction(() => {
       this.removeNoteState = nextState;

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Modal, Button } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
+import { Button } from './Button';
 
 export interface ConfirmModalProps {
   open?: boolean;
@@ -10,6 +11,7 @@ export interface ConfirmModalProps {
   confirmLabel?: string;
   onCancel?: () => void;
   onConfirm?: () => void;
+  confirmPending?: boolean;
 }
 
 export const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
@@ -22,6 +24,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
     confirmLabel = t('Confirm'),
     onCancel,
     onConfirm,
+    confirmPending,
   } = props;
 
   return (
@@ -34,7 +37,7 @@ export const ConfirmModal: React.FC<ConfirmModalProps> = (props) => {
         <Button variant="secondary" onClick={onCancel}>
           {cancelLabel}
         </Button>
-        <Button variant="danger" onClick={onConfirm}>
+        <Button variant="danger" onClick={onConfirm} loading={confirmPending}>
           {confirmLabel}
         </Button>
       </Modal.Footer>

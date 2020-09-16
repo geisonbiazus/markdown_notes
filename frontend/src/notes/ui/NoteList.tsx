@@ -44,6 +44,8 @@ export const RemoveNoteConfirmModal: React.FC = () => {
   const { t } = useTranslation();
   const { removeNoteState, cancelNoteRemoval, confirmNoteRemoval } = useNoteContext();
 
+  const { pending: confirmPending, execute: confirmAction } = useAsyncAction(confirmNoteRemoval);
+
   return (
     <ConfirmModal
       open={removeNoteState.promptConfirmation}
@@ -53,7 +55,8 @@ export const RemoveNoteConfirmModal: React.FC = () => {
       })}
       confirmLabel={t('Remove note')}
       onCancel={cancelNoteRemoval}
-      onConfirm={confirmNoteRemoval}
+      onConfirm={confirmAction}
+      confirmPending={confirmPending}
     />
   );
 };
