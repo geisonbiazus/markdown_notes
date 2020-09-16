@@ -48,12 +48,14 @@ export class EditNoteInteractor {
   }
 
   private async maybeSaveNoteInTheClient(state: EditNoteState): Promise<EditNoteState> {
-    if (isEmpty(state.errors)) {
-      const response = await this.noteClient.saveNote(state.note);
-      if (response.status === 'validation_error')
-        return this.extractSaveNoteClientErrors(state, response);
-    }
-    return state;
+    if (!isEmpty(state.errors)) return state;
+
+    const response = await this.noteClient.saveNote(state.note);
+
+    if (response.status === 'validation_error')
+      return this.extractSaveNoteClientErrors(state, response);
+
+    return { ...state, isDirty: false };
   }
 
   private extractSaveNoteClientErrors(

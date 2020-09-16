@@ -1,5 +1,5 @@
 import React, { ChangeEvent, SyntheticEvent, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Prompt } from 'react-router-dom';
 import { useNoteContext } from './NoteContext';
 import { Form, FormRow, TextField, TextArea, Button, Loading } from '../../shared/components';
 import { useAsyncAction } from '../../shared/hooks';
@@ -37,33 +37,44 @@ export const EditNote: React.FC = () => {
   };
 
   return (
-    <Form onSubmit={onSubmit}>
-      <FormRow>
-        <TextField
-          label={t('Title')}
-          placeholder={t('Enter title')}
-          value={title}
-          onChange={onChangeTitle}
-          errorField="title"
-          errorType={editNoteState.errors.title}
+    <>
+      <Prompt
+        when={editNoteState.isDirty}
+        message={t('You have unsaved data, do you want to leave?')}
+      />
+      <Form onSubmit={onSubmit}>
+        <FormRow>
+          <TextField
+            label={t('Title')}
+            placeholder={t('Enter title')}
+            value={title}
+            onChange={onChangeTitle}
+            errorField="title"
+            errorType={editNoteState.errors.title}
+            disabled={saveNotePending}
+          />
+        </FormRow>
+        <FormRow>
+          <TextArea
+            label={t('Content')}
+            placeholder={t('Enter content')}
+            value={body}
+            onChange={onChangeBody}
+            rows={20}
+            errorField="body"
+            errorType={editNoteState.errors.body}
+            disabled={saveNotePending}
+          />
+        </FormRow>
+        <Button
+          variant="primary"
+          type="submit"
+          loading={saveNotePending}
           disabled={saveNotePending}
-        />
-      </FormRow>
-      <FormRow>
-        <TextArea
-          label={t('Content')}
-          placeholder={t('Enter content')}
-          value={body}
-          onChange={onChangeBody}
-          rows={20}
-          errorField="body"
-          errorType={editNoteState.errors.body}
-          disabled={saveNotePending}
-        />
-      </FormRow>
-      <Button variant="primary" type="submit" loading={saveNotePending} disabled={saveNotePending}>
-        {t('Save')}
-      </Button>
-    </Form>
+        >
+          {t('Save')}
+        </Button>
+      </Form>
+    </>
   );
 };

@@ -107,6 +107,17 @@ describe('EditNoteInteractor', () => {
       expect(errors).toEqual({});
     });
 
+    it('sets isDirty to false when valid', async () => {
+      const id = uuid();
+      const note = { id, title: 'title', body: 'body' };
+
+      const { isDirty } = await editNoteInteractor.saveNote(
+        newEditNoteState({ note: note, isDirty: true })
+      );
+
+      expect(isDirty).toEqual(false);
+    });
+
     it('cleans up past error when validating again', async () => {
       let state = await editNoteInteractor.saveNote(newEditNoteState());
 
