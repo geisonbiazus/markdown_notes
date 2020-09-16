@@ -5,7 +5,11 @@ import { Note } from './entities';
 
 describe('newEditNoteState', () => {
   it('returns an empty state', () => {
-    expect(newEditNoteState()).toEqual({ note: { id: '', title: '', body: '' }, errors: {} });
+    expect(newEditNoteState()).toEqual({
+      note: { id: '', title: '', body: '' },
+      errors: {},
+      isDirty: false,
+    });
   });
 });
 
@@ -53,6 +57,11 @@ describe('EditNoteInteractor', () => {
 
       expect(state.note).toEqual({ id: noteId, title: 'changed', body: 'not changed' });
     });
+
+    it('sets isDirty to true', () => {
+      const state = editNoteInteractor.setTitle(newEditNoteState({ isDirty: false }), 'title');
+      expect(state.isDirty).toEqual(true);
+    });
   });
 
   describe('setBody', () => {
@@ -66,6 +75,11 @@ describe('EditNoteInteractor', () => {
       state = editNoteInteractor.setBody(state, 'changed');
 
       expect(state.note).toEqual({ id: noteId, title: 'not changed', body: 'changed' });
+    });
+
+    it('sets isDirty to true', () => {
+      const state = editNoteInteractor.setBody(newEditNoteState({ isDirty: false }), 'body');
+      expect(state.isDirty).toEqual(true);
     });
   });
 

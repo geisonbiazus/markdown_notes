@@ -4,10 +4,11 @@ import { Note, ErrorType, NoteClient, Errors, SaveNoteResponse } from './entitie
 export interface EditNoteState {
   note: Note;
   errors: Record<string, ErrorType>;
+  isDirty: boolean;
 }
 
 export const newEditNoteState = (initialState: Partial<EditNoteState> = {}): EditNoteState => {
-  return { note: { id: '', title: '', body: '' }, errors: {}, ...initialState };
+  return { note: { id: '', title: '', body: '' }, errors: {}, isDirty: false, ...initialState };
 };
 
 export class EditNoteInteractor {
@@ -24,11 +25,11 @@ export class EditNoteInteractor {
   }
 
   public setTitle(state: EditNoteState, title: string): EditNoteState {
-    return { ...state, note: { ...state.note, title } };
+    return { ...state, note: { ...state.note, title }, isDirty: true };
   }
 
   public setBody(state: EditNoteState, body: string): EditNoteState {
-    return { ...state, note: { ...state.note, body } };
+    return { ...state, note: { ...state.note, body }, isDirty: true };
   }
 
   public async saveNote(state: EditNoteState): Promise<EditNoteState> {
