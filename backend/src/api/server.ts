@@ -6,7 +6,7 @@ import cors from 'cors';
 
 export class Server {
   public server: Express;
-  public port = 4000;
+  public port = process.env.PORT || 4000;
 
   constructor(repo: Repository) {
     const interactor = new NoteInteractor(repo);
