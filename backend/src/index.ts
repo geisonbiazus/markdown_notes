@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Server } from './api';
-import { InMemoryRepository, TypeORMRepository } from './notes';
+import { TypeORMRepository } from './notes';
 import { createConnection, Connection } from 'typeorm';
 
 createConnection().then((connection: Connection) => {

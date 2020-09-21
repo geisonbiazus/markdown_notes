@@ -4,6 +4,8 @@ services:
   #   image: geisonbiazus/markdown_notes:alpha
   #   environment:
   #     DB_HOST: postgres
+  #   ports:
+  #     - 4000:4000
   postgres:
     image: postgres:12
     restart: always

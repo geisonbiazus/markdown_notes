@@ -7,24 +7,26 @@ const defaultConfig = {
   database: process.env.DB_NAME || 'markdown_notes',
   synchronize: false,
   logging: true,
-  entities: ['src/notes/repositories/typeORM/entities/**/*.ts'],
-  migrations: ['src/migrations/**/*.ts'],
+  entities: ['src/notes/repositories/typeORM/entities/**/*'],
+  migrations: ['src/migrations/**/*'],
   cli: {
-    entitiesDir: 'src/entity',
     migrationsDir: 'src/migrations',
   },
 };
 
 const envConfig =
-  process.env.NODE_ENV === 'test'
-    ? {
-        host: 'localhost',
-        port: 5433,
-        username: 'postgres',
-        password: 'postgres',
-        database: 'markdown_notes_test',
-        logging: false,
-      }
-    : {};
+  (process.env.NODE_ENV === 'test' && {
+    host: 'localhost',
+    port: 5433,
+    username: 'postgres',
+    password: 'postgres',
+    database: 'markdown_notes_test',
+    logging: false,
+  }) ||
+  (process.env.NODE_ENV === 'production' && {
+    entities: ['build/notes/repositories/typeORM/entities/**/*'],
+    migrations: ['build/migrations/**/*'],
+  }) ||
+  {};
 
 module.exports = { ...defaultConfig, ...envConfig };
