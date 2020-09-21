@@ -1,5 +1,9 @@
 version: '3.8'
 services:
+  # backend:
+  #   image: geisonbiazus/markdown_notes:alpha
+  #   environment:
+  #     DB_HOST: postgres
   postgres:
     image: postgres:12
     restart: always
