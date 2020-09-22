@@ -1,4 +1,4 @@
-# docker build .  -t geisonbiazus/markdown_notes:alpha
+# docker build .  -t geisonbiazus/markdown_notes_backend:alpha
 
 FROM node:14.5.0-alpine
 ENV NODE_ENV=production
