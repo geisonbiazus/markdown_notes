@@ -3,10 +3,13 @@ services:
   backend:
     image: geisonbiazus/markdown_notes_backend:alpha
     restart: always
+    env_file: .env
     environment:
       DB_HOST: postgres
       VIRTUAL_HOST: api.notes.geisonbiazus.com
       LETSENCRYPT_HOST: api.notes.geisonbiazus.com
+      DB_USERNAME: main
+      DB_NAME: markdown_notes
     ports:
       - 4000:4000
   frontend:
