@@ -30,6 +30,7 @@
     "build:clean": "rm -rf build",
     "start:prod": "npm run build && node build/index.js",
     "test": "jest --watch",
+    "test:ci": "jest",
     "typeorm": "node --require ts-node/register ./node_modules/typeorm/cli.js",
     "db:migrate": "npm run typeorm migration:run",
     "db:migrate:test": "NODE_ENV=test npm run db:migrate",

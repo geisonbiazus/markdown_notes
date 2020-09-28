@@ -16,11 +16,11 @@ const defaultConfig = {
 
 const envConfig =
   (process.env.NODE_ENV === 'test' && {
-    host: 'localhost',
-    port: 5433,
-    username: 'postgres',
-    password: 'postgres',
-    database: 'markdown_notes_test',
+    host: process.env.DB_TEST_HOST || 'localhost',
+    port: process.env.DB_TEST_PORT || 5433,
+    username: process.env.DB_TEST_USERNAME || 'postgres',
+    password: process.env.DB_TEST_PASSWORD || 'postgres',
+    database: process.env.DB_TEST_NAME || 'markdown_notes_test',
     logging: false,
   }) ||
   (process.env.NODE_ENV === 'production' && {
