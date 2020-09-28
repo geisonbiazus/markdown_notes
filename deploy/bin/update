@@ -1,0 +1,5 @@
+#!/bin/bash
+
+BASEDIR=$(dirname "$0")
+
+docker-compose -f $BASEDIR/../docker-compose/app.yml up -d
