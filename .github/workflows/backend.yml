@@ -2,9 +2,13 @@ name: Backend
 
 on:
   push:
-    branches: [master]
+    branches:
+      - master
+    paths:
+      - 'backend/**'
   pull_request:
-    branches: [master]
+    paths:
+      - 'backend/**'
 
 defaults:
   run:
