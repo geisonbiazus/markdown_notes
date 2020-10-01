@@ -115,85 +115,125 @@ func TestUpdateYAML(t *testing.T) {
 			updatedYAML)
 	})
 
-	// t.Run("Acceptance tests", func(t *testing.T) {
-	// 	yamlString := "" +
-	// 		"version: '3.8'\n" +
-	// 		"services:\n" +
-	// 		"  backend:\n" +
-	// 		"    image: geisonbiazus/markdown_notes_backend:alpha\n" +
-	// 		"    restart: always\n" +
-	// 		"    env_file: .env\n" +
-	// 		"    environment:\n" +
-	// 		"      DB_HOST: postgres\n" +
-	// 		"      VIRTUAL_HOST: api.notes.geisonbiazus.com\n" +
-	// 		"      LETSENCRYPT_HOST: api.notes.geisonbiazus.com\n" +
-	// 		"      DB_USERNAME: main\n" +
-	// 		"      DB_NAME: markdown_notes\n" +
-	// 		"    ports:\n" +
-	// 		"      - 4000:4000\n" +
-	// 		"  frontend:\n" +
-	// 		"    image: geisonbiazus/markdown_notes_frontend:alpha\n" +
-	// 		"    restart: always\n" +
-	// 		"    environment:\n" +
-	// 		"      REACT_APP_API_URL: https://api.notes.geisonbiazus.com\n" +
-	// 		"      REACT_APP_APP_ENV: production\n" +
-	// 		"      VIRTUAL_HOST: notes.geisonbiazus.com\n" +
-	// 		"      LETSENCRYPT_HOST: notes.geisonbiazus.com\n" +
-	// 		"    ports:\n" +
-	// 		"      - 3000:3000\n" +
-	// 		"  postgres:\n" +
-	// 		"    image: postgres:12\n" +
-	// 		"    restart: always\n" +
-	// 		"    env_file: .env\n" +
-	// 		"    environment:\n" +
-	// 		"      POSTGRES_DB: markdown_notes\n" +
-	// 		"    ports:\n" +
-	// 		"      - 5432:5432\n" +
-	// 		"    volumes:\n" +
-	// 		"      - ./volumes/postgres-data:/var/lib/postgresql/data\n"
+	t.Run("Acceptance tests", func(t *testing.T) {
+		yamlString := "" +
+			"services:\n" +
+			"  backend:\n" +
+			"    env_file: .env\n" +
+			"    environment:\n" +
+			"      DB_HOST: postgres\n" +
+			"      DB_NAME: markdown_notes\n" +
+			"      DB_USERNAME: main\n" +
+			"      LETSENCRYPT_HOST: api.notes.geisonbiazus.com\n" +
+			"      VIRTUAL_HOST: api.notes.geisonbiazus.com\n" +
+			"    image: geisonbiazus/markdown_notes_backend:alpha\n" +
+			"    ports:\n" +
+			"    - 4000:4000\n" +
+			"    restart: always\n" +
+			"  frontend:\n" +
+			"    environment:\n" +
+			"      LETSENCRYPT_HOST: notes.geisonbiazus.com\n" +
+			"      REACT_APP_API_URL: https://api.notes.geisonbiazus.com\n" +
+			"      REACT_APP_APP_ENV: production\n" +
+			"      VIRTUAL_HOST: notes.geisonbiazus.com\n" +
+			"    image: geisonbiazus/markdown_notes_frontend:alpha\n" +
+			"    ports:\n" +
+			"    - 3000:3000\n" +
+			"    restart: always\n" +
+			"  postgres:\n" +
+			"    env_file: .env\n" +
+			"    environment:\n" +
+			"      POSTGRES_DB: markdown_notes\n" +
+			"    image: postgres:12\n" +
+			"    ports:\n" +
+			"    - 5432:5432\n" +
+			"    restart: always\n" +
+			"    volumes:\n" +
+			"    - ./volumes/postgres-data:/var/lib/postgresql/data\n" +
+			"version: \"3.8\"\n"
 
-	// 	updatedYAML, _ := UpdateYAML(yamlString, "services", "backend", "image", "geisonbiazus/markdown_notes_backend:1234")
+		updatedYAML, _ := UpdateYAML(yamlString, "services", "backend", "image", "geisonbiazus/markdown_notes_backend:1234")
 
-	// 	assertEqual(t, ""+
-	// 		"version: '3.8'\n"+
-	// 		"services:\n"+
-	// 		"  backend:\n"+
-	// 		"    image: geisonbiazus/markdown_notes_backend:1234\n"+
-	// 		"    restart: always\n"+
-	// 		"    env_file: .env\n"+
-	// 		"    environment:\n"+
-	// 		"      DB_HOST: postgres\n"+
-	// 		"      VIRTUAL_HOST: api.notes.geisonbiazus.com\n"+
-	// 		"      LETSENCRYPT_HOST: api.notes.geisonbiazus.com\n"+
-	// 		"      DB_USERNAME: main\n"+
-	// 		"      DB_NAME: markdown_notes\n"+
-	// 		"    ports:\n"+
-	// 		"      - 4000:4000\n"+
-	// 		"  frontend:\n"+
-	// 		"    image: geisonbiazus/markdown_notes_frontend:alpha\n"+
-	// 		"    restart: always\n"+
-	// 		"    environment:\n"+
-	// 		"      REACT_APP_API_URL: https://api.notes.geisonbiazus.com\n"+
-	// 		"      REACT_APP_APP_ENV: production\n"+
-	// 		"      VIRTUAL_HOST: notes.geisonbiazus.com\n"+
-	// 		"      LETSENCRYPT_HOST: notes.geisonbiazus.com\n"+
-	// 		"    ports:\n"+
-	// 		"      - 3000:3000\n"+
-	// 		"  postgres:\n"+
-	// 		"    image: postgres:12\n"+
-	// 		"    restart: always\n"+
-	// 		"    env_file: .env\n"+
-	// 		"    environment:\n"+
-	// 		"      POSTGRES_DB: markdown_notes\n"+
-	// 		"    ports:\n"+
-	// 		"      - 5432:5432\n"+
-	// 		"    volumes:\n"+
-	// 		"      - ./volumes/postgres-data:/var/lib/postgresql/data\n",
-	// 		updatedYAML)
-	// })
+		assertEqual(t, ""+
+			"services:\n"+
+			"  backend:\n"+
+			"    env_file: .env\n"+
+			"    environment:\n"+
+			"      DB_HOST: postgres\n"+
+			"      DB_NAME: markdown_notes\n"+
+			"      DB_USERNAME: main\n"+
+			"      LETSENCRYPT_HOST: api.notes.geisonbiazus.com\n"+
+			"      VIRTUAL_HOST: api.notes.geisonbiazus.com\n"+
+			"    image: geisonbiazus/markdown_notes_backend:1234\n"+
+			"    ports:\n"+
+			"    - 4000:4000\n"+
+			"    restart: always\n"+
+			"  frontend:\n"+
+			"    environment:\n"+
+			"      LETSENCRYPT_HOST: notes.geisonbiazus.com\n"+
+			"      REACT_APP_API_URL: https://api.notes.geisonbiazus.com\n"+
+			"      REACT_APP_APP_ENV: production\n"+
+			"      VIRTUAL_HOST: notes.geisonbiazus.com\n"+
+			"    image: geisonbiazus/markdown_notes_frontend:alpha\n"+
+			"    ports:\n"+
+			"    - 3000:3000\n"+
+			"    restart: always\n"+
+			"  postgres:\n"+
+			"    env_file: .env\n"+
+			"    environment:\n"+
+			"      POSTGRES_DB: markdown_notes\n"+
+			"    image: postgres:12\n"+
+			"    ports:\n"+
+			"    - 5432:5432\n"+
+			"    restart: always\n"+
+			"    volumes:\n"+
+			"    - ./volumes/postgres-data:/var/lib/postgresql/data\n"+
+			"version: \"3.8\"\n",
+			updatedYAML)
+
+		updatedYAML, _ = UpdateYAML(yamlString, "services", "frontend", "image", "geisonbiazus/markdown_notes_frontend:4321")
+
+		assertEqual(t, ""+
+			"services:\n"+
+			"  backend:\n"+
+			"    env_file: .env\n"+
+			"    environment:\n"+
+			"      DB_HOST: postgres\n"+
+			"      DB_NAME: markdown_notes\n"+
+			"      DB_USERNAME: main\n"+
+			"      LETSENCRYPT_HOST: api.notes.geisonbiazus.com\n"+
+			"      VIRTUAL_HOST: api.notes.geisonbiazus.com\n"+
+			"    image: geisonbiazus/markdown_notes_backend:alpha\n"+
+			"    ports:\n"+
+			"    - 4000:4000\n"+
+			"    restart: always\n"+
+			"  frontend:\n"+
+			"    environment:\n"+
+			"      LETSENCRYPT_HOST: notes.geisonbiazus.com\n"+
+			"      REACT_APP_API_URL: https://api.notes.geisonbiazus.com\n"+
+			"      REACT_APP_APP_ENV: production\n"+
+			"      VIRTUAL_HOST: notes.geisonbiazus.com\n"+
+			"    image: geisonbiazus/markdown_notes_frontend:4321\n"+
+			"    ports:\n"+
+			"    - 3000:3000\n"+
+			"    restart: always\n"+
+			"  postgres:\n"+
+			"    env_file: .env\n"+
+			"    environment:\n"+
+			"      POSTGRES_DB: markdown_notes\n"+
+			"    image: postgres:12\n"+
+			"    ports:\n"+
+			"    - 5432:5432\n"+
+			"    restart: always\n"+
+			"    volumes:\n"+
+			"    - ./volumes/postgres-data:/var/lib/postgresql/data\n"+
+			"version: \"3.8\"\n",
+			updatedYAML)
+	})
 }
 
 func assertEqual(t *testing.T, expected, actual interface{}) {
+	t.Helper()
 	if !reflect.DeepEqual(expected, actual) {
 		t.Errorf("Values are not equal.\nExpected:\n%v\n\nActual:\n%v", expected, actual)
 	}
