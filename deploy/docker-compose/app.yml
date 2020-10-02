@@ -1,34 +1,3 @@
 services:
   backend:
-    env_file: .env
-    environment:
-      DB_HOST: postgres
-      DB_NAME: markdown_notes
-      DB_USERNAME: main
-      LETSENCRYPT_HOST: api.notes.geisonbiazus.com
-      VIRTUAL_HOST: api.notes.geisonbiazus.com
-    image: geisonbiazus/markdown_notes_backend:26
-    ports:
-    - 4000:4000
-    restart: always
-  frontend:
-    environment:
-      LETSENCRYPT_HOST: notes.geisonbiazus.com
-      REACT_APP_API_URL: https://api.notes.geisonbiazus.com
-      REACT_APP_APP_ENV: production
-      VIRTUAL_HOST: notes.geisonbiazus.com
-    image: geisonbiazus/markdown_notes_frontend:alpha
-    ports:
-    - 3000:3000
-    restart: always
-  postgres:
-    env_file: .env
-    environment:
-      POSTGRES_DB: markdown_notes
-    image: postgres:12
-    ports:
-    - 5432:5432
-    restart: always
-    volumes:
-    - ./volumes/postgres-data:/var/lib/postgresql/data
-version: "3.8"
+    image: geisonbiazus/markdown_notes_backend:27
