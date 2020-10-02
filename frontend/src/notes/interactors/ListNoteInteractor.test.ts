@@ -24,8 +24,8 @@ describe('ListNoteInteractor', () => {
     });
 
     it('returns the note list when there are some notes', async () => {
-      const note1 = { id: uuid(), title: 'title 1', body: 'body 1' };
-      const note2 = { id: uuid(), title: 'title 2', body: 'body 2' };
+      const note1 = { id: uuid(), title: 'Title 1', body: 'body 1' };
+      const note2 = { id: uuid(), title: 'Title 2', body: 'body 2' };
 
       client.saveNote(note1);
       client.saveNote(note2);
