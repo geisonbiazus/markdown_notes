@@ -23,7 +23,7 @@ describe('EditNoteInteractor', () => {
   });
 
   describe('getNote', () => {
-    it('sets an empty note with the given id when note does not exist', async () => {
+    it('sets an empty note with the given ID when note does not exist', async () => {
       const noteId = uuid();
       const state = await editNoteInteractor.getNote(newEditNoteState(), noteId);
       expect(state.note).toEqual({ id: noteId, title: '', body: '' });

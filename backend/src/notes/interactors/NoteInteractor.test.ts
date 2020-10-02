@@ -72,7 +72,7 @@ describe('NoteInteractor', () => {
       expect(await repo.getNoteById(noteId)).toEqual(expectedNote);
     });
 
-    it('stores different IDs independently', async () => {
+    it('stores different ids independently', async () => {
       const noteId1 = uuid();
       const noteId2 = uuid();
       const expectedNote1 = new Note({ id: noteId1, title: 'Title', body: 'Body' });
