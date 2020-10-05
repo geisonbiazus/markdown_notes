@@ -53,9 +53,9 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          context: ./backend
-          file: ./backend/Dockerfile
+          context: ./frontend
+          file: ./frontend/Dockerfile
           push: true
           tags: |
-            geisonbiazus/markdown_notes_backend:latest
-            geisonbiazus/markdown_notes_backend:${{ github.run_number }}
+            geisonbiazus/markdown-notes-frontend:latest
+            geisonbiazus/markdown-notes-frontend:${{ github.run_number }}

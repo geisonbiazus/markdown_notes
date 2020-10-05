@@ -81,5 +81,5 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: |
-            geisonbiazus/markdown_notes_backend:latest
-            geisonbiazus/markdown_notes_backend:${{ github.run_number }}
+            geisonbiazus/markdown-notes-backend:latest
+            geisonbiazus/markdown-notes-backend:${{ github.run_number }}

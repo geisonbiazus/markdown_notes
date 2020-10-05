@@ -12,20 +12,20 @@ Start databases:
 docker-compose up -d
 ```
 
-run migrations:
+Run migrations:
 
 ```
 npm db:migrate
 npm db:migrate:test
 ```
 
-run tests:
+Run tests:
 
 ```
 npm test
 ```
 
-start application:
+Start application:
 
 ```
 npm start
