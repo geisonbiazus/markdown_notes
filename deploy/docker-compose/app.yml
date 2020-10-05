@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   backend:
-    image: geisonbiazus/markdown_notes_backend:alpha
+    image: geisonbiazus/markdown-notes-backend:31
     restart: always
     env_file: .env
     environment:
@@ -13,7 +13,7 @@ services:
     ports:
       - 4000:4000
   frontend:
-    image: geisonbiazus/markdown_notes_frontend:alpha
+    image: geisonbiazus/markdown-notes-frontend:37
     restart: always
     environment:
       REACT_APP_API_URL: https://api.notes.geisonbiazus.com
