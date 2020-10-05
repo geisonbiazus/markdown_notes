@@ -14,7 +14,7 @@ describe('NoteInteractor', () => {
   });
 
   describe('saveNote', () => {
-    it('validates required id', async () => {
+    it('validates required ID', async () => {
       const params = { id: '', title: 'Title', body: 'Body' };
       const response = InteractorResponse.validationError([{ field: 'id', type: 'required' }]);
 
@@ -72,7 +72,7 @@ describe('NoteInteractor', () => {
       expect(await repo.getNoteById(noteId)).toEqual(expectedNote);
     });
 
-    it('stores different ids independently', async () => {
+    it('stores different IDs independently', async () => {
       const noteId1 = uuid();
       const noteId2 = uuid();
       const expectedNote1 = new Note({ id: noteId1, title: 'Title', body: 'Body' });
