@@ -1,5 +1,5 @@
 import { InteractorResponse } from '../../notes';
-import { User } from '../entities';
+import { PasswordManager, User } from '../entities';
 
 export interface AuthenticationRepository {
   getUserByEmail(email: string): User | null;
@@ -14,7 +14,11 @@ export interface AuthenticateResponse {
 }
 
 export class AuthenticationInteractor {
-  constructor(private repository: AuthenticationRepository, private tokenManager: TokenManager) {}
+  constructor(
+    private repository: AuthenticationRepository,
+    private tokenManager: TokenManager,
+    private passwordManager: PasswordManager
+  ) {}
 
   async authenticate(
     email: string,
@@ -22,12 +26,16 @@ export class AuthenticationInteractor {
   ): Promise<InteractorResponse<AuthenticateResponse>> {
     const user = this.repository.getUserByEmail(email);
 
-    if (user?.password == password) {
-      return InteractorResponse.success<AuthenticateResponse>({
-        token: this.tokenManager.generateToken(user.id),
-      });
-    }
+    if (!user) return InteractorResponse.notFound();
 
-    return InteractorResponse.notFound();
+    if (!(await this.verifyPassword(user, password))) return InteractorResponse.notFound();
+
+    return InteractorResponse.success<AuthenticateResponse>({
+      token: this.tokenManager.generateToken(user.id),
+    });
+  }
+
+  private async verifyPassword(user: User, password: string): Promise<boolean> {
+    return await this.passwordManager.verifyPassword(user.password, password, user.email);
   }
 }
