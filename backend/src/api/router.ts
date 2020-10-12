@@ -1,22 +1,26 @@
 import express from 'express';
-import { NoteController } from './controllers';
+import { AuthenticationController, NoteController } from './controllers';
 
 export class Router {
   public router: express.Router;
 
   private noteController: NoteController;
+  private authenticationController: AuthenticationController;
 
-  constructor(noteController: NoteController) {
+  constructor(noteController: NoteController, authenticationController: AuthenticationController) {
     this.router = express.Router();
     this.router.use(express.json());
     this.noteController = noteController;
+    this.authenticationController = authenticationController;
     this.assignRoutes();
   }
 
   private assignRoutes(): void {
     this.router.get('/', (_req, res) => {
-      res.send('Hello World!');
+      res.send('MarkdownNotes API');
     });
+
+    this.router.post('/sign_in', this.authenticationController.signIn);
 
     this.router.get('/notes', this.noteController.getNotes);
     this.router.get('/notes/:id', this.noteController.getNote);
