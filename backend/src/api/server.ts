@@ -3,14 +3,14 @@ import { Router } from './router';
 import { NoteInteractor, InMemoryRepository, Repository } from '../notes';
 import { NoteController } from './controllers';
 import cors from 'cors';
+import { AppContext } from '../AppContext';
 
 export class Server {
   public server: Express;
   public port = process.env.PORT || 4000;
 
-  constructor(repo: Repository) {
-    const interactor = new NoteInteractor(repo);
-    const noteController = new NoteController(interactor);
+  constructor(context: AppContext) {
+    const noteController = new NoteController(context.noteInteractor);
     const router = new Router(noteController);
 
     this.server = express();

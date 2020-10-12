@@ -3,14 +3,17 @@ import request from 'supertest';
 import { Server } from '../index';
 import { uuid, json } from '../../utils';
 import { InMemoryRepository, Note } from '../../notes';
+import { AppContext } from '../../AppContext';
 
 describe('NoteController', () => {
+  let context: AppContext;
   let server: Express;
   let repo: InMemoryRepository;
 
   beforeEach(() => {
-    repo = new InMemoryRepository();
-    server = new Server(repo).server;
+    context = new AppContext();
+    repo = context.noteRepository as InMemoryRepository;
+    server = new Server(context).server;
   });
 
   describe('PUT /notes/:id', () => {
