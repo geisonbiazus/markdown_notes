@@ -1,12 +1,8 @@
 import { InteractorResponse } from '../../notes';
-import { PasswordManager, User } from '../entities';
+import { PasswordManager, TokenManager, User } from '../entities';
 
 export interface AuthenticationRepository {
   getUserByEmail(email: string): User | null;
-}
-
-export interface TokenManager {
-  generateToken(userId: string): string;
 }
 
 export interface AuthenticateResponse {
@@ -31,7 +27,7 @@ export class AuthenticationInteractor {
     if (!(await this.verifyPassword(user, password))) return InteractorResponse.notFound();
 
     return InteractorResponse.success<AuthenticateResponse>({
-      token: this.tokenManager.generateToken(user.id),
+      token: this.tokenManager.encode(user.id),
     });
   }
 

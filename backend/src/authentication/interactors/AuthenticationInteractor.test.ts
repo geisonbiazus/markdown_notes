@@ -1,5 +1,5 @@
 import { uuid } from '../../utils';
-import { PasswordManager, User } from '../entities';
+import { PasswordManager, TokenManager, User } from '../entities';
 import { InMemoryAuthenticationRepository } from '../repositories';
 import { AuthenticationInteractor } from './AuthenticationInteractor';
 
@@ -10,7 +10,7 @@ describe('AuthenticationInteractor', () => {
   let passwordManager: PasswordManager;
 
   beforeEach(() => {
-    passwordManager = new PasswordManager();
+    passwordManager = new PasswordManager('secret');
     tokenManager = new TokenManagerStub();
     repository = new InMemoryAuthenticationRepository();
     interactor = new AuthenticationInteractor(repository, tokenManager, passwordManager);
@@ -50,10 +50,14 @@ describe('AuthenticationInteractor', () => {
   });
 });
 
-export class TokenManagerStub {
+export class TokenManagerStub extends TokenManager {
   public token = 'token';
 
-  public generateToken(_userId: string): string {
+  constructor() {
+    super('no_secret');
+  }
+
+  public encode(_userId: string): string {
     return this.token;
   }
 }

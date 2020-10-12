@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 
 export class PasswordManager {
-  constructor(public secret: string = '') {}
+  constructor(public secret: string) {}
 
   public async hashPassword(password: string, salt: string): Promise<string> {
     const saltRounds = 10;
