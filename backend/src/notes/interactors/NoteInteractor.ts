@@ -1,5 +1,5 @@
 import { Note } from '../entities';
-import { InteractorResponse } from './InteractorResponse';
+import { InteractorResponse } from '../../utils/interactor';
 import { SaveNoteValidator } from '../validators';
 
 export interface Repository {

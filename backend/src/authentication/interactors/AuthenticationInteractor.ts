@@ -1,4 +1,4 @@
-import { InteractorResponse } from '../../notes';
+import { InteractorResponse } from '../../utils/interactor';
 import { PasswordManager, TokenManager, User } from '../entities';
 
 export interface AuthenticationRepository {

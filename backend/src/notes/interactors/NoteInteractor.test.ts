@@ -2,7 +2,7 @@ import { NoteInteractor } from './NoteInteractor';
 import { uuid } from '../../utils';
 import { Note } from '../entities';
 import { InMemoryRepository } from '../repositories';
-import { InteractorResponse } from './InteractorResponse';
+import { InteractorResponse } from '../../utils/interactor';
 
 describe('NoteInteractor', () => {
   let noteInteractor: NoteInteractor;

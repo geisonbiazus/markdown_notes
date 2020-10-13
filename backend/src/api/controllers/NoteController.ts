@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { NoteInteractor, SaveNoteRequest, InteractorResponse, Note } from '../../notes';
+import { NoteInteractor, SaveNoteRequest, Note } from '../../notes';
+import { InteractorResponse } from '../../utils/interactor';
 import { resolveHttpStatus } from '../helpers';
 
 export class NoteController {

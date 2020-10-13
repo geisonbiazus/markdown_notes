@@ -26,7 +26,7 @@ describe('AuthenticationInteractor', () => {
       expect(response).toEqual({ status: 'error', type: 'not_found' });
     });
 
-    it.only('Given a user exists but the wrong password is provided, it returns error', async () => {
+    it('Given a user exists but the wrong password is provided, it returns error', async () => {
       const hashedPassword = await passwordManager.hashPassword('password', 'user@example.com');
       const user = new User({ id: uuid(), email: 'user@example.com', password: hashedPassword });
       await repository.saveUser(user);
