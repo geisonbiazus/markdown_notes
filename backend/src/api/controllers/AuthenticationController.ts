@@ -14,9 +14,14 @@ export class AuthenticationController {
       req.body.email,
       req.body.password
     );
-    const { status, type } = response;
+    const { status, type, data } = response;
 
     res.status(resolveHttpStatus(response));
-    res.json({ status, type });
+
+    if (status == 'success' && data) {
+      res.json({ status, token: data.token });
+    } else {
+      res.json({ status, type });
+    }
   };
 }

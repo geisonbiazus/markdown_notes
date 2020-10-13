@@ -12,6 +12,7 @@ export class AppContext {
   public authenticationRepository: AuthenticationRepository;
   public noteInteractor: NoteInteractor;
   public authenticationInteractor: AuthenticationInteractor;
+  public passwordManager: PasswordManager;
 
   constructor() {
     if (process.env.NODE_ENV == 'test') {
@@ -23,10 +24,12 @@ export class AppContext {
 
     this.noteInteractor = new NoteInteractor(this.noteRepository);
 
+    this.passwordManager = new PasswordManager('secret');
+
     this.authenticationInteractor = new AuthenticationInteractor(
       this.authenticationRepository,
       new TokenManager('secret'),
-      new PasswordManager('secret')
+      this.passwordManager
     );
   }
 }
