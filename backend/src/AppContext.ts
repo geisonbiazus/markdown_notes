@@ -1,4 +1,4 @@
-import { getConnection } from 'typeorm';
+import { ConnectionManager, EntityManager, getConnection } from 'typeorm';
 import {
   AuthenticationInteractor,
   AuthenticationRepository,
@@ -10,16 +10,17 @@ import { InMemoryRepository, NoteInteractor, Repository, TypeORMRepository } fro
 export class AppContext {
   public noteRepository: Repository;
   public authenticationRepository: AuthenticationRepository;
+
   public noteInteractor: NoteInteractor;
   public authenticationInteractor: AuthenticationInteractor;
+
   public passwordManager: PasswordManager;
 
   constructor() {
-    if (process.env.NODE_ENV == 'test') {
-      this.noteRepository = new InMemoryRepository();
-    } else {
-      this.noteRepository = new TypeORMRepository(getConnection().manager);
-    }
+    this.noteRepository = this.isTest
+      ? new InMemoryRepository()
+      : new TypeORMRepository(this.entityManager);
+
     this.authenticationRepository = new InMemoryAuthenticationRepository();
 
     this.noteInteractor = new NoteInteractor(this.noteRepository);
@@ -31,5 +32,13 @@ export class AppContext {
       new TokenManager('secret'),
       this.passwordManager
     );
+  }
+
+  private get isTest(): boolean {
+    return process.env.NODE_ENV == 'test';
+  }
+
+  private get entityManager(): EntityManager {
+    return getConnection().manager;
   }
 }

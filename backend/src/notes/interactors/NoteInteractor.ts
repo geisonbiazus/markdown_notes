@@ -9,6 +9,12 @@ export interface Repository {
   removeNote(note: Note): Promise<void>;
 }
 
+export interface SaveNoteRequest {
+  id?: string;
+  title?: string;
+  body?: string;
+}
+
 export class NoteInteractor {
   constructor(private repo: Repository) {}
 
@@ -45,10 +51,4 @@ export class NoteInteractor {
 
     return InteractorResponse.success();
   }
-}
-
-export interface SaveNoteRequest {
-  id?: string;
-  title?: string;
-  body?: string;
 }
