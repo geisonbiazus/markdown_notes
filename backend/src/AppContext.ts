@@ -1,14 +1,19 @@
-import { ConnectionManager, EntityManager, getConnection } from 'typeorm';
+import { EntityManager, getConnection } from 'typeorm';
 import {
   AuthenticationInteractor,
   AuthenticationRepository,
   InMemoryAuthenticationRepository,
 } from './authentication';
 import { PasswordManager, TokenManager } from './authentication/entities';
-import { InMemoryRepository, NoteInteractor, Repository, TypeORMRepository } from './notes';
+import {
+  InMemoryNoteRepository,
+  NoteInteractor,
+  NoteRepository,
+  TypeORMNoteRepository,
+} from './notes';
 
 export class AppContext {
-  public noteRepository: Repository;
+  public noteRepository: NoteRepository;
   public authenticationRepository: AuthenticationRepository;
 
   public noteInteractor: NoteInteractor;
@@ -18,8 +23,8 @@ export class AppContext {
 
   constructor() {
     this.noteRepository = this.isTest
-      ? new InMemoryRepository()
-      : new TypeORMRepository(this.entityManager);
+      ? new InMemoryNoteRepository()
+      : new TypeORMNoteRepository(this.entityManager);
 
     this.authenticationRepository = new InMemoryAuthenticationRepository();
 

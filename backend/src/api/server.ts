@@ -1,7 +1,5 @@
 import express, { Express } from 'express';
 import { Router } from './router';
-import { NoteInteractor, InMemoryRepository, Repository } from '../notes';
-import { AuthenticationController, NoteController } from './controllers';
 import cors from 'cors';
 import { AppContext } from '../AppContext';
 import { APIContext } from './APIContext';

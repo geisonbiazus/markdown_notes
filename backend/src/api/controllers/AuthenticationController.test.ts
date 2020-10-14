@@ -1,7 +1,7 @@
 import { Express, response } from 'express';
 import request from 'supertest';
 import { Server } from '../index';
-import { InMemoryRepository, Note } from '../../notes';
+import { InMemoryNoteRepository, Note } from '../../notes';
 import { InMemoryAuthenticationRepository } from '../../authentication/repositories';
 import { AppContext } from '../../AppContext';
 import { User } from '../../authentication';

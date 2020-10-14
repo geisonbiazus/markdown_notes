@@ -1,2 +1,2 @@
-export * from './InMemoryRepository';
-export * from './TypeORMRepository';
+export * from './InMemoryNoteRepository';
+export * from './TypeORMNoteRepository';

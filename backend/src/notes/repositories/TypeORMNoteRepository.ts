@@ -1,9 +1,9 @@
-import { Repository } from '../interactors';
+import { NoteRepository } from '../interactors';
 import { Note } from '../entities';
 import { EntityManager } from 'typeorm';
 import { NoteDB } from './typeORM/entities/NoteDB';
 
-export class TypeORMRepository implements Repository {
+export class TypeORMNoteRepository implements NoteRepository {
   constructor(private entityManager: EntityManager) {}
 
   async getNoteById(id: string): Promise<Note | null> {

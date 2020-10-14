@@ -2,7 +2,7 @@ import { Note } from '../entities';
 import { InteractorResponse } from '../../utils/interactor';
 import { SaveNoteValidator } from '../validators';
 
-export interface Repository {
+export interface NoteRepository {
   getNoteById(id: string): Promise<Note | null>;
   saveNote(note: Note): Promise<void>;
   getNotesSortedByTitle(): Promise<Note[]>;
@@ -16,7 +16,7 @@ export interface SaveNoteRequest {
 }
 
 export class NoteInteractor {
-  constructor(private repo: Repository) {}
+  constructor(private repo: NoteRepository) {}
 
   public async saveNote(request: SaveNoteRequest): Promise<InteractorResponse<Note>> {
     const validator = new SaveNoteValidator(request);

@@ -2,17 +2,17 @@ import { Express } from 'express';
 import request from 'supertest';
 import { Server } from '../index';
 import { uuid, json } from '../../utils';
-import { InMemoryRepository, Note } from '../../notes';
+import { InMemoryNoteRepository, Note } from '../../notes';
 import { AppContext } from '../../AppContext';
 
 describe('NoteController', () => {
   let context: AppContext;
   let server: Express;
-  let repo: InMemoryRepository;
+  let repo: InMemoryNoteRepository;
 
   beforeEach(() => {
     context = new AppContext();
-    repo = context.noteRepository as InMemoryRepository;
+    repo = context.noteRepository as InMemoryNoteRepository;
     server = new Server(context).server;
   });
 

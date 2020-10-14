@@ -1,7 +1,7 @@
-import { Repository } from '../interactors/NoteInteractor';
+import { NoteRepository } from '../interactors/NoteInteractor';
 import { Note } from '../entities/Note';
 
-export class InMemoryRepository implements Repository {
+export class InMemoryNoteRepository implements NoteRepository {
   private notes: Record<string, Note> = {};
 
   async getNoteById(id: string): Promise<Note | null> {
