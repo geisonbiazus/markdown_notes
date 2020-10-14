@@ -27,6 +27,10 @@ export class InteractorResponse<T = undefined> {
   static notFound<T>() {
     return new InteractorResponse<T>({ status: 'error', type: 'not_found' });
   }
+
+  static error<T>(errorType: string) {
+    return new InteractorResponse<T>({ status: 'error', type: errorType });
+  }
 }
 
 export class ValidationError {

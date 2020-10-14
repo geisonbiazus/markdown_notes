@@ -48,6 +48,49 @@ describe('AuthenticationInteractor', () => {
       expect(response).toEqual({ status: 'success', data: { token: tokenManager.token } });
     });
   });
+
+  describe('getAuthenticatedUser', () => {
+    let tokenManager: TokenManager;
+
+    beforeEach(() => {
+      tokenManager = new TokenManager('secret');
+      interactor = new AuthenticationInteractor(repository, tokenManager, passwordManager);
+    });
+
+    it('returns error when invalid token is given', async () => {
+      const token = 'invalid_token';
+      const response = await interactor.getAuthenticatedUser(token);
+
+      expect(response).toEqual({ status: 'error', type: 'invalid_token' });
+    });
+
+    it('returns error when token is valid but user does not exist', async () => {
+      const userId = uuid();
+      const token = tokenManager.encode(userId);
+      const response = await interactor.getAuthenticatedUser(token);
+
+      expect(response).toEqual({ status: 'error', type: 'not_found' });
+    });
+
+    it('returns error when token is expired', async () => {
+      const userId = uuid();
+      const token = tokenManager.encode(userId, 0);
+      const response = await interactor.getAuthenticatedUser(token);
+
+      expect(response).toEqual({ status: 'error', type: 'token_expired' });
+    });
+
+    it('returns the user when token is valid', async () => {
+      const user = new User({ id: uuid(), email: 'user@example.com' });
+
+      repository.saveUser(user);
+
+      const token = tokenManager.encode(user.id);
+      const response = await interactor.getAuthenticatedUser(token);
+
+      expect(response).toEqual({ status: 'success', data: user });
+    });
+  });
 });
 
 export class TokenManagerStub extends TokenManager {

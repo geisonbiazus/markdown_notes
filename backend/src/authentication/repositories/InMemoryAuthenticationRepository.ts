@@ -11,4 +11,8 @@ export class InMemoryAuthenticationRepository implements AuthenticationRepositor
   getUserByEmail(email: string): User | null {
     return Object.values(this.users).find((user) => user.email === email) || null;
   }
+
+  getUserById(id: string): User | null {
+    return this.users[id] || null;
+  }
 }
