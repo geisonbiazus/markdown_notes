@@ -20,6 +20,7 @@ export class AppContext {
   public authenticationInteractor: AuthenticationInteractor;
 
   public passwordManager: PasswordManager;
+  public tokenManager: TokenManager;
 
   constructor() {
     this.noteRepository = this.isTest
@@ -30,11 +31,12 @@ export class AppContext {
 
     this.noteInteractor = new NoteInteractor(this.noteRepository);
 
+    this.tokenManager = new TokenManager('secret');
     this.passwordManager = new PasswordManager('secret');
 
     this.authenticationInteractor = new AuthenticationInteractor(
       this.authenticationRepository,
-      new TokenManager('secret'),
+      this.tokenManager,
       this.passwordManager
     );
   }

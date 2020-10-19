@@ -1,15 +1,36 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { AuthenticationInteractor, User } from '../../authentication';
 
-export function authentication(req: Request, res: Response, next: () => void) {
-  const header = req.header('Authorization');
+export type ActionWithUser = (req: Request, res: Response, user: User) => void;
 
-  const token = header?.split('Bearer ')[1];
+export class AuthenticationMiddleware {
+  constructor(private authenticationInteractor: AuthenticationInteractor) {}
 
-  if (token) {
-    next();
-    return;
+  public authenticate = (action: ActionWithUser): RequestHandler => {
+    const authenticationInteractor = this.authenticationInteractor;
+
+    return async (req: Request, res: Response) => {
+      const token = this.getToken(req);
+
+      if (!token) return this.unauthorized(res);
+
+      const response = await authenticationInteractor.getAuthenticatedUser(token);
+
+      if (response.status == 'success' && response.data) {
+        return action(req, res, response.data);
+      }
+
+      this.unauthorized(res);
+    };
+  };
+
+  private getToken(req: Request): string | undefined {
+    const header = req.header('Authorization');
+    return header?.split('Bearer ')[1];
   }
 
-  res.status(401);
-  res.json({ status: 'error', type: 'unauthorized' });
+  private unauthorized(res: Response) {
+    res.status(401);
+    res.json({ status: 'error', type: 'unauthorized' });
+  }
 }
