@@ -3,16 +3,16 @@ import request from 'supertest';
 
 import { Server } from '../server';
 import { AppContext } from '../../AppContext';
-import { AuthenticationMiddleware } from './authentication';
+import { AuthenticationMiddleware } from './AuthenticationMiddleware';
 import { InMemoryAuthenticationRepository, User } from '../../authentication';
 import { json, uuid } from '../../utils';
+import { authenticate, createUser } from '../helpers';
 
 describe('authentication', () => {
   let context: AppContext;
   let server: Express;
   let repo: InMemoryAuthenticationRepository;
   let middleware: AuthenticationMiddleware;
-  let user: User;
 
   beforeEach(() => {
     context = new AppContext();
@@ -61,10 +61,7 @@ describe('authentication', () => {
   });
 
   it('returns error when token is expired', async () => {
-    const [user, _password] = await createUser();
-
-    repo.saveUser(user);
-
+    const user = await createUser(context);
     const token = context.tokenManager.encode(user.id, 0);
 
     const response = await request(server)
@@ -77,10 +74,8 @@ describe('authentication', () => {
   });
 
   it('successfully proceeds when user is authorized and inject the user in the request', async () => {
-    const [user, password] = await createUser();
-
-    const authResp = await context.authenticationInteractor.authenticate(user.email, password);
-    const token = authResp.data!.token;
+    const user = await createUser(context);
+    const token = authenticate(context, user);
 
     const response = await request(server)
       .get('/protected')
@@ -90,15 +85,4 @@ describe('authentication', () => {
 
     expect(response.body).toEqual({ status: 'success', user: json(user) });
   });
-
-  async function createUser(): Promise<[User, string]> {
-    const email = 'user@exmaple.com';
-    const password = 'password';
-    const hashedPassword = await context.passwordManager.hashPassword(password, email);
-    const user = new User({ id: uuid(), email: email, password: hashedPassword });
-
-    repo.saveUser(user);
-
-    return [user, password];
-  }
 });

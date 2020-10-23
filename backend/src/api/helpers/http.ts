@@ -1,4 +1,4 @@
-import { InteractorResponse } from '../utils/interactor';
+import { InteractorResponse } from '../../utils/interactor';
 
 export const resolveHttpStatus = <T>(response: InteractorResponse<T>): number => {
   const { status, type } = response;

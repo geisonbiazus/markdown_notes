@@ -1,12 +1,12 @@
-import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { Request, RequestHandler, Response } from 'express';
 import { AuthenticationInteractor, User } from '../../authentication';
 
-export type ActionWithUser = (req: Request, res: Response, user: User) => void;
+export type AuthenticatedAction = (req: Request, res: Response, user: User) => Promise<void> | void;
 
 export class AuthenticationMiddleware {
   constructor(private authenticationInteractor: AuthenticationInteractor) {}
 
-  public authenticate = (action: ActionWithUser): RequestHandler => {
+  public authenticate = (action: AuthenticatedAction): RequestHandler => {
     const authenticationInteractor = this.authenticationInteractor;
 
     return async (req: Request, res: Response) => {

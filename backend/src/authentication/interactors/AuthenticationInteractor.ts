@@ -8,8 +8,9 @@ import {
 } from '../entities';
 
 export interface AuthenticationRepository {
-  getUserByEmail(email: string): User | null;
-  getUserById(id: string): User | null;
+  getUserByEmail(email: string): Promise<User | null>;
+  getUserById(id: string): Promise<User | null>;
+  saveUser(user: User): Promise<void>;
 }
 
 export interface AuthenticateResponse {
@@ -27,7 +28,7 @@ export class AuthenticationInteractor {
     email: string,
     password: string
   ): Promise<InteractorResponse<AuthenticateResponse>> {
-    const user = this.repository.getUserByEmail(email);
+    const user = await this.repository.getUserByEmail(email);
 
     if (!user) return InteractorResponse.notFound();
 
@@ -45,7 +46,7 @@ export class AuthenticationInteractor {
   public async getAuthenticatedUser(token: string): Promise<InteractorResponse<User>> {
     try {
       const userId = this.tokenManager.decode(token);
-      const user = this.repository.getUserById(userId);
+      const user = await this.repository.getUserById(userId);
 
       if (user) return InteractorResponse.success(user);
 
