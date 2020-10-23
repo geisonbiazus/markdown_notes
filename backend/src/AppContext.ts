@@ -9,27 +9,22 @@ import {
   InMemoryNoteRepository,
   NoteInteractor,
   NoteRepository,
+  NotesContext,
   TypeORMNoteRepository,
 } from './notes';
 
 export class AppContext {
-  public noteRepository: NoteRepository;
   public authenticationRepository: AuthenticationRepository;
 
-  public noteInteractor: NoteInteractor;
   public authenticationInteractor: AuthenticationInteractor;
 
   public passwordManager: PasswordManager;
   public tokenManager: TokenManager;
 
+  private notesContext?: NotesContext;
+
   constructor() {
-    this.noteRepository = this.isTest
-      ? new InMemoryNoteRepository()
-      : new TypeORMNoteRepository(this.entityManager);
-
     this.authenticationRepository = new InMemoryAuthenticationRepository();
-
-    this.noteInteractor = new NoteInteractor(this.noteRepository);
 
     this.tokenManager = new TokenManager('secret');
     this.passwordManager = new PasswordManager('secret');
@@ -41,11 +36,10 @@ export class AppContext {
     );
   }
 
-  private get isTest(): boolean {
-    return process.env.NODE_ENV == 'test';
-  }
-
-  private get entityManager(): EntityManager {
-    return getConnection().manager;
+  public get notes(): NotesContext {
+    if (!this.notesContext) {
+      this.notesContext = new NotesContext();
+    }
+    return this.notesContext;
   }
 }

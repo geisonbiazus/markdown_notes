@@ -13,7 +13,7 @@ export class APIContext {
       appContext.authenticationInteractor
     );
 
-    this.noteController = new NoteController(appContext.noteInteractor);
+    this.noteController = new NoteController(appContext.notes.noteInteractor);
     this.authenticationController = new AuthenticationController(
       appContext.authenticationInteractor
     );

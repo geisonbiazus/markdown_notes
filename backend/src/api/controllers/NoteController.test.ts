@@ -2,19 +2,19 @@ import { Express } from 'express';
 import request from 'supertest';
 import { Server } from '../index';
 import { uuid, json } from '../../utils';
-import { InMemoryNoteRepository, Note } from '../../notes';
+import { InMemoryNoteRepository, Note, NoteRepository } from '../../notes';
 import { AppContext } from '../../AppContext';
 import { authenticate, createUser } from '../helpers';
 
 describe('NoteController', () => {
   let context: AppContext;
   let server: Express;
-  let repo: InMemoryNoteRepository;
+  let repo: NoteRepository;
   let token: string;
 
   beforeEach(async () => {
     context = new AppContext();
-    repo = context.noteRepository as InMemoryNoteRepository;
+    repo = context.notes.noteRepository;
     server = new Server(context).server;
 
     const user = await createUser(context);
