@@ -6,12 +6,14 @@ import { APIContext } from './APIContext';
 
 export class Server {
   public server: Express;
-  public port = process.env.PORT || 4000;
+  public port: number;
 
   constructor(appContext: AppContext) {
     const apiContext = new APIContext(appContext);
 
     const router = new Router(apiContext);
+
+    this.port = appContext.config.port;
 
     this.server = express();
     this.server.use(cors());

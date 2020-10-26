@@ -3,8 +3,15 @@ import { EntityFactory } from './EntityFactory';
 import { AuthenticationInteractor, AuthenticationRepository } from './interactors';
 import { InMemoryAuthenticationRepository } from './repositories';
 
+export interface Config {
+  env: string;
+  authenticationTokenSecret: string;
+  authenticationPasswordSecret: string;
+}
 export class AuthenticationContext {
   private authenticationRepo?: AuthenticationRepository;
+
+  constructor(public config: Config) {}
 
   public get authenticationInteractor(): AuthenticationInteractor {
     return new AuthenticationInteractor(
@@ -22,11 +29,11 @@ export class AuthenticationContext {
   }
 
   public get tokenManager(): TokenManager {
-    return new TokenManager('secret');
+    return new TokenManager(this.config.authenticationTokenSecret);
   }
 
   public get passwordManager(): PasswordManager {
-    return new PasswordManager('secret');
+    return new PasswordManager(this.config.authenticationPasswordSecret);
   }
 
   public get entityFactory(): EntityFactory {

@@ -1,9 +1,9 @@
 import 'reflect-metadata';
 import { Server } from './api';
-import { createConnection, Connection } from 'typeorm';
+import { createConnection } from 'typeorm';
 import { AppContext } from './AppContext';
 
-createConnection().then((connection: Connection) => {
+createConnection().then(() => {
   const context = new AppContext();
 
   new Server(context).start();

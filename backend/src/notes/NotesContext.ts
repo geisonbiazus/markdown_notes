@@ -2,8 +2,14 @@ import { EntityManager, getConnection } from 'typeorm';
 import { NoteInteractor, NoteRepository } from './interactors';
 import { InMemoryNoteRepository, TypeORMNoteRepository } from './repositories';
 
+export interface Config {
+  env: string;
+}
+
 export class NotesContext {
   private noteRepo?: NoteRepository;
+
+  constructor(public config: Config) {}
 
   public get noteInteractor(): NoteInteractor {
     return new NoteInteractor(this.noteRepository);
@@ -20,7 +26,7 @@ export class NotesContext {
   }
 
   private get isTest(): boolean {
-    return process.env.NODE_ENV == 'test';
+    return this.config.env == 'test';
   }
 
   private get entityManager(): EntityManager {
