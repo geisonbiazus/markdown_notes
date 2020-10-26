@@ -1,19 +1,14 @@
-import { Express, response } from 'express';
+import { Express } from 'express';
 import request from 'supertest';
 import { Server } from '../index';
-import { InMemoryNoteRepository, Note } from '../../notes';
-import { InMemoryAuthenticationRepository } from '../../authentication/repositories';
 import { AppContext } from '../../AppContext';
-import { User } from '../../authentication';
 
 describe('AuthenticationController', () => {
   let context: AppContext;
   let server: Express;
-  let repo: InMemoryAuthenticationRepository;
 
   beforeEach(() => {
     context = new AppContext();
-    repo = context.authenticationRepository as InMemoryAuthenticationRepository;
     server = new Server(context).server;
   });
 
@@ -29,14 +24,7 @@ describe('AuthenticationController', () => {
     it('returns token when successful', async () => {
       const email = 'user@exmaple.com';
       const password = 'password';
-      const hashedPassword = await context.passwordManager.hashPassword(password, email);
-
-      repo.saveUser(
-        new User({
-          email: email,
-          password: hashedPassword,
-        })
-      );
+      await context.authentication.entityFactory.createUser({ email, password });
 
       const response = await request(server)
         .post('/sign_in')

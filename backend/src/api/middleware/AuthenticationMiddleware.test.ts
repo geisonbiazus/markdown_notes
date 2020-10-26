@@ -4,21 +4,19 @@ import request from 'supertest';
 import { Server } from '../server';
 import { AppContext } from '../../AppContext';
 import { AuthenticationMiddleware } from './AuthenticationMiddleware';
-import { InMemoryAuthenticationRepository, User } from '../../authentication';
+import { User } from '../../authentication';
 import { json, uuid } from '../../utils';
 import { authenticate, createUser } from '../helpers';
 
 describe('authentication', () => {
   let context: AppContext;
   let server: Express;
-  let repo: InMemoryAuthenticationRepository;
   let middleware: AuthenticationMiddleware;
 
   beforeEach(() => {
     context = new AppContext();
-    repo = context.authenticationRepository as InMemoryAuthenticationRepository;
     server = new Server(context).server;
-    middleware = new AuthenticationMiddleware(context.authenticationInteractor);
+    middleware = new AuthenticationMiddleware(context.authentication.authenticationInteractor);
 
     server.get(
       '/protected',
@@ -49,7 +47,7 @@ describe('authentication', () => {
   });
 
   it('returns error when token is valid but used does not exist', async () => {
-    const token = context.tokenManager.encode(uuid());
+    const token = context.authentication.tokenManager.encode(uuid());
 
     const response = await request(server)
       .get('/protected')
@@ -62,7 +60,7 @@ describe('authentication', () => {
 
   it('returns error when token is expired', async () => {
     const user = await createUser(context);
-    const token = context.tokenManager.encode(user.id, 0);
+    const token = context.authentication.tokenManager.encode(user.id, 0);
 
     const response = await request(server)
       .get('/protected')

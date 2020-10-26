@@ -1,39 +1,15 @@
-import { EntityManager, getConnection } from 'typeorm';
-import {
-  AuthenticationInteractor,
-  AuthenticationRepository,
-  InMemoryAuthenticationRepository,
-} from './authentication';
-import { PasswordManager, TokenManager } from './authentication/entities';
-import {
-  InMemoryNoteRepository,
-  NoteInteractor,
-  NoteRepository,
-  NotesContext,
-  TypeORMNoteRepository,
-} from './notes';
+import { AuthenticationContext } from './authentication';
+import { NotesContext } from './notes';
 
 export class AppContext {
-  public authenticationRepository: AuthenticationRepository;
-
-  public authenticationInteractor: AuthenticationInteractor;
-
-  public passwordManager: PasswordManager;
-  public tokenManager: TokenManager;
-
+  private authenticationContext?: AuthenticationContext;
   private notesContext?: NotesContext;
 
-  constructor() {
-    this.authenticationRepository = new InMemoryAuthenticationRepository();
-
-    this.tokenManager = new TokenManager('secret');
-    this.passwordManager = new PasswordManager('secret');
-
-    this.authenticationInteractor = new AuthenticationInteractor(
-      this.authenticationRepository,
-      this.tokenManager,
-      this.passwordManager
-    );
+  public get authentication(): AuthenticationContext {
+    if (!this.authenticationContext) {
+      this.authenticationContext = new AuthenticationContext();
+    }
+    return this.authenticationContext;
   }
 
   public get notes(): NotesContext {

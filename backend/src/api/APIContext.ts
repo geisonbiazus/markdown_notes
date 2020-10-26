@@ -3,19 +3,17 @@ import { AuthenticationController, NoteController } from './controllers';
 import { AuthenticationMiddleware } from './middleware';
 
 export class APIContext {
-  public authenticationMiddleware: AuthenticationMiddleware;
+  constructor(private appContext: AppContext) {}
 
-  public noteController: NoteController;
-  public authenticationController: AuthenticationController;
+  public get authenticationMidleware(): AuthenticationMiddleware {
+    return new AuthenticationMiddleware(this.appContext.authentication.authenticationInteractor);
+  }
 
-  constructor(appContext: AppContext) {
-    this.authenticationMiddleware = new AuthenticationMiddleware(
-      appContext.authenticationInteractor
-    );
+  public get authenticationController(): AuthenticationController {
+    return new AuthenticationController(this.appContext.authentication.authenticationInteractor);
+  }
 
-    this.noteController = new NoteController(appContext.notes.noteInteractor);
-    this.authenticationController = new AuthenticationController(
-      appContext.authenticationInteractor
-    );
+  public get noteController(): NoteController {
+    return new NoteController(this.appContext.notes.noteInteractor);
   }
 }

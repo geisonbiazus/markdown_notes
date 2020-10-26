@@ -1,4 +1,5 @@
 export * from './entities';
 export * from './interactors';
 export * from './repositories';
-export * from './AuthenticationFactory';
+export * from './EntityFactory';
+export * from './AuthenticationContext';

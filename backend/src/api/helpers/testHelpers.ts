@@ -1,14 +1,10 @@
 import { AppContext } from '../../AppContext';
-import { User, AuthenticationFactory } from '../../authentication';
+import { User } from '../../authentication';
 
 export async function createUser(context: AppContext): Promise<User> {
-  const factory = new AuthenticationFactory(
-    context.authenticationRepository,
-    context.passwordManager
-  );
-  return await factory.createUser();
+  return await context.authentication.entityFactory.createUser();
 }
 
 export function authenticate(context: AppContext, user: User): string {
-  return context.tokenManager.encode(user.id);
+  return context.authentication.tokenManager.encode(user.id);
 }

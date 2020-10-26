@@ -2,7 +2,7 @@ import { uuid } from '../utils';
 import { PasswordManager, User, UserParams } from './entities';
 import { AuthenticationRepository } from './interactors';
 
-export class AuthenticationFactory {
+export class EntityFactory {
   constructor(
     public repository: AuthenticationRepository,
     public passwordManager: PasswordManager
