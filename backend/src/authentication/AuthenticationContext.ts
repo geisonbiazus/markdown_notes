@@ -1,7 +1,8 @@
+import { EntityManager, getConnection } from 'typeorm';
 import { PasswordManager, TokenManager } from './entities';
 import { EntityFactory } from './EntityFactory';
 import { AuthenticationInteractor, AuthenticationRepository } from './interactors';
-import { InMemoryAuthenticationRepository } from './repositories';
+import { InMemoryAuthenticationRepository, TypeORMAuthenticationRepository } from './repositories';
 
 export interface Config {
   env: string;
@@ -23,7 +24,9 @@ export class AuthenticationContext {
 
   public get authenticationRepository(): AuthenticationRepository {
     if (!this.authenticationRepo) {
-      this.authenticationRepo = new InMemoryAuthenticationRepository();
+      this.authenticationRepo = this.isTest
+        ? new InMemoryAuthenticationRepository()
+        : new TypeORMAuthenticationRepository(this.entityManager);
     }
     return this.authenticationRepo;
   }
@@ -38,5 +41,13 @@ export class AuthenticationContext {
 
   public get entityFactory(): EntityFactory {
     return new EntityFactory(this.authenticationRepository, this.passwordManager);
+  }
+
+  private get isTest(): boolean {
+    return this.config.env == 'test';
+  }
+
+  private get entityManager(): EntityManager {
+    return getConnection().manager;
   }
 }

@@ -7,7 +7,7 @@ const defaultConfig = {
   database: process.env.DB_NAME || 'markdown_notes',
   synchronize: false,
   logging: true,
-  entities: ['src/notes/repositories/typeORM/entities/**/*'],
+  entities: ['src/*/repositories/typeORM/entities/**/*'],
   migrations: ['src/migrations/**/*'],
   cli: {
     migrationsDir: 'src/migrations',
