@@ -1,22 +1,32 @@
 import { uuid } from '../../utils';
 import { PasswordManager, TokenManager, User } from '../entities';
+import { EntityFactory } from '../EntityFactory';
 import { InMemoryAuthenticationRepository } from '../repositories';
 import { AuthenticationInteractor } from './AuthenticationInteractor';
 
 describe('AuthenticationInteractor', () => {
   let interactor: AuthenticationInteractor;
   let repository: InMemoryAuthenticationRepository;
-  let tokenManager: TokenManagerStub;
+  let tokenManager: TokenManager;
   let passwordManager: PasswordManager;
+  let factory: EntityFactory;
 
   beforeEach(() => {
     passwordManager = new PasswordManager('secret');
-    tokenManager = new TokenManagerStub();
     repository = new InMemoryAuthenticationRepository();
+    tokenManager = new TokenManager('secret');
     interactor = new AuthenticationInteractor(repository, tokenManager, passwordManager);
+    factory = new EntityFactory(repository, passwordManager);
   });
 
   describe('authenticate', () => {
+    let tokenManager: TokenManagerStub;
+
+    beforeEach(() => {
+      tokenManager = new TokenManagerStub();
+      interactor = new AuthenticationInteractor(repository, tokenManager, passwordManager);
+    });
+
     it('Given no user exists for the email, it returns error', async () => {
       const email = 'user@example.com';
       const password = 'password';
@@ -27,36 +37,29 @@ describe('AuthenticationInteractor', () => {
     });
 
     it('Given a user exists but the wrong password is provided, it returns error', async () => {
-      const hashedPassword = await passwordManager.hashPassword('password', 'user@example.com');
-      const user = new User({ id: uuid(), email: 'user@example.com', password: hashedPassword });
-      await repository.saveUser(user);
+      const email = 'user@example.com';
+      const password = 'password';
+      await factory.createUser({ email, password });
 
-      const response = await interactor.authenticate(user.email, 'wrong password');
+      const response = await interactor.authenticate(email, 'wrong password');
 
       expect(response).toEqual({ status: 'error', type: 'not_found' });
     });
 
     it('Given a user exists and the correct password is provided, it returns the user token', async () => {
-      const hashedPassword = await passwordManager.hashPassword('password', 'user@example.com');
-      const user = new User({ id: uuid(), email: 'user@example.com', password: hashedPassword });
-      await repository.saveUser(user);
+      const email = 'user@example.com';
+      const password = 'password';
+      await factory.createUser({ email, password });
 
       tokenManager.token = uuid();
 
-      const response = await interactor.authenticate(user.email, 'password');
+      const response = await interactor.authenticate(email, password);
 
       expect(response).toEqual({ status: 'success', data: { token: tokenManager.token } });
     });
   });
 
   describe('getAuthenticatedUser', () => {
-    let tokenManager: TokenManager;
-
-    beforeEach(() => {
-      tokenManager = new TokenManager('secret');
-      interactor = new AuthenticationInteractor(repository, tokenManager, passwordManager);
-    });
-
     it('returns error when invalid token is given', async () => {
       const token = 'invalid_token';
       const response = await interactor.getAuthenticatedUser(token);
@@ -81,14 +84,25 @@ describe('AuthenticationInteractor', () => {
     });
 
     it('returns the user when token is valid', async () => {
-      const user = new User({ id: uuid(), email: 'user@example.com' });
-
-      repository.saveUser(user);
+      const user = await factory.createUser();
 
       const token = tokenManager.encode(user.id);
       const response = await interactor.getAuthenticatedUser(token);
 
       expect(response).toEqual({ status: 'success', data: user });
+    });
+  });
+
+  describe('integration', () => {
+    it('authenticates and gets authenticated user', async () => {
+      const email = 'user@example.com';
+      const password = 'password';
+      const user = await factory.createUser({ email, password });
+
+      const tokenResponse = await interactor.authenticate(email, password);
+      const userResponse = await interactor.getAuthenticatedUser(tokenResponse.data!.token);
+
+      expect(userResponse.data).toEqual(user);
     });
   });
 });

@@ -23,7 +23,7 @@ export class EntityFactory {
 
     const user = new User(userParams);
 
-    this.repository.saveUser(user);
+    await this.repository.saveUser(user);
 
     return user;
   }
