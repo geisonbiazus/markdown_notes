@@ -1,9 +1,9 @@
-import { ErrorType } from '../../notes';
+import { Errors, validateRequired } from '../../utils';
 
 export interface SignInState {
   email: string;
   password: string;
-  errors: Record<string, ErrorType>;
+  errors: Errors;
 }
 
 export function newSignInState(): SignInState {
@@ -20,17 +20,14 @@ export class SignInInteractor {
   }
 
   public async signIn(state: SignInState): Promise<SignInState> {
-    let updatedState = { ...state, errors: {} };
-    updatedState = this.validateRequired(updatedState, 'email');
-    updatedState = this.validateRequired(updatedState, 'password');
-
-    return updatedState;
+    return this.validate(state);
   }
 
-  private validateRequired(state: SignInState, field: keyof SignInState): SignInState {
-    if (!state[field].toString().trim()) {
-      return { ...state, errors: { ...state.errors, [field]: 'required' } };
-    }
-    return state;
+  private validate(state: SignInState): SignInState {
+    let errors: Errors = {};
+    errors = validateRequired(errors, state, 'email');
+    errors = validateRequired(errors, state, 'password');
+
+    return { ...state, errors };
   }
 }

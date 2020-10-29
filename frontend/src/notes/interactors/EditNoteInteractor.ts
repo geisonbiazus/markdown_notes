@@ -1,5 +1,5 @@
-import { isEmpty } from '../../utils';
-import { Note, ErrorType, NoteClient, Errors, SaveNoteResponse } from './entities';
+import { Errors, ErrorType, isEmpty, validateRequired } from '../../utils';
+import { Note, NoteClient, SaveNoteResponse } from './entities';
 
 export interface EditNoteState {
   note: Note;
@@ -39,11 +39,7 @@ export class EditNoteInteractor {
 
   private validateNote(state: EditNoteState): EditNoteState {
     let errors: Errors = {};
-
-    if (!state.note.title?.trim()) {
-      errors = { ...errors, title: 'required' };
-    }
-
+    errors = validateRequired(errors, state.note, 'title');
     return { ...state, errors };
   }
 

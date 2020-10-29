@@ -4,9 +4,6 @@ export interface Note {
   body: string;
 }
 
-export type ErrorType = 'required';
-export type Errors = Record<string, ErrorType>;
-
 export interface ValidationError {
   field: string;
   type: string;
