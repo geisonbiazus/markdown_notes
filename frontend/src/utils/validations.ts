@@ -1,4 +1,4 @@
-export type ErrorType = 'required';
+export type ErrorType = 'required' | 'not_found';
 export type Errors = Record<string, ErrorType>;
 
 export function validateRequired<T>(errors: Errors, state: T, field: keyof T): Errors {

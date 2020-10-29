@@ -1,4 +1,5 @@
-import { Errors, validateRequired } from '../../utils';
+import { Errors, isEmpty, validateRequired } from '../../utils';
+import { AuthenticationClient, SessionRepository } from '../entities';
 
 export interface SignInState {
   email: string;
@@ -6,11 +7,16 @@ export interface SignInState {
   errors: Errors;
 }
 
-export function newSignInState(): SignInState {
-  return { email: '', password: '', errors: {} };
+export function newSignInState(initialState: Partial<SignInState> = {}): SignInState {
+  return { email: '', password: '', errors: {}, ...initialState };
 }
 
 export class SignInInteractor {
+  constructor(
+    private authenticationClient: AuthenticationClient,
+    private sessionRepository: SessionRepository
+  ) {}
+
   public setEmail(state: SignInState, email: string): SignInState {
     return { ...state, email };
   }
@@ -20,7 +26,14 @@ export class SignInInteractor {
   }
 
   public async signIn(state: SignInState): Promise<SignInState> {
-    return this.validate(state);
+    let updatedState = state;
+    updatedState = this.validate(updatedState);
+
+    if (!isEmpty(updatedState.errors)) return updatedState;
+
+    updatedState = { ...updatedState, errors: { base: 'not_found' } };
+
+    return updatedState;
   }
 
   private validate(state: SignInState): SignInState {
