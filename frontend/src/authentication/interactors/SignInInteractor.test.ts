@@ -4,7 +4,7 @@ import { newSignInState, SignInInteractor } from './SignInInteractor';
 
 describe('newSignInState', () => {
   it('retuns an empty state', () => {
-    expect(newSignInState()).toEqual({ email: '', password: '', errors: {} });
+    expect(newSignInState()).toEqual({ email: '', password: '', errors: {}, success: false });
   });
 });
 
@@ -37,16 +37,20 @@ describe('SignInInteractor', () => {
       expect(state.errors).toEqual({ base: 'not_found' });
     });
 
-    it.skip('saves the session data when authentication succeds', async () => {
-      authenticationClient.addUser('user@example.com', 'password', 'token');
+    it('saves the session data and sets success when authentication succeds', async () => {
+      const email = 'user@example.com';
+      const password = 'password';
+      const token = 'token';
+      authenticationClient.addUser(email, password, token);
 
       let state = newSignInState();
-      state = interactor.setEmail(state, 'user@example.com');
-      state = interactor.setPassword(state, 'password');
+      state = interactor.setEmail(state, email);
+      state = interactor.setPassword(state, password);
 
       state = await interactor.signIn(state);
 
-      expect(sessionRepository.getToken()).toEqual('token');
+      expect(sessionRepository.getToken()).toEqual(token);
+      expect(state.success).toEqual(true);
     });
   });
 });

@@ -5,10 +5,11 @@ export interface SignInState {
   email: string;
   password: string;
   errors: Errors;
+  success: boolean;
 }
 
 export function newSignInState(initialState: Partial<SignInState> = {}): SignInState {
-  return { email: '', password: '', errors: {}, ...initialState };
+  return { email: '', password: '', errors: {}, success: false, ...initialState };
 }
 
 export class SignInInteractor {
@@ -27,13 +28,16 @@ export class SignInInteractor {
 
   public async signIn(state: SignInState): Promise<SignInState> {
     let updatedState = state;
-    updatedState = this.validate(updatedState);
 
+    updatedState = this.validate(updatedState);
     if (!isEmpty(updatedState.errors)) return updatedState;
 
-    updatedState = { ...updatedState, errors: { base: 'not_found' } };
+    const token = await this.authenticationClient.signIn(state.email, state.password);
+    if (!token) return this.notFound(updatedState);
 
-    return updatedState;
+    this.sessionRepository.setToken(token);
+
+    return { ...updatedState, success: true };
   }
 
   private validate(state: SignInState): SignInState {
@@ -42,5 +46,9 @@ export class SignInInteractor {
     errors = validateRequired(errors, state, 'password');
 
     return { ...state, errors };
+  }
+
+  private notFound(state: SignInState): SignInState {
+    return { ...state, errors: { base: 'not_found' } };
   }
 }
