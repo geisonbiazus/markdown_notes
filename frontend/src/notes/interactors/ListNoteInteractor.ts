@@ -1,4 +1,4 @@
-import { Note, NoteClient } from './entities';
+import { Note, NoteClient } from '../entities';
 
 export interface ListNoteState {
   notes: Note[];

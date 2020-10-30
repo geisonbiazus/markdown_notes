@@ -1,5 +1,5 @@
 import { Errors, ErrorType, isEmpty, validateRequired } from '../../utils';
-import { Note, NoteClient, SaveNoteResponse } from './entities';
+import { Note, NoteClient, SaveNoteResponse } from '../entities';
 
 export interface EditNoteState {
   note: Note;

@@ -1,4 +1,4 @@
-import { NoteClient, Note, SaveNoteResponse } from '../interactors';
+import { NoteClient, Note, SaveNoteResponse } from '../entities';
 import { HTTPClient, HTTPResponse } from '../../utils';
 
 export class APINoteClient implements NoteClient {

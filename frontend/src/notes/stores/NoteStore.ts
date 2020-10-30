@@ -1,4 +1,5 @@
 import { observable, action, runInAction } from 'mobx';
+import { Note } from '../entities';
 import {
   EditNoteState,
   newEditNoteState,
@@ -9,7 +10,6 @@ import {
   RemoveNoteState,
   newRemoveNoteState,
   RemoveNoteInteractor,
-  Note,
 } from '../interactors';
 
 export class NoteStore {
