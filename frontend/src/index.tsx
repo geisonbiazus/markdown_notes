@@ -3,17 +3,14 @@ import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import './i18n';
-import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
-import { NoteProvider } from './notes';
+import { App } from './app';
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <NoteProvider>
-        <App />
-      </NoteProvider>
+      <App />
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
