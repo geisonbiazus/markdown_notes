@@ -6,11 +6,14 @@ import './i18n';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './app';
+import { AuthenticationProvider } from './authentication';
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <AuthenticationProvider>
+        <App />
+      </AuthenticationProvider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
