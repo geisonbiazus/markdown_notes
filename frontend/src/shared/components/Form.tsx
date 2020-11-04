@@ -20,16 +20,26 @@ export interface TextFieldProps {
   errorField?: string;
   errorType?: string;
   disabled?: boolean;
+  type?: 'text' | 'password' | 'email';
 }
 
 export const TextField: React.FC<TextFieldProps> = (props) => {
-  const { label, placeholder, value, onChange, errorField, errorType, disabled } = props;
+  const {
+    label,
+    placeholder,
+    value,
+    onChange,
+    errorField,
+    errorType,
+    disabled,
+    type = 'text',
+  } = props;
 
   return (
     <>
       <BootstrapForm.Label>{label}</BootstrapForm.Label>
       <BootstrapForm.Control
-        type="text"
+        type={type}
         placeholder={placeholder}
         value={value}
         onChange={onChange}

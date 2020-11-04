@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navbar, Container } from 'react-bootstrap';
+import './Layout.css';
 
 export interface AppBarProps {
   title: string;
@@ -22,4 +23,12 @@ export const AppContainer: React.FC = ({ children }) => {
       {children}
     </Container>
   );
+};
+
+export const CenteredContainer: React.FC = ({ children }) => {
+  return <div className="centered-container">{children}</div>;
+};
+
+export const NarrowContainer: React.FC = ({ children }) => {
+  return <div className="narrow-container">{children}</div>;
 };
