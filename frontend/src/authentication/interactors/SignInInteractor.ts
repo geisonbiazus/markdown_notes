@@ -25,42 +25,53 @@ export class SignInInteractor {
   ) {}
 
   public setEmail(email: string): void {
-    const state = this.stateManager.getState();
-    this.stateManager.setState({ ...state, email });
+    this.updateState({ email });
   }
 
   public setPassword(password: string): void {
-    const state = this.stateManager.getState();
-    this.stateManager.setState({ ...state, password });
+    this.updateState({ password });
   }
 
   public async signIn(): Promise<void> {
-    let state = this.stateManager.getState();
-
-    state = this.validate(state);
-    if (!isEmpty(state.errors)) {
-      this.stateManager.setState(state);
-      return;
-    }
-
-    const token = await this.authenticationClient.signIn(state.email, state.password);
-    if (!token) {
-      this.stateManager.setState(this.notFound(state));
-    } else {
-      this.sessionRepository.setToken(token);
-      this.stateManager.setState({ ...state, authenticated: true });
-    }
+    if (!this.validateState()) return;
+    await this.performSignIn();
   }
 
-  private validate(state: SignInState): SignInState {
+  private validateState(): boolean {
     let errors: Errors = {};
-    errors = validateRequired(errors, state, 'email');
-    errors = validateRequired(errors, state, 'password');
 
-    return { ...state, errors };
+    errors = validateRequired(errors, this.state, 'email');
+    errors = validateRequired(errors, this.state, 'password');
+
+    this.updateState({ errors });
+
+    return isEmpty(errors);
   }
 
-  private notFound(state: SignInState): SignInState {
-    return { ...state, errors: { base: 'not_found' } };
+  private async performSignIn() {
+    const token = await this.authenticationClient.signIn(this.state.email, this.state.password);
+
+    if (!token) {
+      this.updateStateToNotFound();
+    } else {
+      this.processSucessSignIn(token);
+    }
+  }
+
+  private updateStateToNotFound(): void {
+    this.updateState({ errors: { base: 'not_found' } });
+  }
+
+  private processSucessSignIn(token: string): void {
+    this.updateState({ authenticated: true });
+    this.sessionRepository.setToken(token);
+  }
+
+  private get state(): SignInState {
+    return this.stateManager.getState();
+  }
+
+  private updateState(update: Partial<SignInState>): void {
+    this.stateManager.setState({ ...this.state, ...update });
   }
 }
