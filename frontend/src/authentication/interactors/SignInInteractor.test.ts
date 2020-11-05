@@ -1,10 +1,10 @@
 import { InMemoryAuthenticationClient } from '../clients';
 import { InMemorySessionRepository } from '../repositories';
-import { newSignInState, SignInInteractor } from './SignInInteractor';
+import { newSignInState, SignInInteractor, SignInState, StateManager } from './SignInInteractor';
 
 describe('newSignInState', () => {
   it('retuns an empty state', () => {
-    expect(newSignInState()).toEqual({ email: '', password: '', errors: {}, success: false });
+    expect(newSignInState()).toEqual({ email: '', password: '', errors: {}, authenticated: false });
   });
 });
 
@@ -12,27 +12,29 @@ describe('SignInInteractor', () => {
   let interactor: SignInInteractor;
   let authenticationClient: InMemoryAuthenticationClient;
   let sessionRepository: InMemorySessionRepository;
+  let stateManager: InMemoryStateManager<SignInState>;
 
   beforeEach(() => {
     authenticationClient = new InMemoryAuthenticationClient();
     sessionRepository = new InMemorySessionRepository();
-    interactor = new SignInInteractor(authenticationClient, sessionRepository);
+    stateManager = new InMemoryStateManager(newSignInState());
+    interactor = new SignInInteractor(stateManager, authenticationClient, sessionRepository);
   });
 
   describe('signIn', () => {
     it('validates required email and password', async () => {
-      let state = newSignInState();
-      state = await interactor.signIn(state);
+      await interactor.signIn();
+      const state = stateManager.getState();
 
       expect(state.errors).toEqual({ email: 'required', password: 'required' });
     });
 
     it('returns error when authentication fails', async () => {
-      let state = newSignInState();
-      state = interactor.setEmail(state, 'user@example.com');
-      state = interactor.setPassword(state, 'password');
+      interactor.setEmail('user@example.com');
+      interactor.setPassword('password');
 
-      state = await interactor.signIn(state);
+      await interactor.signIn();
+      const state = stateManager.getState();
 
       expect(state.errors).toEqual({ base: 'not_found' });
     });
@@ -43,14 +45,26 @@ describe('SignInInteractor', () => {
       const token = 'token';
       authenticationClient.addUser(email, password, token);
 
-      let state = newSignInState();
-      state = interactor.setEmail(state, email);
-      state = interactor.setPassword(state, password);
+      interactor.setEmail(email);
+      interactor.setPassword(password);
 
-      state = await interactor.signIn(state);
+      await interactor.signIn();
+      const state = stateManager.getState();
 
       expect(sessionRepository.getToken()).toEqual(token);
-      expect(state.success).toEqual(true);
+      expect(state.authenticated).toEqual(true);
     });
   });
 });
+
+export class InMemoryStateManager<T> implements StateManager<T> {
+  constructor(private state: T) {}
+
+  setState(state: T): void {
+    this.state = state;
+  }
+
+  getState(): T {
+    return this.state;
+  }
+}
