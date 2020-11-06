@@ -1,4 +1,4 @@
-import { InMemoryStateManager } from '../../utils';
+import { StateManager } from '../../utils';
 import { InMemoryAuthenticationClient } from '../clients';
 import { InMemorySessionRepository } from '../repositories';
 import { newSignInState, SignInInteractor, SignInState } from './SignInInteractor';
@@ -13,12 +13,12 @@ describe('SignInInteractor', () => {
   let interactor: SignInInteractor;
   let authenticationClient: InMemoryAuthenticationClient;
   let sessionRepository: InMemorySessionRepository;
-  let stateManager: InMemoryStateManager<SignInState>;
+  let stateManager: StateManager<SignInState>;
 
   beforeEach(() => {
     authenticationClient = new InMemoryAuthenticationClient();
     sessionRepository = new InMemorySessionRepository();
-    stateManager = new InMemoryStateManager(newSignInState());
+    stateManager = new StateManager(newSignInState());
     interactor = new SignInInteractor(stateManager, authenticationClient, sessionRepository);
   });
 

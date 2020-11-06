@@ -1,6 +1,14 @@
-export interface StateManager<T> {
-  setState(state: T): void;
-  getState(): T;
+export class StateManager<T> {
+  constructor(private state: T, private stateObserverFn?: (state: T) => void) {}
+
+  setState(state: T): void {
+    this.state = state;
+    this.stateObserverFn?.(state);
+  }
+
+  getState(): T {
+    return this.state;
+  }
 }
 
 export class StateBasedInteractor<T> {
@@ -12,17 +20,5 @@ export class StateBasedInteractor<T> {
 
   protected updateState(update: Partial<T>): void {
     this.stateManager.setState({ ...this.state, ...update });
-  }
-}
-
-export class InMemoryStateManager<T> implements StateManager<T> {
-  constructor(private state: T) {}
-
-  setState(state: T): void {
-    this.state = state;
-  }
-
-  getState(): T {
-    return this.state;
   }
 }

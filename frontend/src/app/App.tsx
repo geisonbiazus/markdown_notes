@@ -4,7 +4,7 @@ import { useAuthenticationContext } from '../authentication';
 import { UnauthenticatedApp } from './UnauthenticatedApp';
 
 export const App: React.FC = () => {
-  const { authenticated } = useAuthenticationContext();
+  const { signInState } = useAuthenticationContext();
 
-  return authenticated ? <AuthenticatedApp /> : <UnauthenticatedApp />;
+  return signInState.authenticated ? <AuthenticatedApp /> : <UnauthenticatedApp />;
 };

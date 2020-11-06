@@ -1,10 +1,10 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { EditNote, NoteList } from '../notes';
+import { EditNote, NoteList, NoteProvider } from '../notes';
 import { Row, Col, AppBar, AppContainer } from '../shared/components';
 
 export const AuthenticatedApp: React.FC = () => (
-  <>
+  <NoteProvider>
     <AppBar title="MarkdownNotes" href="/" />
     <AppContainer>
       <Row>
@@ -21,5 +21,5 @@ export const AuthenticatedApp: React.FC = () => (
         </Col>
       </Row>
     </AppContainer>
-  </>
+  </NoteProvider>
 );
