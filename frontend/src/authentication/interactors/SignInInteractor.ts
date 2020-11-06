@@ -1,4 +1,4 @@
-import { Errors, isEmpty, validateRequired } from '../../utils';
+import { Errors, isEmpty, validateRequired, StateBasedInteractor, StateManager } from '../../utils';
 import { AuthenticationClient, SessionRepository } from '../entities';
 
 export interface SignInState {
@@ -12,17 +12,14 @@ export function newSignInState(initialState: Partial<SignInState> = {}): SignInS
   return { email: '', password: '', errors: {}, authenticated: false, ...initialState };
 }
 
-export interface StateManager<T> {
-  setState(state: T): void;
-  getState(): T;
-}
-
-export class SignInInteractor {
+export class SignInInteractor extends StateBasedInteractor<SignInState> {
   constructor(
-    private stateManager: StateManager<SignInState>,
+    stateManager: StateManager<SignInState>,
     private authenticationClient: AuthenticationClient,
     private sessionRepository: SessionRepository
-  ) {}
+  ) {
+    super(stateManager);
+  }
 
   public setEmail(email: string): void {
     this.updateState({ email });
@@ -65,13 +62,5 @@ export class SignInInteractor {
   private processSucessSignIn(token: string): void {
     this.updateState({ authenticated: true });
     this.sessionRepository.setToken(token);
-  }
-
-  private get state(): SignInState {
-    return this.stateManager.getState();
-  }
-
-  private updateState(update: Partial<SignInState>): void {
-    this.stateManager.setState({ ...this.state, ...update });
   }
 }

@@ -1,6 +1,7 @@
+import { InMemoryStateManager } from '../../utils';
 import { InMemoryAuthenticationClient } from '../clients';
 import { InMemorySessionRepository } from '../repositories';
-import { newSignInState, SignInInteractor, SignInState, StateManager } from './SignInInteractor';
+import { newSignInState, SignInInteractor, SignInState } from './SignInInteractor';
 
 describe('newSignInState', () => {
   it('retuns an empty state', () => {
@@ -56,15 +57,3 @@ describe('SignInInteractor', () => {
     });
   });
 });
-
-export class InMemoryStateManager<T> implements StateManager<T> {
-  constructor(private state: T) {}
-
-  setState(state: T): void {
-    this.state = state;
-  }
-
-  getState(): T {
-    return this.state;
-  }
-}
