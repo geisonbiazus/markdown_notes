@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 export const EditNote: React.FC = () => {
   const { editNoteState, saveNote, getNote, setTitle, setBody } = useNoteContext();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
 
   const { pending: getNotePending, execute: getNoteAction } = useAsyncAction(getNote);
