@@ -17,6 +17,8 @@ function useSigninInteractor(): [SignInState, SignInInteractor] {
   const signInInteractor = useMemo(() => {
     const stateManager = new StateManager<SignInState>(signInState, setSignInState);
     const authenticationclient = new InMemoryAuthenticationClient();
+    authenticationclient.addUser('user@example.com', 'password123', 'token');
+
     const sessionRepository = new InMemorySessionRepository();
     return new SignInInteractor(stateManager, authenticationclient, sessionRepository);
     // eslint-disable-next-line react-hooks/exhaustive-deps
