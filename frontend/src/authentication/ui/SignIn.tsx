@@ -1,8 +1,9 @@
-import React, { ChangeEvent, SyntheticEvent, useCallback } from 'react';
+import React, { ChangeEvent, SyntheticEvent } from 'react';
 import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import {
   CenteredContainer,
+  FormErrorMessage,
   Form,
   FormRow,
   NarrowContainer,
@@ -32,6 +33,7 @@ export const SignIn: React.FC = () => {
       <NarrowContainer>
         <h3>{t('Please sign in')}</h3>
         <Form onSubmit={onSubmit}>
+          <FormErrorMessage feature="sign_in" type={signInState.errors.base} />
           <FormRow>
             <TextField
               label={t('Email')}
@@ -50,7 +52,6 @@ export const SignIn: React.FC = () => {
               errorType={signInState.errors.password}
             />
           </FormRow>
-          {signInState.errors.base}
           <Button variant="primary" type="submit">
             {t('Sign in')}
           </Button>

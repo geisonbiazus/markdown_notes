@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormProps as BootstrapFormProps, Form as BootstrapForm } from 'react-bootstrap';
-import { ErrorMessage } from './ErrorMessage';
+import { FieldErrorMessage } from './ErrorMessage';
 
 export interface FormProps extends BootstrapFormProps {}
 
@@ -46,7 +46,7 @@ export const TextField: React.FC<TextFieldProps> = (props) => {
         isInvalid={!!errorType}
         disabled={disabled}
       />
-      <ErrorMessage field={errorField} type={errorType} />
+      <FieldErrorMessage field={errorField} type={errorType} />
     </>
   );
 };
@@ -77,7 +77,7 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
         isInvalid={!!errorType}
         disabled={disabled}
       />
-      <ErrorMessage field={errorField} type={errorType} />
+      <FieldErrorMessage field={errorField} type={errorType} />
     </>
   );
 };
