@@ -2,7 +2,7 @@ import React, { useContext, useMemo, useState } from 'react';
 import { StateManager } from '../utils';
 import { InMemoryAuthenticationClient } from './clients';
 import { newSignInState, SignInInteractor, SignInState } from './interactors';
-import { InMemorySessionRepository } from './repositories';
+import { LocalStorageSessionRepository } from './repositories';
 
 export interface AuthenticationContextValue {
   signInState: SignInState;
@@ -19,7 +19,7 @@ function useSigninInteractor(): [SignInState, SignInInteractor] {
     const authenticationclient = new InMemoryAuthenticationClient();
     authenticationclient.addUser('user@example.com', 'password123', 'token');
 
-    const sessionRepository = new InMemorySessionRepository();
+    const sessionRepository = new LocalStorageSessionRepository();
     return new SignInInteractor(stateManager, authenticationclient, sessionRepository);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

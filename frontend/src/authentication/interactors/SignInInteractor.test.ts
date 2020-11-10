@@ -56,4 +56,24 @@ describe('SignInInteractor', () => {
       expect(state.authenticated).toEqual(true);
     });
   });
+
+  describe('checkAuthentication', () => {
+    it('sets authenticated to false when token is note set', () => {
+      interactor.checkAuthentication();
+
+      const state = stateManager.getState();
+
+      expect(state.authenticated).toBe(false);
+    });
+
+    it('sets authenticated to true when token is set', () => {
+      sessionRepository.setToken('token');
+
+      interactor.checkAuthentication();
+
+      const state = stateManager.getState();
+
+      expect(state.authenticated).toBe(true);
+    });
+  });
 });

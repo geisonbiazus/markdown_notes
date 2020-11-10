@@ -63,4 +63,10 @@ export class SignInInteractor extends StateBasedInteractor<SignInState> {
     this.updateState({ authenticated: true });
     this.sessionRepository.setToken(token);
   }
+
+  public checkAuthentication() {
+    const token = this.sessionRepository.getToken();
+
+    this.updateState({ authenticated: !!token });
+  }
 }
