@@ -1,4 +1,4 @@
-import React, { ChangeEvent, SyntheticEvent, useEffect } from 'react';
+import React, { ChangeEvent, SyntheticEvent } from 'react';
 import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import {
@@ -14,10 +14,6 @@ import { useAuthenticationContext } from '../AuthenticationContext';
 export const SignIn: React.FC = () => {
   const { t } = useTranslation();
   const { signInState, signInInteractor } = useAuthenticationContext();
-
-  useEffect(() => {
-    signInInteractor.checkAuthentication();
-  }, []);
 
   const setEmail = (event: ChangeEvent<HTMLInputElement>) => {
     signInInteractor.setEmail(event.target.value);

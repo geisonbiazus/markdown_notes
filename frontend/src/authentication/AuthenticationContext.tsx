@@ -20,7 +20,15 @@ function useSigninInteractor(): [SignInState, SignInInteractor] {
     authenticationclient.addUser('user@example.com', 'password123', 'token');
 
     const sessionRepository = new LocalStorageSessionRepository();
-    return new SignInInteractor(stateManager, authenticationclient, sessionRepository);
+    const signInInteractor = new SignInInteractor(
+      stateManager,
+      authenticationclient,
+      sessionRepository
+    );
+
+    signInInteractor.checkAuthentication();
+
+    return signInInteractor;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
