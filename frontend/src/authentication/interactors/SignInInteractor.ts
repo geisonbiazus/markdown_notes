@@ -21,20 +21,20 @@ export class SignInInteractor extends StateBasedInteractor<SignInState> {
     super(stateManager);
   }
 
-  public setEmail(email: string): void {
+  public setEmail = (email: string): void => {
     this.updateState({ email });
-  }
+  };
 
-  public setPassword(password: string): void {
+  public setPassword = (password: string): void => {
     this.updateState({ password });
-  }
+  };
 
-  public async signIn(): Promise<void> {
+  public signIn = async (): Promise<void> => {
     if (!this.validateState()) return;
     await this.performSignIn();
-  }
+  };
 
-  private validateState(): boolean {
+  private validateState = (): boolean => {
     let errors: Errors = {};
 
     errors = validateRequired(errors, this.state, 'email');
@@ -43,9 +43,9 @@ export class SignInInteractor extends StateBasedInteractor<SignInState> {
     this.updateState({ errors });
 
     return isEmpty(errors);
-  }
+  };
 
-  private async performSignIn() {
+  private performSignIn = async () => {
     const token = await this.authenticationClient.signIn(this.state.email, this.state.password);
 
     if (!token) {
@@ -53,20 +53,20 @@ export class SignInInteractor extends StateBasedInteractor<SignInState> {
     } else {
       this.processSucessSignIn(token);
     }
-  }
+  };
 
-  private updateStateToNotFound(): void {
+  private updateStateToNotFound = (): void => {
     this.updateState({ errors: { base: 'not_found' } });
-  }
+  };
 
-  private processSucessSignIn(token: string): void {
+  private processSucessSignIn = (token: string): void => {
     this.updateState({ authenticated: true });
     this.sessionRepository.setToken(token);
-  }
+  };
 
-  public checkAuthentication() {
+  public checkAuthentication = (): void => {
     const token = this.sessionRepository.getToken();
 
     this.updateState({ authenticated: !!token });
-  }
+  };
 }

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, SyntheticEvent } from 'react';
+import React from 'react';
 import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import {
@@ -15,30 +15,17 @@ export const SignIn: React.FC = () => {
   const { t } = useTranslation();
   const { signInState, signInInteractor } = useAuthenticationContext();
 
-  const setEmail = (event: ChangeEvent<HTMLInputElement>) => {
-    signInInteractor.setEmail(event.target.value);
-  };
-
-  const setPassword = (event: ChangeEvent<HTMLInputElement>) => {
-    signInInteractor.setPassword(event.target.value);
-  };
-
-  const onSubmit = async (event: SyntheticEvent) => {
-    event.preventDefault();
-    await signInInteractor.signIn();
-  };
-
   return (
     <CenteredContainer>
       <NarrowContainer>
         <h3>{t('Please sign in')}</h3>
-        <Form onSubmit={onSubmit}>
+        <Form onSubmit={signInInteractor.signIn}>
           <FormErrorMessage feature="sign_in" type={signInState.errors.base} />
           <FormRow>
             <TextField
               label={t('Email')}
               type="email"
-              onChange={setEmail}
+              onChange={signInInteractor.setEmail}
               errorField="email"
               errorType={signInState.errors.email}
             />
@@ -47,7 +34,7 @@ export const SignIn: React.FC = () => {
             <TextField
               label={t('Password')}
               type="password"
-              onChange={setPassword}
+              onChange={signInInteractor.setPassword}
               errorField="password"
               errorType={signInState.errors.password}
             />
