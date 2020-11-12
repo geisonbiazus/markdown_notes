@@ -11,4 +11,8 @@ export class LocalStorageSessionRepository implements SessionRepository {
   public getToken(): Token | null {
     return localStorage.getItem(TOKEN_KEY);
   }
+
+  public removeToken(): void {
+    localStorage.removeItem(TOKEN_KEY);
+  }
 }

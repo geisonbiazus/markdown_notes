@@ -76,4 +76,28 @@ describe('SignInInteractor', () => {
       expect(state.authenticated).toBe(true);
     });
   });
+
+  describe('signOut', () => {
+    beforeEach(() => {
+      stateManager.setState({
+        ...stateManager.getState(),
+        authenticated: true,
+        email: 'user@email.com',
+        password: 'password',
+      });
+    });
+
+    it('cleans the state', () => {
+      interactor.signOut();
+
+      const state = stateManager.getState();
+      expect(state).toEqual(newSignInState());
+    });
+
+    it('cleans the token from the session', () => {
+      sessionRepository.setToken('token');
+      interactor.signOut();
+      expect(sessionRepository.getToken()).toBeNull();
+    });
+  });
 });

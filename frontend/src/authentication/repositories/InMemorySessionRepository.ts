@@ -10,4 +10,8 @@ export class InMemorySessionRepository implements SessionRepository {
   public getToken(): Token | null {
     return this.token || null;
   }
+
+  public removeToken(): void {
+    this.token = undefined;
+  }
 }

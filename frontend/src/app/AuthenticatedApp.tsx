@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Switch, Route, Redirect, Link } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
+import { useAuthenticationContext } from '../authentication';
 import { EditNote, NoteList, NoteProvider } from '../notes';
 import { Row, Col, AppBar, AppContainer, Button } from '../shared/components';
 
@@ -30,12 +31,13 @@ export const AuthenticatedApp: React.FC = () => (
 
 export const AuthenticatedAppBar: React.FC = () => {
   const { t } = useTranslation();
+  const { signInInteractor } = useAuthenticationContext();
 
-  return (
-    <AppBar
-      title="MarkdownNotes"
-      href="/"
-      rightComponent={<Button variant="link">{t('Sign out')}</Button>}
-    />
+  const signOutButton = (
+    <Button variant="link" onClick={signInInteractor.signOut}>
+      {t('Sign out')}
+    </Button>
   );
+
+  return <AppBar title="MarkdownNotes" href="/" rightComponent={signOutButton} />;
 };

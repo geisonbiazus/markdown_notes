@@ -7,4 +7,5 @@ export interface AuthenticationClient {
 export interface SessionRepository {
   setToken(token: Token): void;
   getToken(): string | null;
+  removeToken(): void;
 }
