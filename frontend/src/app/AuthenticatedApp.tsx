@@ -1,11 +1,12 @@
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Switch, Route, Redirect, Link } from 'react-router-dom';
 import { EditNote, NoteList, NoteProvider } from '../notes';
-import { Row, Col, AppBar, AppContainer } from '../shared/components';
+import { Row, Col, AppBar, AppContainer, Button } from '../shared/components';
 
 export const AuthenticatedApp: React.FC = () => (
   <NoteProvider>
-    <AppBar title="MarkdownNotes" href="/" />
+    <AuthenticatedAppBar />
     <AppContainer>
       <Row>
         <Col xs={2}>
@@ -26,3 +27,15 @@ export const AuthenticatedApp: React.FC = () => (
     </AppContainer>
   </NoteProvider>
 );
+
+export const AuthenticatedAppBar: React.FC = () => {
+  const { t } = useTranslation();
+
+  return (
+    <AppBar
+      title="MarkdownNotes"
+      href="/"
+      rightComponent={<Button variant="link">{t('Sign out')}</Button>}
+    />
+  );
+};
