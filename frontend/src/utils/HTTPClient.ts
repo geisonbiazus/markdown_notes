@@ -53,3 +53,9 @@ export class HTTPClient {
 }
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+export const handleError = <T>(response: HTTPResponse<T>) => {
+  throw new Error(
+    `Something went wrong. Status: ${response.status}. Body: ${JSON.stringify(response.data)}`
+  );
+};
