@@ -2,17 +2,18 @@ import nock from 'nock';
 
 import { APINoteClient } from './APINoteClient';
 import { Note } from '../entities';
-import { uuid, HTTPClient } from '../../utils';
+import { uuid, AuthenticatedHTTPClient } from '../../utils';
 
-HTTPClient.useNodeAdapter();
+AuthenticatedHTTPClient.useNodeAdapter();
 
 describe('APINoteClient', () => {
   let client: APINoteClient;
+  const token = 'token';
   const baseURL = 'http://localhost:4000';
-  const nockScope = nock(baseURL);
+  const nockScope = nock(baseURL, { reqheaders: { Autorization: `Bearer ${token}` } });
 
   beforeEach(() => {
-    client = new APINoteClient(new HTTPClient(baseURL));
+    client = new APINoteClient(new AuthenticatedHTTPClient(baseURL, token));
     nock.cleanAll();
   });
 
