@@ -5,11 +5,12 @@ export interface SignInState {
   email: string;
   password: string;
   errors: Errors;
+  token: string;
   authenticated: boolean;
 }
 
 export function newSignInState(initialState: Partial<SignInState> = {}): SignInState {
-  return { email: '', password: '', errors: {}, authenticated: false, ...initialState };
+  return { email: '', password: '', errors: {}, token: '', authenticated: false, ...initialState };
 }
 
 export class SignInInteractor extends StateBasedInteractor<SignInState> {
@@ -60,14 +61,14 @@ export class SignInInteractor extends StateBasedInteractor<SignInState> {
   };
 
   private processSucessSignIn = (token: string): void => {
-    this.updateState({ authenticated: true });
+    this.updateState({ authenticated: true, token });
     this.sessionRepository.setToken(token);
   };
 
   public checkAuthentication = (): void => {
     const token = this.sessionRepository.getToken();
 
-    this.updateState({ authenticated: !!token });
+    this.updateState({ authenticated: !!token, token: token || '' });
   };
 
   public signOut = () => {

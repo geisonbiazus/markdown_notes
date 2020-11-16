@@ -5,7 +5,13 @@ import { newSignInState, SignInInteractor, SignInState } from './SignInInteracto
 
 describe('newSignInState', () => {
   it('retuns an empty state', () => {
-    expect(newSignInState()).toEqual({ email: '', password: '', errors: {}, authenticated: false });
+    expect(newSignInState()).toEqual({
+      email: '',
+      password: '',
+      errors: {},
+      token: '',
+      authenticated: false,
+    });
   });
 });
 
@@ -54,6 +60,7 @@ describe('SignInInteractor', () => {
 
       expect(sessionRepository.getToken()).toEqual(token);
       expect(state.authenticated).toEqual(true);
+      expect(state.token).toEqual(token);
     });
   });
 
@@ -64,16 +71,19 @@ describe('SignInInteractor', () => {
       const state = stateManager.getState();
 
       expect(state.authenticated).toBe(false);
+      expect(state.token).toEqual('');
     });
 
     it('sets authenticated to true when token is set', () => {
-      sessionRepository.setToken('token');
+      const token = 'token';
+      sessionRepository.setToken(token);
 
       interactor.checkAuthentication();
 
       const state = stateManager.getState();
 
       expect(state.authenticated).toBe(true);
+      expect(state.token).toEqual(token);
     });
   });
 

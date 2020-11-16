@@ -10,7 +10,7 @@ describe('APINoteClient', () => {
   let client: APINoteClient;
   const token = 'token';
   const baseURL = 'http://localhost:4000';
-  const nockScope = nock(baseURL, { reqheaders: { Autorization: `Bearer ${token}` } });
+  const nockScope = nock(baseURL, { reqheaders: { Authorization: `Bearer ${token}` } });
 
   beforeEach(() => {
     client = new APINoteClient(new AuthenticatedHTTPClient(baseURL, token));

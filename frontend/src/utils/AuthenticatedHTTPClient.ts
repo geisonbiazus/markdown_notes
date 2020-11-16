@@ -42,6 +42,6 @@ export class AuthenticatedHTTPClient extends HTTPClient {
   }
 
   private putAuthorization(headers: Record<string, string>): Record<string, string> {
-    return { ...headers, Autorization: `Bearer ${this.token}` };
+    return { ...headers, Authorization: `Bearer ${this.token}` };
   }
 }
