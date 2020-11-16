@@ -1,5 +1,5 @@
 import { NoteClient, Note, SaveNoteResponse } from '../entities';
-import { handleError, HTTPClient, HTTPResponse } from '../../utils';
+import { handleError, HTTPClient } from '../../utils';
 
 export class APINoteClient implements NoteClient {
   private httpClient: HTTPClient;

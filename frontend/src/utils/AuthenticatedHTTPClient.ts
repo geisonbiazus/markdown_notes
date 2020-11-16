@@ -7,7 +7,7 @@ export class AuthenticatedHTTPClient extends HTTPClient {
 
   public async post<T>(
     url: string,
-    data: any,
+    data?: any,
     headers: Record<string, string> = {}
   ): Promise<HTTPResponse<T>> {
     return super.post(url, data, this.putAuthorization(headers));
@@ -15,7 +15,7 @@ export class AuthenticatedHTTPClient extends HTTPClient {
 
   public async put<T>(
     url: string,
-    data: any,
+    data?: any,
     headers: Record<string, string> = {}
   ): Promise<HTTPResponse<T>> {
     return super.put(url, data, this.putAuthorization(headers));
@@ -23,7 +23,7 @@ export class AuthenticatedHTTPClient extends HTTPClient {
 
   public async patch<T>(
     url: string,
-    data: any,
+    data?: any,
     headers: Record<string, string> = {}
   ): Promise<HTTPResponse<T>> {
     return super.patch(url, data, this.putAuthorization(headers));
@@ -35,9 +35,10 @@ export class AuthenticatedHTTPClient extends HTTPClient {
 
   public async delete<T>(
     url: string,
+    data?: any,
     headers: Record<string, string> = {}
   ): Promise<HTTPResponse<T>> {
-    return super.delete(url, this.putAuthorization(headers));
+    return super.delete(url, data, this.putAuthorization(headers));
   }
 
   private putAuthorization(headers: Record<string, string>): Record<string, string> {

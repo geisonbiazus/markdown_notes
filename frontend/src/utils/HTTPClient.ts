@@ -14,7 +14,7 @@ export class HTTPClient {
 
   public async post<T>(
     url: string,
-    data: any,
+    data?: any,
     headers?: Record<string, string>
   ): Promise<HTTPResponse<T>> {
     return this.request({ method: 'POST', url, data, headers });
@@ -22,7 +22,7 @@ export class HTTPClient {
 
   public async put<T>(
     url: string,
-    data: any,
+    data?: any,
     headers?: Record<string, string>
   ): Promise<HTTPResponse<T>> {
     return this.request({ method: 'PUT', url, data, headers });
@@ -30,7 +30,7 @@ export class HTTPClient {
 
   public async patch<T>(
     url: string,
-    data: any,
+    data?: any,
     headers?: Record<string, string>
   ): Promise<HTTPResponse<T>> {
     return this.request({ method: 'PATCH', url, data, headers });
@@ -40,8 +40,12 @@ export class HTTPClient {
     return this.request({ method: 'GET', url, headers });
   }
 
-  public async delete<T>(url: string, headers?: Record<string, string>): Promise<HTTPResponse<T>> {
-    return this.request({ method: 'DELETE', url, headers });
+  public async delete<T>(
+    url: string,
+    data?: any,
+    headers?: Record<string, string>
+  ): Promise<HTTPResponse<T>> {
+    return this.request({ method: 'DELETE', url, data, headers });
   }
 
   public async request<T>(options: {
