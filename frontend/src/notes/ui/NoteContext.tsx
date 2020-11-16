@@ -1,40 +1,53 @@
-import React, { useContext } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { useObserver } from 'mobx-react-lite';
-import { EditNoteInteractor, ListNoteInteractor, RemoveNoteInteractor } from '../interactors';
+import {
+  EditNoteInteractor,
+  EditNoteState,
+  ListNoteInteractor,
+  ListNoteState,
+  RemoveNoteInteractor,
+  RemoveNoteState,
+} from '../interactors';
 import { NoteStore } from '../stores';
-import { InMemoryNoteClient } from '../clients';
-import { uuid } from '../../utils';
-
-// const appConfig = getAppConfig();
-// const httpClient = new HTTPClient(appConfig.apiURL);
-// const noteClient = new APINoteClient(httpClient);
-const noteClient = new InMemoryNoteClient();
-noteClient.saveNote({ id: uuid(), title: 'Title 1', body: 'Body 1' });
-noteClient.saveNote({ id: uuid(), title: 'Title 2', body: 'Body 2' });
-noteClient.saveNote({ id: uuid(), title: 'Title 3', body: 'Body 3' });
-
-const listNoteInteractor = new ListNoteInteractor(noteClient);
-const editNoteInteractor = new EditNoteInteractor(noteClient);
-const removeNoteInteractor = new RemoveNoteInteractor(noteClient);
-const noteStore = new NoteStore(listNoteInteractor, editNoteInteractor, removeNoteInteractor);
+import { APINoteClient } from '../clients';
+import { AuthenticatedHTTPClient } from '../../utils';
+import { Note } from '..';
+import { getAppConfig } from '../../AppConfig';
 
 export interface NoteContextValue {
-  listNoteState: typeof noteStore.listNoteState;
-  editNoteState: typeof noteStore.editNoteState;
-  removeNoteState: typeof noteStore.removeNoteState;
-  getNotes: typeof noteStore.getNotes;
-  saveNote: typeof noteStore.saveNote;
-  getNote: typeof noteStore.getNote;
-  setTitle: typeof noteStore.setTitle;
-  setBody: typeof noteStore.setBody;
-  requestNoteRemoval: typeof noteStore.requestNoteRemoval;
-  cancelNoteRemoval: typeof noteStore.cancelNoteRemoval;
-  confirmNoteRemoval: typeof noteStore.confirmNoteRemoval;
+  listNoteState: ListNoteState;
+  editNoteState: EditNoteState;
+  removeNoteState: RemoveNoteState;
+  getNotes: () => Promise<void>;
+  saveNote: () => Promise<void>;
+  getNote: (id: string) => Promise<void>;
+  setTitle: (title: string) => Promise<void>;
+  setBody: (body: string) => Promise<void>;
+  requestNoteRemoval: (note: Note) => void;
+  cancelNoteRemoval: () => void;
+  confirmNoteRemoval: () => Promise<void>;
 }
 
-const NoteContext = React.createContext<NoteContextValue>(noteStore);
+const NoteContext = React.createContext<NoteContextValue>(null!);
+
+function useNoteStore(): NoteStore {
+  return useMemo(() => {
+    const appConfig = getAppConfig();
+    const httpClient = new AuthenticatedHTTPClient(appConfig.apiURL, 'token');
+    const noteClient = new APINoteClient(httpClient);
+
+    const listNoteInteractor = new ListNoteInteractor(noteClient);
+    const editNoteInteractor = new EditNoteInteractor(noteClient);
+    const removeNoteInteractor = new RemoveNoteInteractor(noteClient);
+    const noteStore = new NoteStore(listNoteInteractor, editNoteInteractor, removeNoteInteractor);
+
+    return noteStore;
+  }, []);
+}
 
 export const NoteProvider: React.FC = ({ children }) => {
+  const noteStore = useNoteStore();
+
   return useObserver(() => {
     const {
       listNoteState,

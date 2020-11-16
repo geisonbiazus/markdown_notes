@@ -1,6 +1,7 @@
 import React, { useContext, useMemo, useState } from 'react';
-import { StateManager } from '../utils';
-import { InMemoryAuthenticationClient } from './clients';
+import { getAppConfig } from '../AppConfig';
+import { HTTPClient, StateManager } from '../utils';
+import { APIAuthenticationClient } from './clients';
 import { newSignInState, SignInInteractor, SignInState } from './interactors';
 import { LocalStorageSessionRepository } from './repositories';
 
@@ -16,9 +17,9 @@ function useSigninInteractor(): [SignInState, SignInInteractor] {
 
   const signInInteractor = useMemo(() => {
     const stateManager = new StateManager<SignInState>(signInState, setSignInState);
-    const authenticationclient = new InMemoryAuthenticationClient();
-    authenticationclient.addUser('user@example.com', 'password123', 'token');
-
+    const appConfig = getAppConfig();
+    const httpClient = new HTTPClient(appConfig.apiURL);
+    const authenticationclient = new APIAuthenticationClient(httpClient);
     const sessionRepository = new LocalStorageSessionRepository();
     const signInInteractor = new SignInInteractor(
       stateManager,
