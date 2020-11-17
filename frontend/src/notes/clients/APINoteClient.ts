@@ -16,6 +16,7 @@ export class APINoteClient implements NoteClient {
     }
 
     if (response.data.status === 'error' && response.data.type === 'not_found') return null;
+    if (response.status === 401) return null;
 
     throw handleError(response);
   }
@@ -24,6 +25,8 @@ export class APINoteClient implements NoteClient {
     const response = await this.httpClient.get<GetNotesResponse>('/notes');
 
     if (response.status === 200 && response.data.status === 'success') return response.data.notes;
+    if (response.status === 401) return [];
+
     throw handleError(response);
   }
 
@@ -39,6 +42,8 @@ export class APINoteClient implements NoteClient {
   async removeNote(id: string): Promise<void> {
     const response = await this.httpClient.delete<RemoveNoteResponse>(`/notes/${id}`);
     if (response.status === 200 && response.data.status === 'success') return;
+    if (response.status === 401) return;
+
     throw handleError(response);
   }
 }

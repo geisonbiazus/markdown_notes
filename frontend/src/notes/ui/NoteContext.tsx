@@ -32,11 +32,15 @@ export interface NoteContextValue {
 const NoteContext = React.createContext<NoteContextValue>(null!);
 
 function useNoteStore(): NoteStore {
-  const { signInState } = useAuthenticationContext();
+  const { signInState, signInInteractor } = useAuthenticationContext();
 
   return useMemo(() => {
     const appConfig = getAppConfig();
-    const httpClient = new AuthenticatedHTTPClient(appConfig.apiURL, signInState.token);
+    const httpClient = new AuthenticatedHTTPClient(
+      appConfig.apiURL,
+      signInState.token,
+      signInInteractor.signOut
+    );
     const noteClient = new APINoteClient(httpClient);
 
     const listNoteInteractor = new ListNoteInteractor(noteClient);
@@ -45,7 +49,7 @@ function useNoteStore(): NoteStore {
     const noteStore = new NoteStore(listNoteInteractor, editNoteInteractor, removeNoteInteractor);
 
     return noteStore;
-  }, [signInState.token]);
+  }, [signInState.token, signInInteractor.signOut]);
 }
 
 export const NoteProvider: React.FC = ({ children }) => {

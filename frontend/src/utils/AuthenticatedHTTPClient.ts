@@ -42,7 +42,7 @@ export class AuthenticatedHTTPClient extends HTTPClient {
   }
 
   private handleUnauthorized<T>(response: HTTPResponse<T>): HTTPResponse<T> {
-    if (response.status == 401) this.onUnauthorized?.();
+    if (response.status === 401) this.onUnauthorized?.();
     return response;
   }
 

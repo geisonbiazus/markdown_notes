@@ -17,7 +17,7 @@ export interface NoteClient {
 }
 
 export interface SaveNoteResponse {
-  status: 'success' | 'validation_error';
+  status: 'success' | 'validation_error' | 'unauthorized';
   note?: Note;
   errors?: ValidationError[];
 }
