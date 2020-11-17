@@ -1,7 +1,7 @@
 import { HTTPClient, HTTPResponse } from './HTTPClient';
 
 export class AuthenticatedHTTPClient extends HTTPClient {
-  constructor(baseURL: string, private token: string) {
+  constructor(baseURL: string, private token: string, private onUnauthorized: () => void) {
     super(baseURL);
   }
 
@@ -10,7 +10,7 @@ export class AuthenticatedHTTPClient extends HTTPClient {
     data?: any,
     headers: Record<string, string> = {}
   ): Promise<HTTPResponse<T>> {
-    return super.post(url, data, this.putAuthorization(headers));
+    return this.handleUnauthorized(await super.post(url, data, this.putAuthorization(headers)));
   }
 
   public async put<T>(
@@ -18,7 +18,7 @@ export class AuthenticatedHTTPClient extends HTTPClient {
     data?: any,
     headers: Record<string, string> = {}
   ): Promise<HTTPResponse<T>> {
-    return super.put(url, data, this.putAuthorization(headers));
+    return this.handleUnauthorized(await super.put(url, data, this.putAuthorization(headers)));
   }
 
   public async patch<T>(
@@ -26,11 +26,11 @@ export class AuthenticatedHTTPClient extends HTTPClient {
     data?: any,
     headers: Record<string, string> = {}
   ): Promise<HTTPResponse<T>> {
-    return super.patch(url, data, this.putAuthorization(headers));
+    return this.handleUnauthorized(await super.patch(url, data, this.putAuthorization(headers)));
   }
 
   public async get<T>(url: string, headers: Record<string, string> = {}): Promise<HTTPResponse<T>> {
-    return super.get(url, this.putAuthorization(headers));
+    return this.handleUnauthorized(await super.get<T>(url, this.putAuthorization(headers)));
   }
 
   public async delete<T>(
@@ -38,7 +38,12 @@ export class AuthenticatedHTTPClient extends HTTPClient {
     data?: any,
     headers: Record<string, string> = {}
   ): Promise<HTTPResponse<T>> {
-    return super.delete(url, data, this.putAuthorization(headers));
+    return this.handleUnauthorized(await super.delete(url, data, this.putAuthorization(headers)));
+  }
+
+  private handleUnauthorized<T>(response: HTTPResponse<T>): HTTPResponse<T> {
+    if (response.status == 401) this.onUnauthorized?.();
+    return response;
   }
 
   private putAuthorization(headers: Record<string, string>): Record<string, string> {
