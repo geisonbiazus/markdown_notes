@@ -1,5 +1,7 @@
-import { Request, Response, response } from 'express';
-import { NoteInteractor, SaveNoteRequest, InteractorResponse, Note } from '../../notes';
+import { Request, Response } from 'express';
+import { NoteInteractor, SaveNoteRequest, Note } from '../../notes';
+import { InteractorResponse } from '../../utils/interactor';
+import { resolveHttpStatus } from '../helpers';
 
 export class NoteController {
   private noteInteractor: NoteInteractor;
@@ -53,14 +55,3 @@ export class NoteController {
     res.json({ status, type });
   };
 }
-
-const resolveHttpStatus = <T>(response: InteractorResponse<T>): number => {
-  const { status, type } = response;
-
-  return (
-    (status === 'success' && 200) ||
-    (status === 'error' && type === 'not_found' && 404) ||
-    (status === 'validation_error' && 422) ||
-    500
-  );
-};

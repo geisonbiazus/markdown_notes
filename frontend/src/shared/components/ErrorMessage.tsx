@@ -1,13 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Form } from 'react-bootstrap';
+import { Alert, Form } from 'react-bootstrap';
 
-export interface ErrorMessageProps {
+export interface FieldErrorMessageProps {
   field?: string;
   type?: string;
 }
 
-export const ErrorMessage: React.FC<ErrorMessageProps> = ({ field, type }) => {
+export const FieldErrorMessage: React.FC<FieldErrorMessageProps> = ({ field, type }) => {
   const { t } = useTranslation();
 
   if (!type || !field) return null;
@@ -17,4 +17,17 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({ field, type }) => {
       {t(`validation.${type}`, { field: t(field) })}
     </Form.Control.Feedback>
   );
+};
+
+export interface FormErrorMessageProps {
+  feature?: string;
+  type?: string;
+}
+
+export const FormErrorMessage: React.FC<FormErrorMessageProps> = ({ feature, type }) => {
+  const { t } = useTranslation();
+
+  if (!type || !feature) return null;
+
+  return <Alert variant="danger">{t(`error.${feature}.${type}`)}</Alert>;
 };

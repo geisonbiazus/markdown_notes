@@ -1,10 +1,10 @@
 import 'reflect-metadata';
 import { Server } from './api';
-import { TypeORMRepository } from './notes';
-import { createConnection, Connection } from 'typeorm';
+import { createConnection } from 'typeorm';
+import { AppContext } from './AppContext';
 
-createConnection().then((connection: Connection) => {
-  const repository = new TypeORMRepository(connection.manager);
+createConnection().then(() => {
+  const context = new AppContext();
 
-  new Server(repository).start();
+  new Server(context).start();
 });

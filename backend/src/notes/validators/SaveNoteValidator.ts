@@ -1,4 +1,5 @@
-import { ValidationError, SaveNoteRequest } from '../interactors';
+import { ValidationError } from '../../utils/interactor';
+import { SaveNoteRequest } from '../interactors';
 
 export class SaveNoteValidator {
   public id: string;

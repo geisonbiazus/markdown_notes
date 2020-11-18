@@ -2,15 +2,23 @@ import { Express } from 'express';
 import request from 'supertest';
 import { Server } from '../index';
 import { uuid, json } from '../../utils';
-import { InMemoryRepository, Note } from '../../notes';
+import { InMemoryNoteRepository, Note, NoteRepository } from '../../notes';
+import { AppContext } from '../../AppContext';
+import { authenticate, createUser } from '../helpers';
 
 describe('NoteController', () => {
+  let context: AppContext;
   let server: Express;
-  let repo: InMemoryRepository;
+  let repo: NoteRepository;
+  let token: string;
 
-  beforeEach(() => {
-    repo = new InMemoryRepository();
-    server = new Server(repo).server;
+  beforeEach(async () => {
+    context = new AppContext();
+    repo = context.notes.noteRepository;
+    server = new Server(context).server;
+
+    const user = await createUser(context);
+    token = authenticate(context, user);
   });
 
   describe('PUT /notes/:id', () => {
@@ -19,6 +27,7 @@ describe('NoteController', () => {
 
       request(server)
         .put(`/notes/${noteId}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
         .expect(
           422,
@@ -32,6 +41,7 @@ describe('NoteController', () => {
 
       request(server)
         .put(`/notes/${noteId}`)
+        .set('Authorization', `Bearer ${token}`)
         .send({ title: 'title', body: 'body' })
         .expect('Content-Type', /application\/json/)
         .expect(
@@ -48,6 +58,7 @@ describe('NoteController', () => {
 
       request(server)
         .get(`/notes/${noteId}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
         .expect(404, { status: 'error', type: 'not_found' }, done);
     });
@@ -58,6 +69,7 @@ describe('NoteController', () => {
 
       request(server)
         .get(`/notes/${noteId}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
         .expect(
           200,
@@ -71,6 +83,7 @@ describe('NoteController', () => {
     it('returns  an empty list when there is no note', (done) => {
       request(server)
         .get(`/notes/`)
+        .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
         .expect(200, { status: 'success', notes: [] }, done);
     });
@@ -84,6 +97,7 @@ describe('NoteController', () => {
 
       request(server)
         .get(`/notes`)
+        .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
         .expect(200, { status: 'success', notes: json([note1, note2]) }, done);
     });
@@ -93,6 +107,7 @@ describe('NoteController', () => {
     it('returns not found error when note does not exist', (done) => {
       request(server)
         .delete(`/notes/${uuid()}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
         .expect(404, { status: 'error', type: 'not_found' }, done);
     });
@@ -103,6 +118,7 @@ describe('NoteController', () => {
 
       request(server)
         .delete(`/notes/${id}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
         .expect(200, { status: 'success' }, done);
     });

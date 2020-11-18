@@ -1,17 +1,19 @@
 import express, { Express } from 'express';
 import { Router } from './router';
-import { NoteInteractor, InMemoryRepository, Repository } from '../notes';
-import { NoteController } from './controllers';
 import cors from 'cors';
+import { AppContext } from '../AppContext';
+import { APIContext } from './APIContext';
 
 export class Server {
   public server: Express;
-  public port = process.env.PORT || 4000;
+  public port: number;
 
-  constructor(repo: Repository) {
-    const interactor = new NoteInteractor(repo);
-    const noteController = new NoteController(interactor);
-    const router = new Router(noteController);
+  constructor(appContext: AppContext) {
+    const apiContext = new APIContext(appContext);
+
+    const router = new Router(apiContext);
+
+    this.port = appContext.config.port;
 
     this.server = express();
     this.server.use(cors());

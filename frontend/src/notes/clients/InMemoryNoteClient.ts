@@ -1,4 +1,4 @@
-import { Note, NoteClient, SaveNoteResponse } from '../interactors';
+import { Note, NoteClient, SaveNoteResponse } from '../entities';
 
 export class InMemoryNoteClient implements NoteClient {
   private notes: Record<string, Note> = {};

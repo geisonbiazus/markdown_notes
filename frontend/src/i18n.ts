@@ -6,8 +6,9 @@ import { initReactI18next } from 'react-i18next';
 const resources = {
   en: {
     translation: {
-      'validation.required': '{{field}} is required.',
       title: 'Title',
+      'validation.required': '{{field}} is required.',
+      'error.sign_in.not_found': 'Invalid email or password.',
     },
   },
 };

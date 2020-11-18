@@ -1,26 +1,29 @@
 import express from 'express';
-import { NoteController } from './controllers';
+import { APIContext } from './APIContext';
 
 export class Router {
   public router: express.Router;
+  public context: APIContext;
 
-  private noteController: NoteController;
-
-  constructor(noteController: NoteController) {
+  constructor(apiContext: APIContext) {
+    this.context = apiContext;
     this.router = express.Router();
     this.router.use(express.json());
-    this.noteController = noteController;
     this.assignRoutes();
   }
 
   private assignRoutes(): void {
+    const auth = this.context.authenticationMidleware.authenticate;
+
     this.router.get('/', (_req, res) => {
-      res.send('Hello World!');
+      res.send('MarkdownNotes API');
     });
 
-    this.router.get('/notes', this.noteController.getNotes);
-    this.router.get('/notes/:id', this.noteController.getNote);
-    this.router.put('/notes/:id', this.noteController.saveNote);
-    this.router.delete('/notes/:id', this.noteController.removeNote);
+    this.router.post('/sign_in', this.context.authenticationController.signIn);
+
+    this.router.get('/notes', auth(this.context.noteController.getNotes));
+    this.router.get('/notes/:id', auth(this.context.noteController.getNote));
+    this.router.put('/notes/:id', auth(this.context.noteController.saveNote));
+    this.router.delete('/notes/:id', auth(this.context.noteController.removeNote));
   }
 }

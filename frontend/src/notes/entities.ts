@@ -4,9 +4,6 @@ export interface Note {
   body: string;
 }
 
-export type ErrorType = 'required';
-export type Errors = Record<string, ErrorType>;
-
 export interface ValidationError {
   field: string;
   type: string;
@@ -20,7 +17,7 @@ export interface NoteClient {
 }
 
 export interface SaveNoteResponse {
-  status: 'success' | 'validation_error';
+  status: 'success' | 'validation_error' | 'unauthorized';
   note?: Note;
   errors?: ValidationError[];
 }

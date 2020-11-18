@@ -1,11 +1,22 @@
-import React from 'react';
-import { FormProps as BootstrapFormProps, Form as BootstrapForm } from 'react-bootstrap';
-import { ErrorMessage } from './ErrorMessage';
+import React, { SyntheticEvent } from 'react';
+import { Form as BootstrapForm } from 'react-bootstrap';
+import { FieldErrorMessage } from './ErrorMessage';
 
-export interface FormProps extends BootstrapFormProps {}
+export interface FormProps {
+  onSubmit: () => void;
+}
 
-export const Form: React.FC<FormProps> = (props) => {
-  return <BootstrapForm noValidate {...props} />;
+export const Form: React.FC<FormProps> = ({ onSubmit, children }) => {
+  const onSubmitWrapper = (event: SyntheticEvent) => {
+    event.preventDefault();
+    onSubmit?.();
+  };
+
+  return (
+    <BootstrapForm noValidate onSubmit={onSubmitWrapper}>
+      {children}
+    </BootstrapForm>
+  );
 };
 
 export const FormRow: React.FC = (props) => {
@@ -16,27 +27,41 @@ export interface TextFieldProps {
   label?: string;
   placeholder?: string;
   value?: string | number;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (value: string) => void;
   errorField?: string;
   errorType?: string;
   disabled?: boolean;
+  type?: 'text' | 'password' | 'email';
 }
 
 export const TextField: React.FC<TextFieldProps> = (props) => {
-  const { label, placeholder, value, onChange, errorField, errorType, disabled } = props;
+  const {
+    label,
+    placeholder,
+    value,
+    onChange,
+    errorField,
+    errorType,
+    disabled,
+    type = 'text',
+  } = props;
+
+  const onChangeWrapper = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onChange?.(event.target.value);
+  };
 
   return (
     <>
       <BootstrapForm.Label>{label}</BootstrapForm.Label>
       <BootstrapForm.Control
-        type="text"
+        type={type}
         placeholder={placeholder}
         value={value}
-        onChange={onChange}
+        onChange={onChangeWrapper}
         isInvalid={!!errorType}
         disabled={disabled}
       />
-      <ErrorMessage field={errorField} type={errorType} />
+      <FieldErrorMessage field={errorField} type={errorType} />
     </>
   );
 };
@@ -45,7 +70,7 @@ export interface TextAreaProps {
   label?: string;
   placeholder?: string;
   value?: string | number;
-  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onChange?: (value: string) => void;
   rows?: number;
   errorField?: string;
   errorType?: string;
@@ -55,6 +80,10 @@ export interface TextAreaProps {
 export const TextArea: React.FC<TextAreaProps> = (props) => {
   const { label, placeholder, value, onChange, rows, errorField, errorType, disabled } = props;
 
+  const onChangeWrapper = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onChange?.(event.target.value);
+  };
+
   return (
     <>
       <BootstrapForm.Label>{label}</BootstrapForm.Label>
@@ -63,11 +92,11 @@ export const TextArea: React.FC<TextAreaProps> = (props) => {
         placeholder={placeholder}
         value={value}
         rows={rows}
-        onChange={onChange}
+        onChange={onChangeWrapper}
         isInvalid={!!errorType}
         disabled={disabled}
       />
-      <ErrorMessage field={errorField} type={errorType} />
+      <FieldErrorMessage field={errorField} type={errorType} />
     </>
   );
 };

@@ -12,33 +12,51 @@ export class HTTPClient {
     this.axios = axios.create({ baseURL: baseURL });
   }
 
-  public async post<T>(url: string, data: any): Promise<HTTPResponse<T>> {
-    return this.request('POST', url, data);
-  }
-
-  public async put<T>(url: string, data: any): Promise<HTTPResponse<T>> {
-    return this.request('PUT', url, data);
-  }
-
-  public async patch<T>(url: string, data: any): Promise<HTTPResponse<T>> {
-    return this.request('PATCH', url, data);
-  }
-
-  public async get<T>(url: string): Promise<HTTPResponse<T>> {
-    return this.request('GET', url);
-  }
-
-  public async delete<T>(url: string): Promise<HTTPResponse<T>> {
-    return this.request('DELETE', url);
-  }
-
-  public async request<T>(
-    method: HTTPMethod,
+  public async post<T>(
     url: string,
-    data: any = undefined
+    data?: any,
+    headers?: Record<string, string>
   ): Promise<HTTPResponse<T>> {
+    return this.request({ method: 'POST', url, data, headers });
+  }
+
+  public async put<T>(
+    url: string,
+    data?: any,
+    headers?: Record<string, string>
+  ): Promise<HTTPResponse<T>> {
+    return this.request({ method: 'PUT', url, data, headers });
+  }
+
+  public async patch<T>(
+    url: string,
+    data?: any,
+    headers?: Record<string, string>
+  ): Promise<HTTPResponse<T>> {
+    return this.request({ method: 'PATCH', url, data, headers });
+  }
+
+  public async get<T>(url: string, headers?: Record<string, string>): Promise<HTTPResponse<T>> {
+    return this.request({ method: 'GET', url, headers });
+  }
+
+  public async delete<T>(
+    url: string,
+    data?: any,
+    headers?: Record<string, string>
+  ): Promise<HTTPResponse<T>> {
+    return this.request({ method: 'DELETE', url, data, headers });
+  }
+
+  public async request<T>(options: {
+    method: HTTPMethod;
+    url: string;
+    headers?: Record<string, string>;
+    data?: any;
+  }): Promise<HTTPResponse<T>> {
+    const { url, method, data, headers } = options;
     try {
-      const response = await this.axios.request<T>({ url, method, data });
+      const response = await this.axios.request<T>({ url, method, data, headers });
       return response;
     } catch (e) {
       const error = e as AxiosError<T>;
@@ -53,3 +71,9 @@ export class HTTPClient {
 }
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+export const handleError = <T>(response: HTTPResponse<T>) => {
+  throw new Error(
+    `Something went wrong. Status: ${response.status}. Body: ${JSON.stringify(response.data)}`
+  );
+};

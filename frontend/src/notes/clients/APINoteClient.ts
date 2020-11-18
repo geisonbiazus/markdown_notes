@@ -1,5 +1,5 @@
-import { NoteClient, Note, SaveNoteResponse } from '../interactors';
-import { HTTPClient, HTTPResponse } from '../../utils';
+import { NoteClient, Note, SaveNoteResponse } from '../entities';
+import { handleError, HTTPClient } from '../../utils';
 
 export class APINoteClient implements NoteClient {
   private httpClient: HTTPClient;
@@ -16,15 +16,18 @@ export class APINoteClient implements NoteClient {
     }
 
     if (response.data.status === 'error' && response.data.type === 'not_found') return null;
+    if (response.status === 401) return null;
 
-    throw this.handleError(response);
+    throw handleError(response);
   }
 
   async getNotes(): Promise<Note[]> {
     const response = await this.httpClient.get<GetNotesResponse>('/notes');
 
     if (response.status === 200 && response.data.status === 'success') return response.data.notes;
-    throw this.handleError(response);
+    if (response.status === 401) return [];
+
+    throw handleError(response);
   }
 
   async saveNote(note: Note): Promise<SaveNoteResponse> {
@@ -39,13 +42,9 @@ export class APINoteClient implements NoteClient {
   async removeNote(id: string): Promise<void> {
     const response = await this.httpClient.delete<RemoveNoteResponse>(`/notes/${id}`);
     if (response.status === 200 && response.data.status === 'success') return;
-    throw this.handleError(response);
-  }
+    if (response.status === 401) return;
 
-  private handleError<T>(response: HTTPResponse<T>) {
-    throw new Error(
-      `Something went wrong. Status: ${response.status}. Body: ${JSON.stringify(response.data)}`
-    );
+    throw handleError(response);
   }
 }
 

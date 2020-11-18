@@ -1,13 +1,14 @@
 import nock from 'nock';
 
 import { APINoteClient } from './APINoteClient';
-import { Note } from '../interactors';
+import { Note } from '../entities';
 import { uuid, HTTPClient } from '../../utils';
 
 HTTPClient.useNodeAdapter();
 
 describe('APINoteClient', () => {
   let client: APINoteClient;
+  const unauthorizedResponse = { status: 'error', type: 'unauthorized' };
   const baseURL = 'http://localhost:4000';
   const nockScope = nock(baseURL);
 
@@ -49,6 +50,18 @@ describe('APINoteClient', () => {
 
       expect(response).toEqual(expectedResponse);
     });
+
+    it('returns unauthorized status', async () => {
+      const note: Note = { id: uuid(), body: 'body', title: '' };
+
+      nockScope
+        .put(`/notes/${note.id}`, { title: note.title, body: note.body })
+        .reply(401, unauthorizedResponse);
+
+      const response = await client.saveNote(note);
+
+      expect(response).toEqual(unauthorizedResponse);
+    });
   });
 
   describe('getNote', () => {
@@ -70,6 +83,16 @@ describe('APINoteClient', () => {
       const response = await client.getNote(note.id);
 
       expect(response).toEqual(note);
+    });
+
+    it('returns null when unauthorized', async () => {
+      const note: Note = { id: uuid(), body: 'body', title: '' };
+
+      nockScope.get(`/notes/${note.id}`).reply(401, unauthorizedResponse);
+
+      const response = await client.getNote(note.id);
+
+      expect(response).toBeNull();
     });
   });
 
@@ -99,6 +122,14 @@ describe('APINoteClient', () => {
 
       expect(error).toEqual(new Error('Something went wrong. Status: 500. Body: "Anything"'));
     });
+
+    it('returns empty when unauthorized', async () => {
+      nockScope.get(`/notes`).reply(401, unauthorizedResponse);
+
+      const response = await client.getNotes();
+
+      expect(response).toEqual([]);
+    });
   });
 
   describe('removeNote', () => {
@@ -126,6 +157,13 @@ describe('APINoteClient', () => {
       expect(error).toEqual(
         new Error('Something went wrong. Status: 400. Body: {"status":"error","type":"not_found"}')
       );
+    });
+
+    it('does not throws when unauthorized', async () => {
+      const id = uuid();
+      nockScope.delete(`/notes/${id}`).reply(401, unauthorizedResponse);
+
+      await client.removeNote(id);
     });
   });
 });

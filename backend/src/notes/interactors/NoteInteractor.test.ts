@@ -1,15 +1,15 @@
 import { NoteInteractor } from './NoteInteractor';
 import { uuid } from '../../utils';
 import { Note } from '../entities';
-import { InMemoryRepository } from '../repositories';
-import { InteractorResponse } from './InteractorResponse';
+import { InMemoryNoteRepository } from '../repositories';
+import { InteractorResponse } from '../../utils/interactor';
 
 describe('NoteInteractor', () => {
   let noteInteractor: NoteInteractor;
-  let repo: InMemoryRepository;
+  let repo: InMemoryNoteRepository;
 
   beforeEach(() => {
-    repo = new InMemoryRepository();
+    repo = new InMemoryNoteRepository();
     noteInteractor = new NoteInteractor(repo);
   });
 
