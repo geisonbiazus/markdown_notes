@@ -24,7 +24,7 @@ const envConfig =
     logging: false,
   }) ||
   (process.env.NODE_ENV === 'production' && {
-    entities: ['build/notes/repositories/typeORM/entities/**/*'],
+    entities: ['build/*/repositories/typeORM/entities/**/*'],
     migrations: ['build/migrations/**/*'],
   }) ||
   {};
