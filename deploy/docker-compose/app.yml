@@ -6,6 +6,7 @@ services:
     env_file: .env
     environment:
       DB_HOST: postgres
+      DB_PORT: 5432
       VIRTUAL_HOST: api.notes.geisonbiazus.com
       LETSENCRYPT_HOST: api.notes.geisonbiazus.com
       DB_USERNAME: main
