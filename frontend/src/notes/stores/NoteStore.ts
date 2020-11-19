@@ -4,33 +4,19 @@ import {
   EditNoteState,
   newEditNoteState,
   EditNoteInteractor,
-  ListNoteState,
-  newListNoteState,
-  ListNoteInteractor,
   RemoveNoteState,
   newRemoveNoteState,
   RemoveNoteInteractor,
 } from '../interactors';
 
 export class NoteStore {
-  @observable listNoteState: ListNoteState = newListNoteState();
   @observable editNoteState: EditNoteState = newEditNoteState();
   @observable removeNoteState: RemoveNoteState = newRemoveNoteState();
 
   constructor(
-    private listNoteInteractor: ListNoteInteractor,
     private editNoteInteractor: EditNoteInteractor,
     private removeNoteInteractor: RemoveNoteInteractor
   ) {}
-
-  @action.bound
-  async getNotes(): Promise<void> {
-    const nextState = await this.listNoteInteractor.getNotes(this.listNoteState);
-
-    runInAction(() => {
-      this.listNoteState = nextState;
-    });
-  }
 
   @action.bound
   async getNote(id: string): Promise<void> {
@@ -56,7 +42,6 @@ export class NoteStore {
   @action.bound
   async saveNote(): Promise<void> {
     const nextState = await this.editNoteInteractor.saveNote(this.editNoteState);
-    await this.getNotes();
 
     runInAction(() => {
       this.editNoteState = nextState;
@@ -76,7 +61,6 @@ export class NoteStore {
   @action.bound
   async confirmNoteRemoval(): Promise<void> {
     const nextState = await this.removeNoteInteractor.confirmNoteRemoval(this.removeNoteState);
-    await this.getNotes();
 
     runInAction(() => {
       this.removeNoteState = nextState;

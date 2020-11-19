@@ -1,16 +1,17 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { useObserver } from 'mobx-react-lite';
 import {
   EditNoteInteractor,
   EditNoteState,
   ListNoteInteractor,
   ListNoteState,
+  newListNoteState,
   RemoveNoteInteractor,
   RemoveNoteState,
 } from '../interactors';
 import { NoteStore } from '../stores';
 import { APINoteClient } from '../clients';
-import { AuthenticatedHTTPClient } from '../../utils';
+import { AuthenticatedHTTPClient, StateManager } from '../../utils';
 import { Note } from '..';
 import { getAppConfig } from '../../AppConfig';
 import { useAuthenticationContext } from '../../authentication';
@@ -31,6 +32,26 @@ export interface NoteContextValue {
 
 const NoteContext = React.createContext<NoteContextValue>(null!);
 
+function useListNoteInteractor(): [ListNoteState, ListNoteInteractor] {
+  const { signInState, signInInteractor } = useAuthenticationContext();
+  const [listNoteState, setListNoteState] = useState(newListNoteState());
+
+  const listNoteInteractor = useMemo(() => {
+    const appConfig = getAppConfig();
+    const httpClient = new AuthenticatedHTTPClient(
+      appConfig.apiURL,
+      signInState.token,
+      signInInteractor.signOut
+    );
+    const noteClient = new APINoteClient(httpClient);
+    const stateManager = new StateManager<ListNoteState>(listNoteState, setListNoteState);
+    return new ListNoteInteractor(stateManager, noteClient);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signInState.token]);
+
+  return [listNoteState, listNoteInteractor];
+}
+
 function useNoteStore(): NoteStore {
   const { signInState, signInInteractor } = useAuthenticationContext();
 
@@ -43,10 +64,9 @@ function useNoteStore(): NoteStore {
     );
     const noteClient = new APINoteClient(httpClient);
 
-    const listNoteInteractor = new ListNoteInteractor(noteClient);
     const editNoteInteractor = new EditNoteInteractor(noteClient);
     const removeNoteInteractor = new RemoveNoteInteractor(noteClient);
-    const noteStore = new NoteStore(listNoteInteractor, editNoteInteractor, removeNoteInteractor);
+    const noteStore = new NoteStore(editNoteInteractor, removeNoteInteractor);
 
     return noteStore;
   }, [signInState.token, signInInteractor.signOut]);
@@ -54,13 +74,12 @@ function useNoteStore(): NoteStore {
 
 export const NoteProvider: React.FC = ({ children }) => {
   const noteStore = useNoteStore();
+  const [listNoteState, listNoteInteractor] = useListNoteInteractor();
 
   return useObserver(() => {
     const {
-      listNoteState,
       editNoteState,
       removeNoteState,
-      getNotes,
       saveNote,
       getNote,
       setTitle,
@@ -76,7 +95,7 @@ export const NoteProvider: React.FC = ({ children }) => {
           listNoteState,
           editNoteState,
           removeNoteState,
-          getNotes,
+          getNotes: listNoteInteractor.getNotes,
           saveNote,
           getNote,
           setTitle,

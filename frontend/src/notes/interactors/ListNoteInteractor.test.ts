@@ -1,5 +1,5 @@
-import { newListNoteState, ListNoteInteractor } from './ListNoteInteractor';
-import { uuid } from '../../utils';
+import { newListNoteState, ListNoteInteractor, ListNoteState } from './ListNoteInteractor';
+import { StateManager, uuid } from '../../utils';
 import { InMemoryNoteClient } from '../clients';
 
 describe('newListNoteState', () => {
@@ -11,15 +11,18 @@ describe('newListNoteState', () => {
 describe('ListNoteInteractor', () => {
   let client: InMemoryNoteClient;
   let interactor: ListNoteInteractor;
+  let stateManager: StateManager<ListNoteState>;
 
   beforeEach(() => {
     client = new InMemoryNoteClient();
-    interactor = new ListNoteInteractor(client);
+    stateManager = new StateManager(newListNoteState());
+    interactor = new ListNoteInteractor(stateManager, client);
   });
 
   describe('getNotes', () => {
     it('returns empty when there is no note', async () => {
-      const state = await interactor.getNotes(newListNoteState());
+      await interactor.getNotes();
+      const state = stateManager.getState();
       expect(state.notes).toEqual([]);
     });
 
@@ -30,7 +33,9 @@ describe('ListNoteInteractor', () => {
       client.saveNote(note1);
       client.saveNote(note2);
 
-      const state = await interactor.getNotes(newListNoteState());
+      await interactor.getNotes();
+
+      const state = stateManager.getState();
       expect(state.notes).toEqual([note1, note2]);
     });
   });
