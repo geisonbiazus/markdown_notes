@@ -3,3 +3,4 @@ export * from './interactors';
 export * from './entities';
 export * from './stores';
 export * from './ui';
+export * from './NoteContext';
