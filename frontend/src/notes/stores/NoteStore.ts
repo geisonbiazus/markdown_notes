@@ -1,22 +1,10 @@
 import { observable, action, runInAction } from 'mobx';
-import { Note } from '../entities';
-import {
-  EditNoteState,
-  newEditNoteState,
-  EditNoteInteractor,
-  RemoveNoteState,
-  newRemoveNoteState,
-  RemoveNoteInteractor,
-} from '../interactors';
+import { EditNoteState, newEditNoteState, EditNoteInteractor } from '../interactors';
 
 export class NoteStore {
   @observable editNoteState: EditNoteState = newEditNoteState();
-  @observable removeNoteState: RemoveNoteState = newRemoveNoteState();
 
-  constructor(
-    private editNoteInteractor: EditNoteInteractor,
-    private removeNoteInteractor: RemoveNoteInteractor
-  ) {}
+  constructor(private editNoteInteractor: EditNoteInteractor) {}
 
   @action.bound
   async getNote(id: string): Promise<void> {
@@ -45,25 +33,6 @@ export class NoteStore {
 
     runInAction(() => {
       this.editNoteState = nextState;
-    });
-  }
-
-  @action.bound
-  requestNoteRemoval(note: Note): void {
-    this.removeNoteState = this.removeNoteInteractor.requestNoteRemoval(this.removeNoteState, note);
-  }
-
-  @action.bound
-  cancelNoteRemoval(): void {
-    this.removeNoteState = this.removeNoteInteractor.cancelNoteRemoval(this.removeNoteState);
-  }
-
-  @action.bound
-  async confirmNoteRemoval(): Promise<void> {
-    const nextState = await this.removeNoteInteractor.confirmNoteRemoval(this.removeNoteState);
-
-    runInAction(() => {
-      this.removeNoteState = nextState;
     });
   }
 }

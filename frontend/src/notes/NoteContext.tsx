@@ -6,6 +6,7 @@ import {
   ListNoteInteractor,
   ListNoteState,
   newListNoteState,
+  newRemoveNoteState,
   RemoveNoteInteractor,
   RemoveNoteState,
 } from './interactors';
@@ -59,13 +60,25 @@ function useListNoteInteractor(): [ListNoteState, ListNoteInteractor] {
   return [listNoteState, listNoteInteractor];
 }
 
+function useRemoveNoteInteractor(): [RemoveNoteState, RemoveNoteInteractor] {
+  const noteClient = useNoteClient();
+  const [removeNoteState, setRemoveNoteState] = useState(newRemoveNoteState());
+
+  const removeNoteInteractor = useMemo(() => {
+    const stateManager = new StateManager<RemoveNoteState>(removeNoteState, setRemoveNoteState);
+    return new RemoveNoteInteractor(stateManager, noteClient);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [noteClient]);
+
+  return [removeNoteState, removeNoteInteractor];
+}
+
 function useNoteStore(): NoteStore {
   const noteClient = useNoteClient();
 
   return useMemo(() => {
     const editNoteInteractor = new EditNoteInteractor(noteClient);
-    const removeNoteInteractor = new RemoveNoteInteractor(noteClient);
-    const noteStore = new NoteStore(editNoteInteractor, removeNoteInteractor);
+    const noteStore = new NoteStore(editNoteInteractor);
 
     return noteStore;
   }, [noteClient]);
@@ -74,19 +87,10 @@ function useNoteStore(): NoteStore {
 export const NoteProvider: React.FC = ({ children }) => {
   const noteStore = useNoteStore();
   const [listNoteState, listNoteInteractor] = useListNoteInteractor();
+  const [removeNoteState, removeNoteInteractor] = useRemoveNoteInteractor();
 
   return useObserver(() => {
-    const {
-      editNoteState,
-      removeNoteState,
-      saveNote,
-      getNote,
-      setTitle,
-      setBody,
-      requestNoteRemoval,
-      cancelNoteRemoval,
-      confirmNoteRemoval,
-    } = noteStore;
+    const { editNoteState, saveNote, getNote, setTitle, setBody } = noteStore;
 
     return (
       <NoteContext.Provider
@@ -99,9 +103,9 @@ export const NoteProvider: React.FC = ({ children }) => {
           getNote,
           setTitle,
           setBody,
-          requestNoteRemoval,
-          cancelNoteRemoval,
-          confirmNoteRemoval,
+          requestNoteRemoval: removeNoteInteractor.requestNoteRemoval,
+          cancelNoteRemoval: removeNoteInteractor.cancelNoteRemoval,
+          confirmNoteRemoval: removeNoteInteractor.confirmNoteRemoval,
         }}
       >
         {children}

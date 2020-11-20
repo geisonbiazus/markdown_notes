@@ -1,3 +1,5 @@
+import bind from 'bind-decorator';
+import { StateBasedInteractor, StateManager } from '../../utils';
 import { Note, NoteClient } from '../entities';
 
 export interface RemoveNoteState {
@@ -9,22 +11,27 @@ export const newRemoveNoteState = (): RemoveNoteState => {
   return { note: undefined, promptConfirmation: false };
 };
 
-export class RemoveNoteInteractor {
-  constructor(private client: NoteClient) {}
-
-  requestNoteRemoval(state: RemoveNoteState, note: Note): RemoveNoteState {
-    return { ...state, note, promptConfirmation: true };
+export class RemoveNoteInteractor extends StateBasedInteractor<RemoveNoteState> {
+  constructor(stateManager: StateManager<RemoveNoteState>, private client: NoteClient) {
+    super(stateManager);
   }
 
-  cancelNoteRemoval(state: RemoveNoteState): RemoveNoteState {
-    return { ...state, note: undefined, promptConfirmation: false };
+  @bind
+  requestNoteRemoval(note: Note): void {
+    this.updateState({ note, promptConfirmation: true });
   }
 
-  async confirmNoteRemoval(state: RemoveNoteState): Promise<RemoveNoteState> {
-    if (!state.note) return state;
+  @bind
+  cancelNoteRemoval(): void {
+    this.updateState({ note: undefined, promptConfirmation: false });
+  }
 
-    await this.client.removeNote(state.note.id);
+  @bind
+  async confirmNoteRemoval(): Promise<void> {
+    if (!this.state.note) return;
 
-    return { ...state, note: undefined, promptConfirmation: false };
+    await this.client.removeNote(this.state.note.id);
+
+    this.updateState({ note: undefined, promptConfirmation: false });
   }
 }
