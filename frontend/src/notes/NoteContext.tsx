@@ -1,16 +1,15 @@
 import React, { useContext, useMemo, useState } from 'react';
-import { useObserver } from 'mobx-react-lite';
 import {
   EditNoteInteractor,
   EditNoteState,
   ListNoteInteractor,
   ListNoteState,
+  newEditNoteState,
   newListNoteState,
   newRemoveNoteState,
   RemoveNoteInteractor,
   RemoveNoteState,
 } from './interactors';
-import { NoteStore } from './stores';
 import { APINoteClient } from './clients';
 import { AuthenticatedHTTPClient, StateManager } from '../utils';
 import { Note, NoteClient } from './entities';
@@ -24,8 +23,8 @@ export interface NoteContextValue {
   getNotes: () => Promise<void>;
   saveNote: () => Promise<void>;
   getNote: (id: string) => Promise<void>;
-  setTitle: (title: string) => Promise<void>;
-  setBody: (body: string) => Promise<void>;
+  setTitle: (title: string) => void;
+  setBody: (body: string) => void;
   requestNoteRemoval: (note: Note) => void;
   cancelNoteRemoval: () => void;
   confirmNoteRemoval: () => Promise<void>;
@@ -73,45 +72,43 @@ function useRemoveNoteInteractor(): [RemoveNoteState, RemoveNoteInteractor] {
   return [removeNoteState, removeNoteInteractor];
 }
 
-function useNoteStore(): NoteStore {
+function useEditNoteInteractor(): [EditNoteState, EditNoteInteractor] {
   const noteClient = useNoteClient();
+  const [editNoteState, setEditNoteState] = useState(newEditNoteState());
 
-  return useMemo(() => {
-    const editNoteInteractor = new EditNoteInteractor(noteClient);
-    const noteStore = new NoteStore(editNoteInteractor);
-
-    return noteStore;
+  const editNoteInteractor = useMemo(() => {
+    const stateManager = new StateManager<EditNoteState>(editNoteState, setEditNoteState);
+    return new EditNoteInteractor(stateManager, noteClient);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [noteClient]);
+
+  return [editNoteState, editNoteInteractor];
 }
 
 export const NoteProvider: React.FC = ({ children }) => {
-  const noteStore = useNoteStore();
   const [listNoteState, listNoteInteractor] = useListNoteInteractor();
   const [removeNoteState, removeNoteInteractor] = useRemoveNoteInteractor();
+  const [editNoteState, editNoteInteractor] = useEditNoteInteractor();
 
-  return useObserver(() => {
-    const { editNoteState, saveNote, getNote, setTitle, setBody } = noteStore;
-
-    return (
-      <NoteContext.Provider
-        value={{
-          listNoteState,
-          editNoteState,
-          removeNoteState,
-          getNotes: listNoteInteractor.getNotes,
-          saveNote,
-          getNote,
-          setTitle,
-          setBody,
-          requestNoteRemoval: removeNoteInteractor.requestNoteRemoval,
-          cancelNoteRemoval: removeNoteInteractor.cancelNoteRemoval,
-          confirmNoteRemoval: removeNoteInteractor.confirmNoteRemoval,
-        }}
-      >
-        {children}
-      </NoteContext.Provider>
-    );
-  });
+  return (
+    <NoteContext.Provider
+      value={{
+        listNoteState,
+        editNoteState,
+        removeNoteState,
+        getNotes: listNoteInteractor.getNotes,
+        saveNote: editNoteInteractor.saveNote,
+        getNote: editNoteInteractor.getNote,
+        setTitle: editNoteInteractor.setTitle,
+        setBody: editNoteInteractor.setBody,
+        requestNoteRemoval: removeNoteInteractor.requestNoteRemoval,
+        cancelNoteRemoval: removeNoteInteractor.cancelNoteRemoval,
+        confirmNoteRemoval: removeNoteInteractor.confirmNoteRemoval,
+      }}
+    >
+      {children}
+    </NoteContext.Provider>
+  );
 };
 
 export const useNoteContext = () => useContext(NoteContext);
