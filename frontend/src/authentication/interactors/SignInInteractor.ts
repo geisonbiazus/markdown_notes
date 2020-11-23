@@ -1,3 +1,4 @@
+import bind from 'bind-decorator';
 import { Errors, isEmpty, validateRequired, StateBasedInteractor, StateManager } from '../../utils';
 import { AuthenticationClient, SessionRepository } from '../entities';
 
@@ -22,20 +23,23 @@ export class SignInInteractor extends StateBasedInteractor<SignInState> {
     super(stateManager);
   }
 
-  public setEmail = (email: string): void => {
+  @bind
+  public setEmail(email: string): void {
     this.updateState({ email });
-  };
+  }
 
-  public setPassword = (password: string): void => {
+  @bind
+  public setPassword(password: string): void {
     this.updateState({ password });
-  };
+  }
 
-  public signIn = async (): Promise<void> => {
+  @bind
+  public async signIn(): Promise<void> {
     if (!this.validateState()) return;
     await this.performSignIn();
-  };
+  }
 
-  private validateState = (): boolean => {
+  private validateState(): boolean {
     let errors: Errors = {};
 
     errors = validateRequired(errors, this.state, 'email');
@@ -44,9 +48,9 @@ export class SignInInteractor extends StateBasedInteractor<SignInState> {
     this.updateState({ errors });
 
     return isEmpty(errors);
-  };
+  }
 
-  private performSignIn = async () => {
+  private async performSignIn() {
     const token = await this.authenticationClient.signIn(this.state.email, this.state.password);
 
     if (!token) {
@@ -54,25 +58,25 @@ export class SignInInteractor extends StateBasedInteractor<SignInState> {
     } else {
       this.processSucessSignIn(token);
     }
-  };
+  }
 
-  private updateStateToNotFound = (): void => {
+  private updateStateToNotFound(): void {
     this.updateState({ errors: { base: 'not_found' } });
-  };
+  }
 
-  private processSucessSignIn = (token: string): void => {
+  private processSucessSignIn(token: string): void {
     this.updateState({ authenticated: true, token });
     this.sessionRepository.setToken(token);
-  };
+  }
 
-  public checkAuthentication = (): void => {
+  public checkAuthentication(): void {
     const token = this.sessionRepository.getToken();
 
     this.updateState({ authenticated: !!token, token: token || '' });
-  };
+  }
 
-  public signOut = () => {
+  public signOut() {
     this.sessionRepository.removeToken();
     this.updateState(newSignInState());
-  };
+  }
 }

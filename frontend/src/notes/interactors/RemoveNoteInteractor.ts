@@ -17,17 +17,17 @@ export class RemoveNoteInteractor extends StateBasedInteractor<RemoveNoteState> 
   }
 
   @bind
-  requestNoteRemoval(note: Note): void {
+  public requestNoteRemoval(note: Note): void {
     this.updateState({ note, promptConfirmation: true });
   }
 
   @bind
-  cancelNoteRemoval(): void {
+  public cancelNoteRemoval(): void {
     this.updateState({ note: undefined, promptConfirmation: false });
   }
 
   @bind
-  async confirmNoteRemoval(): Promise<void> {
+  public async confirmNoteRemoval(): Promise<void> {
     if (!this.state.note) return;
 
     await this.client.removeNote(this.state.note.id);
