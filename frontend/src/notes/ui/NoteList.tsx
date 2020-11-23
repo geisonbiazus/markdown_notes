@@ -6,9 +6,16 @@ import { useTranslation } from 'react-i18next';
 import { useAsyncAction } from '../../shared/hooks';
 
 export const NoteList: React.FC = () => {
-  const { listNoteState, editNoteState, getNotes, requestNoteRemoval } = useNoteContext();
+  const {
+    listNoteState,
+    editNoteState,
+    listNoteInteractor,
+    removeNoteInteractor,
+  } = useNoteContext();
 
-  const { pending: getNotesPending, execute: getNotesAction } = useAsyncAction(getNotes);
+  const { pending: getNotesPending, execute: getNotesAction } = useAsyncAction(
+    listNoteInteractor.getNotes
+  );
 
   useEffect(() => {
     getNotesAction();
@@ -29,7 +36,7 @@ export const NoteList: React.FC = () => {
               href={`/notes/${note.id}`}
               active={note.id === editNoteState.note.id}
             >
-              <NavIcon onClick={() => requestNoteRemoval(note)} />
+              <NavIcon onClick={() => removeNoteInteractor.requestNoteRemoval(note)} />
             </NavItem>
           ))
         )}
@@ -42,9 +49,11 @@ export interface RemoveNoteConfirmModalProps {}
 
 export const RemoveNoteConfirmModal: React.FC = () => {
   const { t } = useTranslation();
-  const { removeNoteState, cancelNoteRemoval, confirmNoteRemoval } = useNoteContext();
+  const { removeNoteState, removeNoteInteractor } = useNoteContext();
 
-  const { pending: confirmPending, execute: confirmAction } = useAsyncAction(confirmNoteRemoval);
+  const { pending: confirmPending, execute: confirmAction } = useAsyncAction(
+    removeNoteInteractor.confirmNoteRemoval
+  );
 
   return (
     <ConfirmModal
@@ -54,7 +63,7 @@ export const RemoveNoteConfirmModal: React.FC = () => {
         name: removeNoteState.note?.title,
       })}
       confirmLabel={t('Remove note')}
-      onCancel={cancelNoteRemoval}
+      onCancel={removeNoteInteractor.cancelNoteRemoval}
       onConfirm={confirmAction}
       confirmPending={confirmPending}
     />

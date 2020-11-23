@@ -12,22 +12,17 @@ import {
 } from './interactors';
 import { APINoteClient } from './clients';
 import { AuthenticatedHTTPClient, StateManager } from '../utils';
-import { Note, NoteClient } from './entities';
+import { NoteClient } from './entities';
 import { getAppConfig } from '../AppConfig';
 import { useAuthenticationContext } from '../authentication';
 
 export interface NoteContextValue {
   listNoteState: ListNoteState;
+  listNoteInteractor: ListNoteInteractor;
   editNoteState: EditNoteState;
+  editNoteInteractor: EditNoteInteractor;
   removeNoteState: RemoveNoteState;
-  getNotes: () => Promise<void>;
-  saveNote: () => Promise<void>;
-  getNote: (id: string) => Promise<void>;
-  setTitle: (title: string) => void;
-  setBody: (body: string) => void;
-  requestNoteRemoval: (note: Note) => void;
-  cancelNoteRemoval: () => void;
-  confirmNoteRemoval: () => Promise<void>;
+  removeNoteInteractor: RemoveNoteInteractor;
 }
 
 const NoteContext = React.createContext<NoteContextValue>(null!);
@@ -94,16 +89,11 @@ export const NoteProvider: React.FC = ({ children }) => {
     <NoteContext.Provider
       value={{
         listNoteState,
+        listNoteInteractor,
         editNoteState,
+        editNoteInteractor,
         removeNoteState,
-        getNotes: listNoteInteractor.getNotes,
-        saveNote: editNoteInteractor.saveNote,
-        getNote: editNoteInteractor.getNote,
-        setTitle: editNoteInteractor.setTitle,
-        setBody: editNoteInteractor.setBody,
-        requestNoteRemoval: removeNoteInteractor.requestNoteRemoval,
-        cancelNoteRemoval: removeNoteInteractor.cancelNoteRemoval,
-        confirmNoteRemoval: removeNoteInteractor.confirmNoteRemoval,
+        removeNoteInteractor,
       }}
     >
       {children}

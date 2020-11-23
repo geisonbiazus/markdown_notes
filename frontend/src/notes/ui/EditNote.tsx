@@ -6,12 +6,16 @@ import { useAsyncAction } from '../../shared/hooks';
 import { useTranslation } from 'react-i18next';
 
 export const EditNote: React.FC = () => {
-  const { editNoteState, saveNote, getNote, setTitle, setBody } = useNoteContext();
+  const { editNoteState, editNoteInteractor } = useNoteContext();
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
 
-  const { pending: getNotePending, execute: getNoteAction } = useAsyncAction(getNote);
-  const { pending: saveNotePending, execute: saveNoteAction } = useAsyncAction(saveNote);
+  const { pending: getNotePending, execute: getNoteAction } = useAsyncAction(
+    editNoteInteractor.getNote
+  );
+  const { pending: saveNotePending, execute: saveNoteAction } = useAsyncAction(
+    editNoteInteractor.saveNote
+  );
 
   const { title, body } = editNoteState.note;
 
@@ -35,7 +39,7 @@ export const EditNote: React.FC = () => {
             label={t('Title')}
             placeholder={t('Enter title')}
             value={title}
-            onChange={setTitle}
+            onChange={editNoteInteractor.setTitle}
             errorField="title"
             errorType={editNoteState.errors.title}
             disabled={saveNotePending}
@@ -46,7 +50,7 @@ export const EditNote: React.FC = () => {
             label={t('Content')}
             placeholder={t('Enter content')}
             value={body}
-            onChange={setBody}
+            onChange={editNoteInteractor.setBody}
             rows={20}
             errorField="body"
             errorType={editNoteState.errors.body}
