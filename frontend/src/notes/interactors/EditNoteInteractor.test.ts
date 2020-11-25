@@ -1,5 +1,5 @@
 import { newEditNoteState, EditNoteInteractor, EditNoteState } from './EditNoteInteractor';
-import { StateManager, uuid } from '../../utils';
+import { FakePublisher, StateManager, uuid } from '../../utils';
 import { InMemoryNoteClient } from '../clients';
 import { Note } from '../entities';
 
@@ -14,14 +14,16 @@ describe('newEditNoteState', () => {
 });
 
 describe('EditNoteInteractor', () => {
-  let client: InMemoryNoteClient;
-  let editNoteInteractor: EditNoteInteractor;
   let stateManager: StateManager<EditNoteState>;
+  let client: InMemoryNoteClient;
+  let publisher: FakePublisher;
+  let editNoteInteractor: EditNoteInteractor;
 
   beforeEach(() => {
     client = new InMemoryNoteClient();
     stateManager = new StateManager(newEditNoteState());
-    editNoteInteractor = new EditNoteInteractor(stateManager, client);
+    publisher = new FakePublisher();
+    editNoteInteractor = new EditNoteInteractor(stateManager, client, publisher);
   });
 
   describe('getNote', () => {
@@ -153,6 +155,19 @@ describe('EditNoteInteractor', () => {
 
       const state = stateManager.getState();
       expect(state.errors).toEqual({ title: 'required' });
+    });
+
+    it('publishes note_saved event', async () => {
+      const title = 'title';
+      const body = 'body';
+      editNoteInteractor.setTitle(title);
+      editNoteInteractor.setBody(body);
+
+      await editNoteInteractor.saveNote();
+
+      const { note } = stateManager.getState();
+
+      expect(publisher.events).toEqual([{ name: 'note_saved', payload: note }]);
     });
   });
 });

@@ -3,6 +3,7 @@ import {
   Errors,
   ErrorType,
   isEmpty,
+  Publisher,
   StateBasedInteractor,
   StateManager,
   validateRequired,
@@ -20,7 +21,11 @@ export const newEditNoteState = (initialState: Partial<EditNoteState> = {}): Edi
 };
 
 export class EditNoteInteractor extends StateBasedInteractor<EditNoteState> {
-  constructor(stateManager: StateManager<EditNoteState>, private noteClient: NoteClient) {
+  constructor(
+    stateManager: StateManager<EditNoteState>,
+    private noteClient: NoteClient,
+    private publiser: Publisher
+  ) {
     super(stateManager);
   }
 
@@ -50,6 +55,7 @@ export class EditNoteInteractor extends StateBasedInteractor<EditNoteState> {
   public async saveNote(): Promise<void> {
     if (!this.validateNote()) return;
     this.maybeSaveNoteInTheClient();
+    this.publiser.pusblish('note_saved', this.state.note);
   }
 
   private validateNote(): boolean {

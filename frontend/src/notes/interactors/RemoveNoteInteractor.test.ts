@@ -1,5 +1,5 @@
 import { newRemoveNoteState, RemoveNoteInteractor, RemoveNoteState } from './RemoveNoteInteractor';
-import { StateManager, uuid } from '../../utils';
+import { FakePublisher, StateManager, uuid } from '../../utils';
 import { InMemoryNoteClient } from '../clients';
 
 describe('newRemoveNoteState', () => {
@@ -9,15 +9,17 @@ describe('newRemoveNoteState', () => {
 });
 
 describe('RemoveNoteInteractor', () => {
-  let interactor: RemoveNoteInteractor;
-  let client: InMemoryNoteClient;
   let stateManager: StateManager<RemoveNoteState>;
+  let client: InMemoryNoteClient;
+  let publisher: FakePublisher;
+  let interactor: RemoveNoteInteractor;
   let state: RemoveNoteState;
 
   beforeEach(() => {
     client = new InMemoryNoteClient();
     stateManager = new StateManager(newRemoveNoteState());
-    interactor = new RemoveNoteInteractor(stateManager, client);
+    publisher = new FakePublisher();
+    interactor = new RemoveNoteInteractor(stateManager, client, publisher);
     state = stateManager.getState();
   });
 
@@ -62,6 +64,17 @@ describe('RemoveNoteInteractor', () => {
       expect(state.note).toEqual(undefined);
       expect(state.promptConfirmation).toEqual(false);
       expect(await client.getNote(note.id)).toEqual(null);
+    });
+
+    it('publishes note_removed event', async () => {
+      const note = { id: uuid(), title: 'title', body: 'body' };
+      await client.saveNote(note);
+
+      interactor.requestNoteRemoval(note);
+
+      await interactor.confirmNoteRemoval();
+
+      expect(publisher.events).toEqual([{ name: 'note_removed', payload: note }]);
     });
 
     it('does not do anything when the prompt is closed', async () => {
