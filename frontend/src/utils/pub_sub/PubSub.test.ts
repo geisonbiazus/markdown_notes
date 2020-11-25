@@ -1,6 +1,6 @@
 import { assert } from 'console';
 import { PubSub } from './PubSub';
-import { sleep } from './sleep';
+import { sleep } from '../sleep';
 
 describe('PubSub', () => {
   it('sends the published events to the subscriber', () => {

@@ -1,9 +1,9 @@
+import { Publisher } from './Publisher';
+
 export type SubscriberCallback<T> = (event: string, payload: T) => void;
 export type DisposeFn = () => void;
 
-export interface Event {}
-
-export class PubSub {
+export class PubSub implements Publisher {
   private subscribers: Record<string, SubscriberCallback<unknown>[]> = {};
 
   public pusblish<T>(event: string, payload?: T): void {
