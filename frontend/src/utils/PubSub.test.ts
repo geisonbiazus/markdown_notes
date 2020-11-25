@@ -1,3 +1,4 @@
+import { assert } from 'console';
 import { PubSub } from './PubSub';
 import { sleep } from './sleep';
 
@@ -79,6 +80,57 @@ describe('PubSub', () => {
 
     expect(receivedEvent).toEqual('event_name');
     expect(callbackFinished).toBeFalsy();
+  });
+
+  it('returns a dispose function that removes the subscriber when called', () => {
+    const pubSub = new PubSub();
+    const events1: string[] = [];
+    const events2: string[] = [];
+    const events3: string[] = [];
+    const events4: string[] = [];
+    const events5: string[] = [];
+
+    pubSub.subscribe('event', (event) => events1.push(event));
+    const dispose2 = pubSub.subscribe('event', (event) => events2.push(event));
+    pubSub.subscribe('event', (event) => events3.push(event));
+    const dispose4 = pubSub.subscribe('event', (event) => events4.push(event));
+    const dispose5 = pubSub.subscribe('event', (event) => events5.push(event));
+
+    pubSub.pusblish('event');
+
+    dispose2();
+
+    pubSub.pusblish('event');
+
+    dispose4();
+    dispose5();
+
+    pubSub.pusblish('event');
+
+    expect(events1.length).toEqual(3);
+    expect(events2.length).toEqual(1);
+    expect(events3.length).toEqual(3);
+    expect(events4.length).toEqual(2);
+    expect(events5.length).toEqual(2);
+  });
+
+  it('ignores if callback is disposed twice', () => {
+    const pubSub = new PubSub();
+    const events1: string[] = [];
+    const events2: string[] = [];
+
+    const dispose = pubSub.subscribe('event', (event) => events1.push(event));
+    pubSub.subscribe('event', (event) => events2.push(event));
+
+    pubSub.pusblish('event');
+
+    dispose();
+    dispose();
+
+    pubSub.pusblish('event');
+
+    expect(events1.length).toEqual(1);
+    expect(events2.length).toEqual(2);
   });
 });
 
