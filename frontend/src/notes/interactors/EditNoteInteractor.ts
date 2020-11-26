@@ -54,7 +54,7 @@ export class EditNoteInteractor extends StateBasedInteractor<EditNoteState> {
   @bind
   public async saveNote(): Promise<void> {
     if (!this.validateNote()) return;
-    this.maybeSaveNoteInTheClient();
+    await this.maybeSaveNoteInTheClient();
     this.publiser.pusblish('note_saved', this.state.note);
   }
 

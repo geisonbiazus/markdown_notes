@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import {
   EditNoteInteractor,
   EditNoteState,
@@ -11,7 +11,7 @@ import {
   RemoveNoteState,
 } from './interactors';
 import { APINoteClient } from './clients';
-import { AuthenticatedHTTPClient, StateManager } from '../utils';
+import { AuthenticatedHTTPClient, PubSub, StateManager } from '../utils';
 import { NoteClient } from './entities';
 import { getAppConfig } from '../AppConfig';
 import { useAuthenticationContext } from '../authentication';
@@ -26,6 +26,8 @@ export interface NoteContextValue {
 }
 
 const NoteContext = React.createContext<NoteContextValue>(null!);
+
+const pubSub = new PubSub();
 
 function useNoteClient(): NoteClient {
   const { signInState, signInInteractor } = useAuthenticationContext();
@@ -48,8 +50,19 @@ function useListNoteInteractor(): [ListNoteState, ListNoteInteractor] {
   const listNoteInteractor = useMemo(() => {
     const stateManager = new StateManager<ListNoteState>(listNoteState, setListNoteState);
     return new ListNoteInteractor(stateManager, noteClient);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [noteClient]);
+
+  useEffect(() => {
+    const disposeNoteSaved = pubSub.subscribe('note_saved', () => listNoteInteractor.getNotes());
+    const disposeNoteRemoved = pubSub.subscribe('note_removed', () =>
+      listNoteInteractor.getNotes()
+    );
+
+    return () => {
+      disposeNoteSaved();
+      disposeNoteRemoved();
+    };
+  }, [listNoteInteractor]);
 
   return [listNoteState, listNoteInteractor];
 }
@@ -60,7 +73,7 @@ function useRemoveNoteInteractor(): [RemoveNoteState, RemoveNoteInteractor] {
 
   const removeNoteInteractor = useMemo(() => {
     const stateManager = new StateManager<RemoveNoteState>(removeNoteState, setRemoveNoteState);
-    return new RemoveNoteInteractor(stateManager, noteClient);
+    return new RemoveNoteInteractor(stateManager, noteClient, pubSub);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [noteClient]);
 
@@ -73,7 +86,7 @@ function useEditNoteInteractor(): [EditNoteState, EditNoteInteractor] {
 
   const editNoteInteractor = useMemo(() => {
     const stateManager = new StateManager<EditNoteState>(editNoteState, setEditNoteState);
-    return new EditNoteInteractor(stateManager, noteClient);
+    return new EditNoteInteractor(stateManager, noteClient, pubSub);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [noteClient]);
 

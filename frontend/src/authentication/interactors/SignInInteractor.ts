@@ -75,6 +75,7 @@ export class SignInInteractor extends StateBasedInteractor<SignInState> {
     this.updateState({ authenticated: !!token, token: token || '' });
   }
 
+  @bind
   public signOut() {
     this.sessionRepository.removeToken();
     this.updateState(newSignInState());
