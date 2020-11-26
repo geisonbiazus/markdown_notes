@@ -43,8 +43,7 @@ function useNoteClient(): NoteClient {
   }, [signInState.token, signInInteractor.signOut]);
 }
 
-function useListNoteInteractor(): [ListNoteState, ListNoteInteractor] {
-  const noteClient = useNoteClient();
+function useListNoteInteractor(noteClient: NoteClient): [ListNoteState, ListNoteInteractor] {
   const [listNoteState, setListNoteState] = useState(newListNoteState());
 
   const listNoteInteractor = useMemo(() => {
@@ -67,8 +66,7 @@ function useListNoteInteractor(): [ListNoteState, ListNoteInteractor] {
   return [listNoteState, listNoteInteractor];
 }
 
-function useRemoveNoteInteractor(): [RemoveNoteState, RemoveNoteInteractor] {
-  const noteClient = useNoteClient();
+function useRemoveNoteInteractor(noteClient: NoteClient): [RemoveNoteState, RemoveNoteInteractor] {
   const [removeNoteState, setRemoveNoteState] = useState(newRemoveNoteState());
 
   const removeNoteInteractor = useMemo(() => {
@@ -80,8 +78,7 @@ function useRemoveNoteInteractor(): [RemoveNoteState, RemoveNoteInteractor] {
   return [removeNoteState, removeNoteInteractor];
 }
 
-function useEditNoteInteractor(): [EditNoteState, EditNoteInteractor] {
-  const noteClient = useNoteClient();
+function useEditNoteInteractor(noteClient: NoteClient): [EditNoteState, EditNoteInteractor] {
   const [editNoteState, setEditNoteState] = useState(newEditNoteState());
 
   const editNoteInteractor = useMemo(() => {
@@ -94,9 +91,10 @@ function useEditNoteInteractor(): [EditNoteState, EditNoteInteractor] {
 }
 
 export const NoteProvider: React.FC = ({ children }) => {
-  const [listNoteState, listNoteInteractor] = useListNoteInteractor();
-  const [removeNoteState, removeNoteInteractor] = useRemoveNoteInteractor();
-  const [editNoteState, editNoteInteractor] = useEditNoteInteractor();
+  const noteClient = useNoteClient();
+  const [listNoteState, listNoteInteractor] = useListNoteInteractor(noteClient);
+  const [removeNoteState, removeNoteInteractor] = useRemoveNoteInteractor(noteClient);
+  const [editNoteState, editNoteInteractor] = useEditNoteInteractor(noteClient);
 
   return (
     <NoteContext.Provider
