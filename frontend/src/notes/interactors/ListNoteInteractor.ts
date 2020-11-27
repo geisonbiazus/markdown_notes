@@ -4,10 +4,11 @@ import { Note, NoteClient } from '../entities';
 
 export interface ListNoteState {
   notes: Note[];
+  getNotesPending: boolean;
 }
 
 export function newListNoteState(): ListNoteState {
-  return { notes: [] };
+  return { notes: [], getNotesPending: false };
 }
 
 export class ListNoteInteractor extends StateBasedInteractor<ListNoteState> {
@@ -17,7 +18,9 @@ export class ListNoteInteractor extends StateBasedInteractor<ListNoteState> {
 
   @bind
   public async getNotes(): Promise<void> {
-    const notes = await this.noteClient.getNotes();
-    this.updateState({ notes });
+    await this.withPendingState('getNotesPending', async () => {
+      const notes = await this.noteClient.getNotes();
+      this.updateState({ notes });
+    });
   }
 }

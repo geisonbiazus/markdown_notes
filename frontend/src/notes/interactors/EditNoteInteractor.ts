@@ -14,10 +14,19 @@ export interface EditNoteState {
   note: Note;
   errors: Record<string, ErrorType>;
   isDirty: boolean;
+  getNotePending: boolean;
+  saveNotePending: boolean;
 }
 
 export const newEditNoteState = (initialState: Partial<EditNoteState> = {}): EditNoteState => {
-  return { note: { id: '', title: '', body: '' }, errors: {}, isDirty: false, ...initialState };
+  return {
+    note: { id: '', title: '', body: '' },
+    errors: {},
+    isDirty: false,
+    getNotePending: false,
+    saveNotePending: false,
+    ...initialState,
+  };
 };
 
 export class EditNoteInteractor extends StateBasedInteractor<EditNoteState> {
@@ -31,8 +40,10 @@ export class EditNoteInteractor extends StateBasedInteractor<EditNoteState> {
 
   @bind
   public async getNote(id: string): Promise<void> {
-    let note = await this.noteClient.getNote(id);
-    this.updateState({ note: note || this.newNote(id) });
+    await this.withPendingState('getNotePending', async () => {
+      let note = await this.noteClient.getNote(id);
+      this.updateState({ note: note || this.newNote(id) });
+    });
   }
 
   private newNote(id: string): Note {
@@ -53,9 +64,11 @@ export class EditNoteInteractor extends StateBasedInteractor<EditNoteState> {
 
   @bind
   public async saveNote(): Promise<void> {
-    if (!this.validateNote()) return;
-    await this.maybeSaveNoteInTheClient();
-    this.publiser.pusblish('note_saved', this.state.note);
+    await this.withPendingState('saveNotePending', async () => {
+      if (!this.validateNote()) return;
+      await this.maybeSaveNoteInTheClient();
+      this.publiser.pusblish('note_saved', this.state.note);
+    });
   }
 
   private validateNote(): boolean {

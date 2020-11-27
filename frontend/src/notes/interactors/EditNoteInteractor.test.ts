@@ -9,6 +9,8 @@ describe('newEditNoteState', () => {
       note: { id: '', title: '', body: '' },
       errors: {},
       isDirty: false,
+      getNotePending: false,
+      saveNotePending: false,
     });
   });
 });

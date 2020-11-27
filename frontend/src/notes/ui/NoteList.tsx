@@ -13,20 +13,16 @@ export const NoteList: React.FC = () => {
     removeNoteInteractor,
   } = useNoteContext();
 
-  const { pending: getNotesPending, execute: getNotesAction } = useAsyncAction(
-    listNoteInteractor.getNotes
-  );
-
   useEffect(() => {
-    getNotesAction();
-  }, [getNotesAction]);
+    listNoteInteractor.getNotes();
+  }, [listNoteInteractor.getNotes]);
 
   return (
     <>
       <RemoveNoteConfirmModal />
       <NewNoteButton />
       <VerticalNav>
-        {getNotesPending ? (
+        {listNoteState.getNotesPending ? (
           <Loading />
         ) : (
           listNoteState.notes.map((note) => (
@@ -51,10 +47,6 @@ export const RemoveNoteConfirmModal: React.FC = () => {
   const { t } = useTranslation();
   const { removeNoteState, removeNoteInteractor } = useNoteContext();
 
-  const { pending: confirmPending, execute: confirmAction } = useAsyncAction(
-    removeNoteInteractor.confirmNoteRemoval
-  );
-
   return (
     <ConfirmModal
       open={removeNoteState.promptConfirmation}
@@ -64,8 +56,8 @@ export const RemoveNoteConfirmModal: React.FC = () => {
       })}
       confirmLabel={t('Remove note')}
       onCancel={removeNoteInteractor.cancelNoteRemoval}
-      onConfirm={confirmAction}
-      confirmPending={confirmPending}
+      onConfirm={removeNoteInteractor.confirmNoteRemoval}
+      confirmPending={removeNoteState.confirmNoteRemovalPending}
     />
   );
 };

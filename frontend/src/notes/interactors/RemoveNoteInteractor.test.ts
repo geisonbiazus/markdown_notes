@@ -4,7 +4,11 @@ import { InMemoryNoteClient } from '../clients';
 
 describe('newRemoveNoteState', () => {
   it('returns an empty state', () => {
-    expect(newRemoveNoteState()).toEqual({ note: undefined, promptConfirmation: false });
+    expect(newRemoveNoteState()).toEqual({
+      note: undefined,
+      promptConfirmation: false,
+      confirmNoteRemovalPending: false,
+    });
   });
 });
 

@@ -5,10 +5,11 @@ import { Note, NoteClient } from '../entities';
 export interface RemoveNoteState {
   note?: Note;
   promptConfirmation: boolean;
+  confirmNoteRemovalPending: boolean;
 }
 
 export const newRemoveNoteState = (): RemoveNoteState => {
-  return { note: undefined, promptConfirmation: false };
+  return { note: undefined, promptConfirmation: false, confirmNoteRemovalPending: false };
 };
 
 export class RemoveNoteInteractor extends StateBasedInteractor<RemoveNoteState> {
@@ -32,12 +33,14 @@ export class RemoveNoteInteractor extends StateBasedInteractor<RemoveNoteState> 
 
   @bind
   public async confirmNoteRemoval(): Promise<void> {
-    if (!this.state.note) return;
+    await this.withPendingState('confirmNoteRemovalPending', async () => {
+      if (!this.state.note) return;
 
-    await this.client.removeNote(this.state.note.id);
+      await this.client.removeNote(this.state.note.id);
 
-    this.publisher.pusblish('note_removed', this.state.note);
+      this.publisher.pusblish('note_removed', this.state.note);
 
-    this.updateState({ note: undefined, promptConfirmation: false });
+      this.updateState({ note: undefined, promptConfirmation: false });
+    });
   }
 }

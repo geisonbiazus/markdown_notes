@@ -4,7 +4,7 @@ import { InMemoryNoteClient } from '../clients';
 
 describe('newListNoteState', () => {
   it('returns an empty state', () => {
-    expect(newListNoteState()).toEqual({ notes: [] });
+    expect(newListNoteState()).toEqual({ notes: [], getNotesPending: false });
   });
 });
 
