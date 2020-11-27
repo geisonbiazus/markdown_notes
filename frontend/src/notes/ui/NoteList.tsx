@@ -1,25 +1,28 @@
 import React, { useEffect } from 'react';
 import { NewNoteButton } from './NewNoteButton';
-import { useNoteContext } from './NoteContext';
+import { useNoteContext } from '../NoteContext';
 import { VerticalNav, NavItem, NavIcon, ConfirmModal, Loading } from '../../shared/components';
 import { useTranslation } from 'react-i18next';
 import { useAsyncAction } from '../../shared/hooks';
 
 export const NoteList: React.FC = () => {
-  const { listNoteState, editNoteState, getNotes, requestNoteRemoval } = useNoteContext();
-
-  const { pending: getNotesPending, execute: getNotesAction } = useAsyncAction(getNotes);
+  const {
+    listNoteState,
+    editNoteState,
+    listNoteInteractor,
+    removeNoteInteractor,
+  } = useNoteContext();
 
   useEffect(() => {
-    getNotesAction();
-  }, [getNotesAction]);
+    listNoteInteractor.getNotes();
+  }, [listNoteInteractor.getNotes]);
 
   return (
     <>
       <RemoveNoteConfirmModal />
       <NewNoteButton />
       <VerticalNav>
-        {getNotesPending ? (
+        {listNoteState.getNotesPending ? (
           <Loading />
         ) : (
           listNoteState.notes.map((note) => (
@@ -29,7 +32,7 @@ export const NoteList: React.FC = () => {
               href={`/notes/${note.id}`}
               active={note.id === editNoteState.note.id}
             >
-              <NavIcon onClick={() => requestNoteRemoval(note)} />
+              <NavIcon onClick={() => removeNoteInteractor.requestNoteRemoval(note)} />
             </NavItem>
           ))
         )}
@@ -42,9 +45,7 @@ export interface RemoveNoteConfirmModalProps {}
 
 export const RemoveNoteConfirmModal: React.FC = () => {
   const { t } = useTranslation();
-  const { removeNoteState, cancelNoteRemoval, confirmNoteRemoval } = useNoteContext();
-
-  const { pending: confirmPending, execute: confirmAction } = useAsyncAction(confirmNoteRemoval);
+  const { removeNoteState, removeNoteInteractor } = useNoteContext();
 
   return (
     <ConfirmModal
@@ -54,9 +55,9 @@ export const RemoveNoteConfirmModal: React.FC = () => {
         name: removeNoteState.note?.title,
       })}
       confirmLabel={t('Remove note')}
-      onCancel={cancelNoteRemoval}
-      onConfirm={confirmAction}
-      confirmPending={confirmPending}
+      onCancel={removeNoteInteractor.cancelNoteRemoval}
+      onConfirm={removeNoteInteractor.confirmNoteRemoval}
+      confirmPending={removeNoteState.confirmNoteRemovalPending}
     />
   );
 };

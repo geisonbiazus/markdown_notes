@@ -1,30 +1,46 @@
+import bind from 'bind-decorator';
+import { Publisher, StateBasedInteractor, StateManager } from '../../utils';
 import { Note, NoteClient } from '../entities';
 
 export interface RemoveNoteState {
   note?: Note;
   promptConfirmation: boolean;
+  confirmNoteRemovalPending: boolean;
 }
 
 export const newRemoveNoteState = (): RemoveNoteState => {
-  return { note: undefined, promptConfirmation: false };
+  return { note: undefined, promptConfirmation: false, confirmNoteRemovalPending: false };
 };
 
-export class RemoveNoteInteractor {
-  constructor(private client: NoteClient) {}
-
-  requestNoteRemoval(state: RemoveNoteState, note: Note): RemoveNoteState {
-    return { ...state, note, promptConfirmation: true };
+export class RemoveNoteInteractor extends StateBasedInteractor<RemoveNoteState> {
+  constructor(
+    stateManager: StateManager<RemoveNoteState>,
+    private client: NoteClient,
+    private publisher: Publisher
+  ) {
+    super(stateManager);
   }
 
-  cancelNoteRemoval(state: RemoveNoteState): RemoveNoteState {
-    return { ...state, note: undefined, promptConfirmation: false };
+  @bind
+  public requestNoteRemoval(note: Note): void {
+    this.updateState({ note, promptConfirmation: true });
   }
 
-  async confirmNoteRemoval(state: RemoveNoteState): Promise<RemoveNoteState> {
-    if (!state.note) return state;
+  @bind
+  public cancelNoteRemoval(): void {
+    this.updateState({ note: undefined, promptConfirmation: false });
+  }
 
-    await this.client.removeNote(state.note.id);
+  @bind
+  public async confirmNoteRemoval(): Promise<void> {
+    await this.withPendingState('confirmNoteRemovalPending', async () => {
+      if (!this.state.note) return;
 
-    return { ...state, note: undefined, promptConfirmation: false };
+      await this.client.removeNote(this.state.note.id);
+
+      this.publisher.pusblish('note_removed', this.state.note);
+
+      this.updateState({ note: undefined, promptConfirmation: false });
+    });
   }
 }

@@ -11,6 +11,10 @@ export class StateManager<T> {
   }
 }
 
+type BooleanKey<T> = {
+  [K in keyof T]: T[K] extends boolean ? K : never;
+}[keyof T];
+
 export class StateBasedInteractor<T> {
   constructor(private stateManager: StateManager<T>) {}
 
@@ -20,5 +24,14 @@ export class StateBasedInteractor<T> {
 
   protected updateState(update: Partial<T>): void {
     this.stateManager.setState({ ...this.state, ...update });
+  }
+
+  protected async withPendingState(
+    field: BooleanKey<T>,
+    callback: () => Promise<any>
+  ): Promise<void> {
+    this.updateState({ [field]: true } as any);
+    await callback();
+    this.updateState({ [field]: false } as any);
   }
 }

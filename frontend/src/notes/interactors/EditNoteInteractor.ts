@@ -1,71 +1,103 @@
-import { Errors, ErrorType, isEmpty, validateRequired } from '../../utils';
+import bind from 'bind-decorator';
+import {
+  Errors,
+  ErrorType,
+  isEmpty,
+  Publisher,
+  StateBasedInteractor,
+  StateManager,
+  validateRequired,
+} from '../../utils';
 import { Note, NoteClient, SaveNoteResponse } from '../entities';
 
 export interface EditNoteState {
   note: Note;
   errors: Record<string, ErrorType>;
   isDirty: boolean;
+  getNotePending: boolean;
+  saveNotePending: boolean;
 }
 
 export const newEditNoteState = (initialState: Partial<EditNoteState> = {}): EditNoteState => {
-  return { note: { id: '', title: '', body: '' }, errors: {}, isDirty: false, ...initialState };
+  return {
+    note: { id: '', title: '', body: '' },
+    errors: {},
+    isDirty: false,
+    getNotePending: false,
+    saveNotePending: false,
+    ...initialState,
+  };
 };
 
-export class EditNoteInteractor {
-  private noteClient: NoteClient;
-
-  constructor(noteClient: NoteClient) {
-    this.noteClient = noteClient;
+export class EditNoteInteractor extends StateBasedInteractor<EditNoteState> {
+  constructor(
+    stateManager: StateManager<EditNoteState>,
+    private noteClient: NoteClient,
+    private publiser: Publisher
+  ) {
+    super(stateManager);
   }
 
-  public async getNote(state: EditNoteState, id: string): Promise<EditNoteState> {
-    const note = await this.noteClient.getNote(id);
-    if (!note) return { ...state, note: { id, title: '', body: '' } };
-    return { ...state, note };
+  @bind
+  public async getNote(id: string): Promise<void> {
+    await this.withPendingState('getNotePending', async () => {
+      let note = await this.noteClient.getNote(id);
+      this.updateState({ note: note || this.newNote(id) });
+    });
   }
 
-  public setTitle(state: EditNoteState, title: string): EditNoteState {
-    return { ...state, note: { ...state.note, title }, isDirty: true };
+  private newNote(id: string): Note {
+    return { id, title: '', body: '' };
   }
 
-  public setBody(state: EditNoteState, body: string): EditNoteState {
-    return { ...state, note: { ...state.note, body }, isDirty: true };
+  @bind
+  public setTitle(title: string): void {
+    const note = this.state.note;
+    this.updateState({ note: { ...note, title }, isDirty: true });
   }
 
-  public async saveNote(state: EditNoteState): Promise<EditNoteState> {
-    const updatedState = this.validateNote(state);
-    return this.maybeSaveNoteInTheClient(updatedState);
+  @bind
+  public setBody(body: string): void {
+    const note = this.state.note;
+    this.updateState({ note: { ...note, body }, isDirty: true });
   }
 
-  private validateNote(state: EditNoteState): EditNoteState {
+  @bind
+  public async saveNote(): Promise<void> {
+    await this.withPendingState('saveNotePending', async () => {
+      if (!this.validateNote()) return;
+      await this.maybeSaveNoteInTheClient();
+      this.publiser.pusblish('note_saved', this.state.note);
+    });
+  }
+
+  private validateNote(): boolean {
     let errors: Errors = {};
-    errors = validateRequired(errors, state.note, 'title');
-    return { ...state, errors };
+    errors = validateRequired(errors, this.state.note, 'title');
+
+    this.updateState({ errors });
+
+    return isEmpty(errors);
   }
 
-  private async maybeSaveNoteInTheClient(state: EditNoteState): Promise<EditNoteState> {
-    if (!isEmpty(state.errors)) return state;
-
-    const response = await this.noteClient.saveNote(state.note);
-
-    if (response.status === 'validation_error')
-      return this.extractSaveNoteClientErrors(state, response);
-
-    return { ...state, isDirty: false };
-  }
-
-  private extractSaveNoteClientErrors(
-    state: EditNoteState,
-    response: SaveNoteResponse
-  ): EditNoteState {
-    let errors = state.errors;
+  private async maybeSaveNoteInTheClient(): Promise<void> {
+    const response = await this.noteClient.saveNote(this.state.note);
 
     if (response.status === 'validation_error') {
-      response.errors?.forEach((error) => {
-        errors = { ...errors, [error.field]: error.type as ErrorType };
-      });
+      this.extractSaveNoteClientErrors(response);
+      return;
     }
 
-    return { ...state, errors };
+    this.updateState({ isDirty: false });
+  }
+
+  private extractSaveNoteClientErrors(response: SaveNoteResponse): void {
+    let errors: Errors = {};
+
+    response.errors?.forEach((error) => {
+      errors = { ...errors, [error.field]: error.type as ErrorType };
+    });
+
+    this.updateState({ errors });
   }
 }
