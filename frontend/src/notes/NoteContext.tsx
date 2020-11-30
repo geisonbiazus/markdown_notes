@@ -49,6 +49,7 @@ function useListNoteInteractor(noteClient: NoteClient): [ListNoteState, ListNote
   const listNoteInteractor = useMemo(() => {
     const stateManager = new StateManager<ListNoteState>(listNoteState, setListNoteState);
     return new ListNoteInteractor(stateManager, noteClient);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [noteClient]);
 
   useEffect(() => {

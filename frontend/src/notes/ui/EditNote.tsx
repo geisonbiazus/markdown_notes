@@ -12,7 +12,7 @@ export const EditNote: React.FC = () => {
 
   useEffect(() => {
     editNoteInteractor.getNote(id);
-  }, [editNoteInteractor.getNote, id]);
+  }, [editNoteInteractor, id]);
 
   if (editNoteState.getNotePending) {
     return <Loading />;
