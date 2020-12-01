@@ -1,4 +1,5 @@
 import { PubSub } from '../utils';
+import { AppConfig, getAppConfig } from './AppConfig';
 
 export class AppContext {
   private pubSubInstance?: PubSub;
@@ -6,5 +7,9 @@ export class AppContext {
   public get pubSub(): PubSub {
     if (!this.pubSubInstance) this.pubSubInstance = new PubSub();
     return this.pubSubInstance;
+  }
+
+  public get config(): AppConfig {
+    return getAppConfig();
   }
 }

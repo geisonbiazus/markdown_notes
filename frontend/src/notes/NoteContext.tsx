@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useAppContext } from '../app';
-import { getAppConfig } from '../AppConfig';
 import { useAuthenticationContext } from '../authentication';
 import { AuthenticatedHTTPClient, StateManager } from '../utils';
 import { APINoteClient } from './clients';
@@ -29,17 +28,17 @@ export interface NoteContextValue {
 const NoteContext = React.createContext<NoteContextValue>(null!);
 
 function useNoteClient(): NoteClient {
+  const { config } = useAppContext();
   const { signInState, signInInteractor } = useAuthenticationContext();
 
   return useMemo(() => {
-    const appConfig = getAppConfig();
     const httpClient = new AuthenticatedHTTPClient(
-      appConfig.apiURL,
+      config.apiURL,
       signInState.token,
       signInInteractor.signOut
     );
     return new APINoteClient(httpClient);
-  }, [signInState.token, signInInteractor.signOut]);
+  }, [config.apiURL, signInState.token, signInInteractor.signOut]);
 }
 
 function useListNoteInteractor(noteClient: NoteClient): [ListNoteState, ListNoteInteractor] {

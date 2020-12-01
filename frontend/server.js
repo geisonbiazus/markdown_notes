@@ -18,7 +18,7 @@ monitoringApp.listen(MONITORING_PORT, '0.0.0.0', () => {
 
 /**
  * !! IMPORTANT !!
- * this has to correspond to src/AppConfig#AppConfig
+ * this has to correspond to src/app/AppConfig#AppConfig
  * !! IMPORTANT !!
  */
 const appConfig = JSON.stringify({

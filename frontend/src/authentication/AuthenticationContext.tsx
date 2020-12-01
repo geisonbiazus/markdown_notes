@@ -1,5 +1,5 @@
 import React, { useContext, useMemo, useState } from 'react';
-import { getAppConfig } from '../AppConfig';
+import { useAppContext } from '../app';
 import { HTTPClient, StateManager } from '../utils';
 import { APIAuthenticationClient } from './clients';
 import { newSignInState, SignInInteractor, SignInState } from './interactors';
@@ -13,12 +13,12 @@ export interface AuthenticationContextValue {
 const AuthenticationContext = React.createContext<AuthenticationContextValue>(null!);
 
 function useSigninInteractor(): [SignInState, SignInInteractor] {
+  const { config } = useAppContext();
   const [signInState, setSignInState] = useState(newSignInState());
 
   const signInInteractor = useMemo(() => {
     const stateManager = new StateManager<SignInState>(signInState, setSignInState);
-    const appConfig = getAppConfig();
-    const httpClient = new HTTPClient(appConfig.apiURL);
+    const httpClient = new HTTPClient(config.apiURL);
     const authenticationclient = new APIAuthenticationClient(httpClient);
     const sessionRepository = new LocalStorageSessionRepository();
     const signInInteractor = new SignInInteractor(
