@@ -1,8 +1,16 @@
 import { HTTPClient, HTTPResponse } from './HTTPClient';
 
 export class AuthenticatedHTTPClient extends HTTPClient {
-  constructor(baseURL: string, private token: string, private onUnauthorized: () => void) {
+  constructor(baseURL: string, private token?: string, private onUnauthorizedCb?: () => void) {
     super(baseURL);
+  }
+
+  public setToken(token: string) {
+    this.token = token;
+  }
+
+  public onUnauthorized(callback: () => void): void {
+    this.onUnauthorizedCb = callback;
   }
 
   public async post<T>(
@@ -42,7 +50,7 @@ export class AuthenticatedHTTPClient extends HTTPClient {
   }
 
   private handleUnauthorized<T>(response: HTTPResponse<T>): HTTPResponse<T> {
-    if (response.status === 401) this.onUnauthorized?.();
+    if (response.status === 401) this.onUnauthorizedCb?.();
     return response;
   }
 

@@ -20,7 +20,9 @@ describe('AuthenticatedHTTPClient', () => {
 
   beforeEach(() => {
     onUnauthorizedCalled = false;
-    client = new AuthenticatedHTTPClient(baseURL, token, onUnauthorized);
+    client = new AuthenticatedHTTPClient(baseURL);
+    client.setToken(token);
+    client.onUnauthorized(onUnauthorized);
     nock.cleanAll();
   });
 

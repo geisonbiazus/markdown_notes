@@ -13,12 +13,11 @@ export interface AuthenticationContextValue {
 const AuthenticationContext = React.createContext<AuthenticationContextValue>(null!);
 
 function useSigninInteractor(): [SignInState, SignInInteractor] {
-  const { config } = useAppContext();
+  const { httpClient } = useAppContext();
   const [signInState, setSignInState] = useState(newSignInState());
 
   const signInInteractor = useMemo(() => {
     const stateManager = new StateManager<SignInState>(signInState, setSignInState);
-    const httpClient = new HTTPClient(config.apiURL);
     const authenticationclient = new APIAuthenticationClient(httpClient);
     const sessionRepository = new LocalStorageSessionRepository();
     const signInInteractor = new SignInInteractor(

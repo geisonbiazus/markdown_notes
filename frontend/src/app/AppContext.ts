@@ -1,4 +1,4 @@
-import { PubSub } from '../utils';
+import { HTTPClient, PubSub } from '../utils';
 import { AppConfig, getAppConfig } from './AppConfig';
 
 export class AppContext {
@@ -11,5 +11,9 @@ export class AppContext {
 
   public get config(): AppConfig {
     return getAppConfig();
+  }
+
+  public get httpClient(): HTTPClient {
+    return new HTTPClient(this.config.apiURL);
   }
 }
