@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import { useAuthenticationContext } from '../authentication';
-import { EditNote, NoteList, NoteProvider } from '../notes';
-import { Row, Col, AppBar, AppContainer, Button } from '../shared/components';
+import { useAuthenticationContext } from '../../authentication';
+import { EditNote, NoteList, NoteProvider } from '../../notes';
+import { Row, Col, AppBar, AppContainer, Button } from '../../shared/components';
 
 export const AuthenticatedApp: React.FC = () => (
   <NoteProvider>

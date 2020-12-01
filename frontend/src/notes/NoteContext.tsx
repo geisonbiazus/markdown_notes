@@ -1,4 +1,10 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { useAppContext } from '../app';
+import { getAppConfig } from '../AppConfig';
+import { useAuthenticationContext } from '../authentication';
+import { AuthenticatedHTTPClient, StateManager } from '../utils';
+import { APINoteClient } from './clients';
+import { NoteClient } from './entities';
 import {
   EditNoteInteractor,
   EditNoteState,
@@ -10,11 +16,6 @@ import {
   RemoveNoteInteractor,
   RemoveNoteState,
 } from './interactors';
-import { APINoteClient } from './clients';
-import { AuthenticatedHTTPClient, PubSub, StateManager } from '../utils';
-import { NoteClient } from './entities';
-import { getAppConfig } from '../AppConfig';
-import { useAuthenticationContext } from '../authentication';
 
 export interface NoteContextValue {
   listNoteState: ListNoteState;
@@ -26,8 +27,6 @@ export interface NoteContextValue {
 }
 
 const NoteContext = React.createContext<NoteContextValue>(null!);
-
-const pubSub = new PubSub();
 
 function useNoteClient(): NoteClient {
   const { signInState, signInInteractor } = useAuthenticationContext();
@@ -44,6 +43,7 @@ function useNoteClient(): NoteClient {
 }
 
 function useListNoteInteractor(noteClient: NoteClient): [ListNoteState, ListNoteInteractor] {
+  const { pubSub } = useAppContext();
   const [listNoteState, setListNoteState] = useState(newListNoteState());
 
   const listNoteInteractor = useMemo(() => {
@@ -62,12 +62,13 @@ function useListNoteInteractor(noteClient: NoteClient): [ListNoteState, ListNote
       disposeNoteSaved();
       disposeNoteRemoved();
     };
-  }, [listNoteInteractor]);
+  }, [listNoteInteractor, pubSub]);
 
   return [listNoteState, listNoteInteractor];
 }
 
 function useRemoveNoteInteractor(noteClient: NoteClient): [RemoveNoteState, RemoveNoteInteractor] {
+  const { pubSub } = useAppContext();
   const [removeNoteState, setRemoveNoteState] = useState(newRemoveNoteState());
 
   const removeNoteInteractor = useMemo(() => {
@@ -80,6 +81,7 @@ function useRemoveNoteInteractor(noteClient: NoteClient): [RemoveNoteState, Remo
 }
 
 function useEditNoteInteractor(noteClient: NoteClient): [EditNoteState, EditNoteInteractor] {
+  const { pubSub } = useAppContext();
   const [editNoteState, setEditNoteState] = useState(newEditNoteState());
 
   const editNoteInteractor = useMemo(() => {

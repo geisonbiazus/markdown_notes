@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import { SignIn } from '../authentication/ui';
-import { Row, Col, AppBar, AppContainer } from '../shared/components';
+import { SignIn } from '../../authentication';
+import { Row, Col, AppBar, AppContainer } from '../../shared/components';
 
 export const UnauthenticatedApp: React.FC = () => (
   <>
