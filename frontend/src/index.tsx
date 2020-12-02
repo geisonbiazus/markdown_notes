@@ -7,8 +7,11 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
 import { App, AppContext, AppProvider } from './app';
 import { AuthenticationProvider } from './authentication';
+import { Subscribers } from './app/Subscribers';
 
 const appContext = new AppContext();
+const subscribers = new Subscribers(appContext);
+subscribers.start();
 
 ReactDOM.render(
   <React.StrictMode>

@@ -1,4 +1,4 @@
-import { StateManager } from '../../utils';
+import { FakePublisher, StateManager } from '../../utils';
 import { InMemoryAuthenticationClient } from '../clients';
 import { InMemorySessionRepository } from '../repositories';
 import { newSignInState, SignInInteractor, SignInState } from './SignInInteractor';
@@ -19,13 +19,20 @@ describe('SignInInteractor', () => {
   let interactor: SignInInteractor;
   let authenticationClient: InMemoryAuthenticationClient;
   let sessionRepository: InMemorySessionRepository;
+  let publisher: FakePublisher;
   let stateManager: StateManager<SignInState>;
 
   beforeEach(() => {
     authenticationClient = new InMemoryAuthenticationClient();
     sessionRepository = new InMemorySessionRepository();
     stateManager = new StateManager(newSignInState());
-    interactor = new SignInInteractor(stateManager, authenticationClient, sessionRepository);
+    publisher = new FakePublisher();
+    interactor = new SignInInteractor(
+      stateManager,
+      authenticationClient,
+      sessionRepository,
+      publisher
+    );
   });
 
   describe('signIn', () => {
@@ -62,6 +69,20 @@ describe('SignInInteractor', () => {
       expect(state.authenticated).toEqual(true);
       expect(state.token).toEqual(token);
     });
+
+    it('publishes user_authenticated event', async () => {
+      const email = 'user@example.com';
+      const password = 'password';
+      const token = 'token';
+      authenticationClient.addUser(email, password, token);
+
+      interactor.setEmail(email);
+      interactor.setPassword(password);
+
+      await interactor.signIn();
+
+      expect(publisher.events).toEqual([{ name: 'user_authenticated', payload: { token } }]);
+    });
   });
 
   describe('checkAuthentication', () => {
@@ -84,6 +105,15 @@ describe('SignInInteractor', () => {
 
       expect(state.authenticated).toBe(true);
       expect(state.token).toEqual(token);
+    });
+
+    it('publishes user_authenticated event', () => {
+      const token = 'token';
+      sessionRepository.setToken(token);
+
+      interactor.checkAuthentication();
+
+      expect(publisher.events).toEqual([{ name: 'user_authenticated', payload: { token } }]);
     });
   });
 

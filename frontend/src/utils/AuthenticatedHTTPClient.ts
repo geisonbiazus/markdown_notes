@@ -1,7 +1,7 @@
 import { HTTPClient, HTTPResponse } from './HTTPClient';
 
 export class AuthenticatedHTTPClient extends HTTPClient {
-  constructor(baseURL: string, private token?: string, private onUnauthorizedCb?: () => void) {
+  constructor(baseURL: string, public token?: string, private onUnauthorizedCb?: () => void) {
     super(baseURL);
   }
 

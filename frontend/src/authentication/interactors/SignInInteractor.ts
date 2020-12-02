@@ -1,5 +1,12 @@
 import bind from 'bind-decorator';
-import { Errors, isEmpty, validateRequired, StateBasedInteractor, StateManager } from '../../utils';
+import {
+  Errors,
+  isEmpty,
+  validateRequired,
+  StateBasedInteractor,
+  StateManager,
+  Publisher,
+} from '../../utils';
 import { AuthenticationClient, SessionRepository } from '../entities';
 
 export interface SignInState {
@@ -18,7 +25,8 @@ export class SignInInteractor extends StateBasedInteractor<SignInState> {
   constructor(
     stateManager: StateManager<SignInState>,
     private authenticationClient: AuthenticationClient,
-    private sessionRepository: SessionRepository
+    private sessionRepository: SessionRepository,
+    private publisher: Publisher
   ) {
     super(stateManager);
   }
@@ -65,14 +73,19 @@ export class SignInInteractor extends StateBasedInteractor<SignInState> {
   }
 
   private processSucessSignIn(token: string): void {
-    this.updateState({ authenticated: true, token });
     this.sessionRepository.setToken(token);
+    this.publishUserAuthenticatedEvent(token);
+    this.updateState({ authenticated: true, token });
   }
 
   public checkAuthentication(): void {
     const token = this.sessionRepository.getToken();
-
+    if (token) this.publishUserAuthenticatedEvent(token);
     this.updateState({ authenticated: !!token, token: token || '' });
+  }
+
+  private publishUserAuthenticatedEvent(token: string): void {
+    this.publisher.pusblish('user_authenticated', { token });
   }
 
   @bind

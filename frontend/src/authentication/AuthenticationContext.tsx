@@ -1,6 +1,6 @@
 import React, { useContext, useMemo, useState } from 'react';
 import { useAppContext } from '../app';
-import { HTTPClient, StateManager } from '../utils';
+import { StateManager } from '../utils';
 import { APIAuthenticationClient } from './clients';
 import { newSignInState, SignInInteractor, SignInState } from './interactors';
 import { LocalStorageSessionRepository } from './repositories';
@@ -13,7 +13,7 @@ export interface AuthenticationContextValue {
 const AuthenticationContext = React.createContext<AuthenticationContextValue>(null!);
 
 function useSigninInteractor(): [SignInState, SignInInteractor] {
-  const { httpClient } = useAppContext();
+  const { pubSub, httpClient } = useAppContext();
   const [signInState, setSignInState] = useState(newSignInState());
 
   const signInInteractor = useMemo(() => {
@@ -23,7 +23,8 @@ function useSigninInteractor(): [SignInState, SignInInteractor] {
     const signInInteractor = new SignInInteractor(
       stateManager,
       authenticationclient,
-      sessionRepository
+      sessionRepository,
+      pubSub
     );
 
     signInInteractor.checkAuthentication();

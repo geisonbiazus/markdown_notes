@@ -28,17 +28,11 @@ export interface NoteContextValue {
 const NoteContext = React.createContext<NoteContextValue>(null!);
 
 function useNoteClient(): NoteClient {
-  const { config } = useAppContext();
-  const { signInState, signInInteractor } = useAuthenticationContext();
+  const { authenticatedHTTPClient } = useAppContext();
 
   return useMemo(() => {
-    const httpClient = new AuthenticatedHTTPClient(
-      config.apiURL,
-      signInState.token,
-      signInInteractor.signOut
-    );
-    return new APINoteClient(httpClient);
-  }, [config.apiURL, signInState.token, signInInteractor.signOut]);
+    return new APINoteClient(authenticatedHTTPClient);
+  }, [authenticatedHTTPClient]);
 }
 
 function useListNoteInteractor(noteClient: NoteClient): [ListNoteState, ListNoteInteractor] {
