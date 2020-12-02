@@ -1,8 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useAppContext } from '../app';
-import { useAuthenticationContext } from '../authentication';
-import { AuthenticatedHTTPClient, StateManager } from '../utils';
-import { APINoteClient } from './clients';
+import { StateManager } from '../utils';
 import { NoteClient } from './entities';
 import {
   EditNoteInteractor,
@@ -25,15 +23,7 @@ export interface NoteContextValue {
   removeNoteInteractor: RemoveNoteInteractor;
 }
 
-const NoteContext = React.createContext<NoteContextValue>(null!);
-
-function useNoteClient(): NoteClient {
-  const { authenticatedHTTPClient } = useAppContext();
-
-  return useMemo(() => {
-    return new APINoteClient(authenticatedHTTPClient);
-  }, [authenticatedHTTPClient]);
-}
+const NoteReactContext = React.createContext<NoteContextValue>(null!);
 
 function useListNoteInteractor(noteClient: NoteClient): [ListNoteState, ListNoteInteractor] {
   const { pubSub } = useAppContext();
@@ -87,13 +77,15 @@ function useEditNoteInteractor(noteClient: NoteClient): [EditNoteState, EditNote
 }
 
 export const NoteProvider: React.FC = ({ children }) => {
-  const noteClient = useNoteClient();
+  const {
+    noteContext: { noteClient },
+  } = useAppContext();
   const [listNoteState, listNoteInteractor] = useListNoteInteractor(noteClient);
   const [removeNoteState, removeNoteInteractor] = useRemoveNoteInteractor(noteClient);
   const [editNoteState, editNoteInteractor] = useEditNoteInteractor(noteClient);
 
   return (
-    <NoteContext.Provider
+    <NoteReactContext.Provider
       value={{
         listNoteState,
         listNoteInteractor,
@@ -104,8 +96,8 @@ export const NoteProvider: React.FC = ({ children }) => {
       }}
     >
       {children}
-    </NoteContext.Provider>
+    </NoteReactContext.Provider>
   );
 };
 
-export const useNoteContext = () => useContext(NoteContext);
+export const useNoteContext = () => useContext(NoteReactContext);

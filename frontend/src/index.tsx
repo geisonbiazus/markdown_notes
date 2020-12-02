@@ -5,9 +5,8 @@ import './index.css';
 import './i18n';
 import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
-import { App, AppContext, AppProvider } from './app';
+import { App, AppContext, AppProvider, Subscribers } from './app';
 import { AuthenticationProvider } from './authentication';
-import { Subscribers } from './app/Subscribers';
 
 const appContext = new AppContext();
 const subscribers = new Subscribers(appContext);

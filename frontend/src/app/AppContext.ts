@@ -1,10 +1,11 @@
+import { NoteContext } from '../notes/NoteContext';
 import { AuthenticatedHTTPClient, HTTPClient, PubSub } from '../utils';
 import { AppConfig, getAppConfig } from './AppConfig';
 
 export class AppContext {
   private pubSubInstance?: PubSub;
-  private httpClientInstance?: HTTPClient;
   private authenticatedHTTPClientInstance?: AuthenticatedHTTPClient;
+  private noteContextInstance?: NoteContext;
 
   public get pubSub(): PubSub {
     if (!this.pubSubInstance) this.pubSubInstance = new PubSub();
@@ -16,10 +17,7 @@ export class AppContext {
   }
 
   public get httpClient(): HTTPClient {
-    if (!this.httpClientInstance) {
-      this.httpClientInstance = new HTTPClient(this.config.apiURL);
-    }
-    return this.httpClientInstance;
+    return new HTTPClient(this.config.apiURL);
   }
 
   public get authenticatedHTTPClient(): AuthenticatedHTTPClient {
@@ -27,5 +25,12 @@ export class AppContext {
       this.authenticatedHTTPClientInstance = new AuthenticatedHTTPClient(this.config.apiURL);
     }
     return this.authenticatedHTTPClientInstance;
+  }
+
+  public get noteContext(): NoteContext {
+    if (!this.noteContextInstance) {
+      this.noteContextInstance = new NoteContext(this.authenticatedHTTPClient);
+    }
+    return this.noteContextInstance;
   }
 }
