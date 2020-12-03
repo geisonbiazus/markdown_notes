@@ -5,4 +5,5 @@ export * from './sleep';
 export * from './validations';
 export * from './object';
 export * from './StateBasedInteractor';
+export * from './StateObservableInteractor';
 export * from './pub_sub';
