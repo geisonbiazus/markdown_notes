@@ -6,6 +6,7 @@ import {
   StateBasedInteractor,
   StateManager,
   Publisher,
+  StateObservableInteractor,
 } from '../../utils';
 import { AuthenticationClient, SessionRepository } from '../entities';
 
@@ -21,14 +22,13 @@ export function newSignInState(initialState: Partial<SignInState> = {}): SignInS
   return { email: '', password: '', errors: {}, token: '', authenticated: false, ...initialState };
 }
 
-export class SignInInteractor extends StateBasedInteractor<SignInState> {
+export class SignInInteractor extends StateObservableInteractor<SignInState> {
   constructor(
-    stateManager: StateManager<SignInState>,
     private authenticationClient: AuthenticationClient,
     private sessionRepository: SessionRepository,
     private publisher: Publisher
   ) {
-    super(stateManager);
+    super(newSignInState());
   }
 
   @bind

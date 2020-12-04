@@ -71,19 +71,23 @@ describe('StateObservableInteractor', () => {
       let observer1TimesCalled = 0;
       let observer2TimesCalled = 0;
 
-      const dispose = interactor.observe(() => {
+      const dispose1 = interactor.observe(() => {
         observer1TimesCalled++;
       });
 
-      interactor.observe(() => {
+      const dispose2 = interactor.observe(() => {
         observer2TimesCalled++;
       });
 
       interactor.updateState({ key1: 'new key1 value' });
 
-      dispose();
+      dispose1();
 
       interactor.updateState({ key2: 'new key2 value' });
+      
+      dispose2();
+      
+      interactor.updateState({ key2: 'another key2 value' });
 
       expect(observer1TimesCalled).toEqual(1);
       expect(observer2TimesCalled).toEqual(2);

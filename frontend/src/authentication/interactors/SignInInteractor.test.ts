@@ -20,27 +20,24 @@ describe('SignInInteractor', () => {
   let authenticationClient: InMemoryAuthenticationClient;
   let sessionRepository: InMemorySessionRepository;
   let publisher: FakePublisher;
-  let stateManager: StateManager<SignInState>;
 
   beforeEach(() => {
     authenticationClient = new InMemoryAuthenticationClient();
     sessionRepository = new InMemorySessionRepository();
-    stateManager = new StateManager(newSignInState());
     publisher = new FakePublisher();
-    interactor = new SignInInteractor(
-      stateManager,
-      authenticationClient,
-      sessionRepository,
-      publisher
-    );
+    interactor = new SignInInteractor(authenticationClient, sessionRepository, publisher);
+  });
+
+  describe('constructor', () => {
+    it('initializes with and empy state', () => {
+      expect(interactor.state).toEqual(newSignInState());
+    });
   });
 
   describe('signIn', () => {
     it('validates required email and password', async () => {
       await interactor.signIn();
-      const state = stateManager.getState();
-
-      expect(state.errors).toEqual({ email: 'required', password: 'required' });
+      expect(interactor.state.errors).toEqual({ email: 'required', password: 'required' });
     });
 
     it('returns error when authentication fails', async () => {
@@ -48,9 +45,8 @@ describe('SignInInteractor', () => {
       interactor.setPassword('password');
 
       await interactor.signIn();
-      const state = stateManager.getState();
 
-      expect(state.errors).toEqual({ base: 'not_found' });
+      expect(interactor.state.errors).toEqual({ base: 'not_found' });
     });
 
     it('saves the session data and sets success when authentication succeds', async () => {
@@ -63,11 +59,10 @@ describe('SignInInteractor', () => {
       interactor.setPassword(password);
 
       await interactor.signIn();
-      const state = stateManager.getState();
 
       expect(sessionRepository.getToken()).toEqual(token);
-      expect(state.authenticated).toEqual(true);
-      expect(state.token).toEqual(token);
+      expect(interactor.state.authenticated).toEqual(true);
+      expect(interactor.state.token).toEqual(token);
     });
 
     it('publishes user_authenticated event', async () => {
@@ -89,10 +84,8 @@ describe('SignInInteractor', () => {
     it('sets authenticated to false when token is note set', () => {
       interactor.checkAuthentication();
 
-      const state = stateManager.getState();
-
-      expect(state.authenticated).toBe(false);
-      expect(state.token).toEqual('');
+      expect(interactor.state.authenticated).toBe(false);
+      expect(interactor.state.token).toEqual('');
     });
 
     it('sets authenticated to true when token is set', () => {
@@ -101,10 +94,8 @@ describe('SignInInteractor', () => {
 
       interactor.checkAuthentication();
 
-      const state = stateManager.getState();
-
-      expect(state.authenticated).toBe(true);
-      expect(state.token).toEqual(token);
+      expect(interactor.state.authenticated).toBe(true);
+      expect(interactor.state.token).toEqual(token);
     });
 
     it('publishes user_authenticated event', () => {
@@ -118,24 +109,23 @@ describe('SignInInteractor', () => {
   });
 
   describe('signOut', () => {
-    beforeEach(() => {
-      stateManager.setState({
-        ...stateManager.getState(),
-        authenticated: true,
-        email: 'user@email.com',
-        password: 'password',
-      });
+    beforeEach(async () => {
+      const email = 'user@example.com';
+      const password = 'password';
+      authenticationClient.addUser(email, password, 'token');
+
+      interactor.setEmail(email);
+      interactor.setPassword(password);
+
+      await interactor.signIn();
     });
 
     it('cleans the state', () => {
       interactor.signOut();
-
-      const state = stateManager.getState();
-      expect(state).toEqual(newSignInState());
+      expect(interactor.state).toEqual(newSignInState());
     });
 
     it('cleans the token from the session', () => {
-      sessionRepository.setToken('token');
       interactor.signOut();
       expect(sessionRepository.getToken()).toBeNull();
     });

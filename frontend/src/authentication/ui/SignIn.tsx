@@ -9,7 +9,7 @@ import {
   NarrowContainer,
   TextField,
 } from '../../shared/components';
-import { useAuthenticationContext } from '../AuthenticationContext';
+import { useAuthenticationContext } from '../AuthenticationReactContext';
 
 export const SignIn: React.FC = () => {
   const { t } = useTranslation();
