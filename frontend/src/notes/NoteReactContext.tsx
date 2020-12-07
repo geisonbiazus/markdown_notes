@@ -26,17 +26,8 @@ function useListNoteInteractor(): [ListNoteState, ListNoteInteractor] {
   const [listNoteState, setListNoteState] = useState(listNoteInteractor.state);
 
   useEffect(() => {
-    const disposeStateOberver = listNoteInteractor.observe(setListNoteState);
-    const disposeNoteSaved = pubSub.subscribe('note_saved', () => listNoteInteractor.getNotes());
-    const disposeNoteRemoved = pubSub.subscribe('note_removed', () =>
-      listNoteInteractor.getNotes()
-    );
-
-    return () => {
-      disposeStateOberver();
-      disposeNoteSaved();
-      disposeNoteRemoved();
-    };
+    const dispose = listNoteInteractor.observe(setListNoteState);
+    return dispose;
   }, [listNoteInteractor, pubSub]);
 
   return [listNoteState, listNoteInteractor];

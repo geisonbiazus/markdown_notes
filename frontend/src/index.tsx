@@ -1,16 +1,15 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './index.css';
-import './i18n';
-import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
-import { App, AppContext, AppProvider, Subscribers } from './app';
+import { App, AppContext, AppProvider } from './app';
 import { AuthenticationProvider } from './authentication';
+import './i18n';
+import './index.css';
+import * as serviceWorker from './serviceWorker';
 
 const appContext = new AppContext();
-const subscribers = new Subscribers(appContext);
-subscribers.start();
+appContext.startSubscribers();
 
 ReactDOM.render(
   <React.StrictMode>

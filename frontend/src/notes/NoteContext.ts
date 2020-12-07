@@ -10,6 +10,11 @@ export class NoteContext {
 
   constructor(private httpClient: HTTPClient, private pubSub: PubSub) {}
 
+  public startSubscribers(): void {
+    this.pubSub.subscribe('note_saved', () => this.listNoteInteractor.getNotes());
+    this.pubSub.subscribe('note_removed', () => this.listNoteInteractor.getNotes());
+  }
+
   public get noteClient(): NoteClient {
     return new APINoteClient(this.httpClient);
   }

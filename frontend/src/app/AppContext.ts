@@ -45,4 +45,11 @@ export class AppContext {
     }
     return this.authenticationContextInstance;
   }
+
+  public startSubscribers(): void {
+    this.pubSub.subscribe('user_authenticated', (event: string, payload: { token: string }) => {
+      this.authenticatedHTTPClient.setToken(payload.token);
+    });
+    this.noteContext.startSubscribers();
+  }
 }
