@@ -1,19 +1,7 @@
-import { FakePublisher, StateManager } from '../../utils';
+import { FakePublisher } from '../../utils';
 import { InMemoryAuthenticationClient } from '../clients';
 import { InMemorySessionRepository } from '../repositories';
-import { newSignInState, SignInInteractor, SignInState } from './SignInInteractor';
-
-describe('newSignInState', () => {
-  it('retuns an empty state', () => {
-    expect(newSignInState()).toEqual({
-      email: '',
-      password: '',
-      errors: {},
-      token: '',
-      authenticated: false,
-    });
-  });
-});
+import { SignInInteractor } from './SignInInteractor';
 
 describe('SignInInteractor', () => {
   let interactor: SignInInteractor;
@@ -30,7 +18,13 @@ describe('SignInInteractor', () => {
 
   describe('constructor', () => {
     it('initializes with and empy state', () => {
-      expect(interactor.state).toEqual(newSignInState());
+      expect(interactor.state).toEqual({
+        email: '',
+        password: '',
+        errors: {},
+        token: '',
+        authenticated: false,
+      });
     });
   });
 
@@ -122,7 +116,9 @@ describe('SignInInteractor', () => {
 
     it('cleans the state', () => {
       interactor.signOut();
-      expect(interactor.state).toEqual(newSignInState());
+      expect(interactor.state.authenticated).toEqual(false);
+      expect(interactor.state.email).toEqual('');
+      expect(interactor.state.password).toEqual('');
     });
 
     it('cleans the token from the session', () => {

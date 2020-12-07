@@ -2,11 +2,9 @@ import bind from 'bind-decorator';
 import {
   Errors,
   isEmpty,
-  validateRequired,
-  StateBasedInteractor,
-  StateManager,
   Publisher,
   StateObservableInteractor,
+  validateRequired,
 } from '../../utils';
 import { AuthenticationClient, SessionRepository } from '../entities';
 
@@ -18,8 +16,8 @@ export interface SignInState {
   authenticated: boolean;
 }
 
-export function newSignInState(initialState: Partial<SignInState> = {}): SignInState {
-  return { email: '', password: '', errors: {}, token: '', authenticated: false, ...initialState };
+function newSignInState(): SignInState {
+  return { email: '', password: '', errors: {}, token: '', authenticated: false };
 }
 
 export class SignInInteractor extends StateObservableInteractor<SignInState> {

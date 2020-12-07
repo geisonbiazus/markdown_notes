@@ -10,19 +10,18 @@ export interface AuthenticationContextValue {
 const AuthenticationReactContext = React.createContext<AuthenticationContextValue>(null!);
 
 function useSigninInteractor(): [SignInState, SignInInteractor] {
-  const {
-    authenticationContext: { signInInteractor },
-  } = useAppContext();
-
+  const { authenticationContext } = useAppContext();
+  const { signInInteractor } = authenticationContext;
   const [signInState, setSignInState] = useState(signInInteractor.state);
 
   useEffect(() => {
-    const disposeSigninState = signInInteractor.observe(setSignInState);
+    const dispose = signInInteractor.observe(setSignInState);
 
     signInInteractor.checkAuthentication();
 
-    return disposeSigninState;
+    return dispose;
   }, [signInInteractor, setSignInState]);
+
   return [signInState, signInInteractor];
 }
 

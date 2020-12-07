@@ -1,16 +1,37 @@
-import { HTTPClient } from '../utils';
+import { HTTPClient, PubSub } from '../utils';
 import { APINoteClient } from './clients';
 import { NoteClient } from './entities';
+import { EditNoteInteractor, ListNoteInteractor, RemoveNoteInteractor } from './interactors';
 
 export class NoteContext {
-  private noteClientInstance?: NoteClient;
+  private editNoteInteractorInstance?: EditNoteInteractor;
+  private listNoteInteractorInstance?: ListNoteInteractor;
+  private removeNoteInteractorInstance?: RemoveNoteInteractor;
 
-  constructor(private httpClient: HTTPClient) {}
+  constructor(private httpClient: HTTPClient, private pubSub: PubSub) {}
 
   public get noteClient(): NoteClient {
-    if (!this.noteClientInstance) {
-      this.noteClientInstance = new APINoteClient(this.httpClient);
+    return new APINoteClient(this.httpClient);
+  }
+
+  public get editNoteInteractor(): EditNoteInteractor {
+    if (!this.editNoteInteractorInstance) {
+      this.editNoteInteractorInstance = new EditNoteInteractor(this.noteClient, this.pubSub);
     }
-    return this.noteClientInstance;
+    return this.editNoteInteractorInstance;
+  }
+
+  public get listNoteInteractor(): ListNoteInteractor {
+    if (!this.listNoteInteractorInstance) {
+      this.listNoteInteractorInstance = new ListNoteInteractor(this.noteClient);
+    }
+    return this.listNoteInteractorInstance;
+  }
+
+  public get removeNoteInteractor(): RemoveNoteInteractor {
+    if (!this.removeNoteInteractorInstance) {
+      this.removeNoteInteractorInstance = new RemoveNoteInteractor(this.noteClient, this.pubSub);
+    }
+    return this.removeNoteInteractorInstance;
   }
 }

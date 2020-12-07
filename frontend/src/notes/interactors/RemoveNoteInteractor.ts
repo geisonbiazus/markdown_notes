@@ -1,5 +1,5 @@
 import bind from 'bind-decorator';
-import { Publisher, StateBasedInteractor, StateManager } from '../../utils';
+import { Publisher, StateObservableInteractor } from '../../utils';
 import { Note, NoteClient } from '../entities';
 
 export interface RemoveNoteState {
@@ -8,17 +8,9 @@ export interface RemoveNoteState {
   confirmNoteRemovalPending: boolean;
 }
 
-export const newRemoveNoteState = (): RemoveNoteState => {
-  return { note: undefined, promptConfirmation: false, confirmNoteRemovalPending: false };
-};
-
-export class RemoveNoteInteractor extends StateBasedInteractor<RemoveNoteState> {
-  constructor(
-    stateManager: StateManager<RemoveNoteState>,
-    private client: NoteClient,
-    private publisher: Publisher
-  ) {
-    super(stateManager);
+export class RemoveNoteInteractor extends StateObservableInteractor<RemoveNoteState> {
+  constructor(private client: NoteClient, private publisher: Publisher) {
+    super({ note: undefined, promptConfirmation: false, confirmNoteRemovalPending: false });
   }
 
   @bind

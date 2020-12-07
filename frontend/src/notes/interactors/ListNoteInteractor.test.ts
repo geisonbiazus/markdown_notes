@@ -1,29 +1,26 @@
-import { newListNoteState, ListNoteInteractor, ListNoteState } from './ListNoteInteractor';
-import { StateManager, uuid } from '../../utils';
+import { uuid } from '../../utils';
 import { InMemoryNoteClient } from '../clients';
-
-describe('newListNoteState', () => {
-  it('returns an empty state', () => {
-    expect(newListNoteState()).toEqual({ notes: [], getNotesPending: false });
-  });
-});
+import { ListNoteInteractor } from './ListNoteInteractor';
 
 describe('ListNoteInteractor', () => {
   let client: InMemoryNoteClient;
   let interactor: ListNoteInteractor;
-  let stateManager: StateManager<ListNoteState>;
 
   beforeEach(() => {
     client = new InMemoryNoteClient();
-    stateManager = new StateManager(newListNoteState());
-    interactor = new ListNoteInteractor(stateManager, client);
+    interactor = new ListNoteInteractor(client);
+  });
+
+  describe('constructor', () => {
+    it('initializes with an empty state', () => {
+      expect(interactor.state).toEqual({ notes: [], getNotesPending: false });
+    });
   });
 
   describe('getNotes', () => {
     it('returns empty when there is no note', async () => {
       await interactor.getNotes();
-      const state = stateManager.getState();
-      expect(state.notes).toEqual([]);
+      expect(interactor.state.notes).toEqual([]);
     });
 
     it('returns the note list when there are some notes', async () => {
@@ -35,8 +32,7 @@ describe('ListNoteInteractor', () => {
 
       await interactor.getNotes();
 
-      const state = stateManager.getState();
-      expect(state.notes).toEqual([note1, note2]);
+      expect(interactor.state.notes).toEqual([note1, note2]);
     });
   });
 });

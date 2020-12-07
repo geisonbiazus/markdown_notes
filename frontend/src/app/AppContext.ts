@@ -25,13 +25,16 @@ export class AppContext {
   public get authenticatedHTTPClient(): AuthenticatedHTTPClient {
     if (!this.authenticatedHTTPClientInstance) {
       this.authenticatedHTTPClientInstance = new AuthenticatedHTTPClient(this.config.apiURL);
+      this.authenticatedHTTPClientInstance.onUnauthorized(
+        this.authenticationContext.signInInteractor.signOut
+      );
     }
     return this.authenticatedHTTPClientInstance;
   }
 
   public get noteContext(): NoteContext {
     if (!this.noteContextInstance) {
-      this.noteContextInstance = new NoteContext(this.authenticatedHTTPClient);
+      this.noteContextInstance = new NoteContext(this.authenticatedHTTPClient, this.pubSub);
     }
     return this.noteContextInstance;
   }

@@ -4,8 +4,7 @@ import {
   ErrorType,
   isEmpty,
   Publisher,
-  StateBasedInteractor,
-  StateManager,
+  StateObservableInteractor,
   validateRequired,
 } from '../../utils';
 import { Note, NoteClient, SaveNoteResponse } from '../entities';
@@ -18,24 +17,15 @@ export interface EditNoteState {
   saveNotePending: boolean;
 }
 
-export const newEditNoteState = (initialState: Partial<EditNoteState> = {}): EditNoteState => {
-  return {
-    note: { id: '', title: '', body: '' },
-    errors: {},
-    isDirty: false,
-    getNotePending: false,
-    saveNotePending: false,
-    ...initialState,
-  };
-};
-
-export class EditNoteInteractor extends StateBasedInteractor<EditNoteState> {
-  constructor(
-    stateManager: StateManager<EditNoteState>,
-    private noteClient: NoteClient,
-    private publiser: Publisher
-  ) {
-    super(stateManager);
+export class EditNoteInteractor extends StateObservableInteractor<EditNoteState> {
+  constructor(private noteClient: NoteClient, private publiser: Publisher) {
+    super({
+      note: { id: '', title: '', body: '' },
+      errors: {},
+      isDirty: false,
+      getNotePending: false,
+      saveNotePending: false,
+    });
   }
 
   @bind
