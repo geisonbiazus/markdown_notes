@@ -1,13 +1,12 @@
-import { assert } from 'console';
-import { PubSub } from './PubSub';
 import { sleep } from '../sleep';
+import { PubSub } from './PubSub';
 
 describe('PubSub', () => {
   it('sends the published events to the subscriber', () => {
     const pubSub = new PubSub();
     let receivedEvent = '';
 
-    pubSub.subscribe('event_name', (event: string) => (receivedEvent = event));
+    pubSub.subscribe('event_name', () => (receivedEvent = 'event_name'));
 
     pubSub.pusblish('event_name');
 
@@ -19,8 +18,8 @@ describe('PubSub', () => {
     let subscriber1Event = '';
     let subscriber2Event = '';
 
-    pubSub.subscribe('event_name', (event: string) => (subscriber1Event = event));
-    pubSub.subscribe('event_name', (event: string) => (subscriber2Event = event));
+    pubSub.subscribe('event_name', () => (subscriber1Event = 'event_name'));
+    pubSub.subscribe('event_name', () => (subscriber2Event = 'event_name'));
 
     pubSub.pusblish('event_name');
 
@@ -34,9 +33,9 @@ describe('PubSub', () => {
     let subscriber2Event = '';
     let subscriber3Event = '';
 
-    pubSub.subscribe('event_2', (event: string) => (subscriber1Event = event));
-    pubSub.subscribe('event_2', (event: string) => (subscriber2Event = event));
-    pubSub.subscribe('event_1', (event: string) => (subscriber3Event = event));
+    pubSub.subscribe('event_2', () => (subscriber1Event = 'event_2'));
+    pubSub.subscribe('event_2', () => (subscriber2Event = 'event_2'));
+    pubSub.subscribe('event_1', () => (subscriber3Event = 'event_1'));
 
     pubSub.pusblish('event_1');
     pubSub.pusblish('event_2');
@@ -49,11 +48,9 @@ describe('PubSub', () => {
 
   it('optionally send typed payload', () => {
     const pubSub = new PubSub();
-    let receivedEvent = '';
     let receivedPayload: EventPayload;
 
-    pubSub.subscribe('event_name', (event: string, payload: EventPayload) => {
-      receivedEvent = event;
+    pubSub.subscribe('event_name', (payload: EventPayload) => {
       receivedPayload = payload;
     });
 
@@ -61,7 +58,6 @@ describe('PubSub', () => {
 
     pubSub.pusblish('event_name', sentPayload);
 
-    expect(receivedEvent).toEqual('event_name');
     expect(receivedPayload!).toEqual(sentPayload);
   });
 
@@ -70,8 +66,8 @@ describe('PubSub', () => {
     let receivedEvent = '';
     let callbackFinished = false;
 
-    pubSub.subscribe('event_name', async (event: string) => {
-      receivedEvent = event;
+    pubSub.subscribe('event_name', async () => {
+      receivedEvent = 'event_name';
       await sleep(1);
       callbackFinished = true;
     });
@@ -90,11 +86,11 @@ describe('PubSub', () => {
     const events4: string[] = [];
     const events5: string[] = [];
 
-    pubSub.subscribe('event', (event) => events1.push(event));
-    const dispose2 = pubSub.subscribe('event', (event) => events2.push(event));
-    pubSub.subscribe('event', (event) => events3.push(event));
-    const dispose4 = pubSub.subscribe('event', (event) => events4.push(event));
-    const dispose5 = pubSub.subscribe('event', (event) => events5.push(event));
+    pubSub.subscribe('event', () => events1.push('event'));
+    const dispose2 = pubSub.subscribe('event', () => events2.push('event'));
+    pubSub.subscribe('event', () => events3.push('event'));
+    const dispose4 = pubSub.subscribe('event', () => events4.push('event'));
+    const dispose5 = pubSub.subscribe('event', () => events5.push('event'));
 
     pubSub.pusblish('event');
 
@@ -119,8 +115,8 @@ describe('PubSub', () => {
     const events1: string[] = [];
     const events2: string[] = [];
 
-    const dispose = pubSub.subscribe('event', (event) => events1.push(event));
-    pubSub.subscribe('event', (event) => events2.push(event));
+    const dispose = pubSub.subscribe('event', () => events1.push('event'));
+    pubSub.subscribe('event', () => events2.push('event'));
 
     pubSub.pusblish('event');
 

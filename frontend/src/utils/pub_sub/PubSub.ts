@@ -1,13 +1,13 @@
 import { Publisher } from './Publisher';
 
-export type SubscriberCallback<T> = (event: string, payload: T) => void;
+export type SubscriberCallback<T> = (payload: T) => void;
 export type DisposeFn = () => void;
 
 export class PubSub implements Publisher {
   private subscribers: Record<string, SubscriberCallback<unknown>[]> = {};
 
   public pusblish<T>(event: string, payload?: T): void {
-    this.subscribersFor<T | undefined>(event).forEach((callback) => callback(event, payload));
+    this.subscribersFor<T | undefined>(event).forEach((callback) => callback(payload));
   }
 
   public subscribe<T>(event: string, callback: SubscriberCallback<T>): DisposeFn {

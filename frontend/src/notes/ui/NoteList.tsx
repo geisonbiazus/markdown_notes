@@ -1,9 +1,8 @@
 import React, { useEffect } from 'react';
 import { NewNoteButton } from './NewNoteButton';
-import { useNoteContext } from '../NoteContext';
+import { useNoteContext } from '../NoteReactContext';
 import { VerticalNav, NavItem, NavIcon, ConfirmModal, Loading } from '../../shared/components';
 import { useTranslation } from 'react-i18next';
-import { useAsyncAction } from '../../shared/hooks';
 
 export const NoteList: React.FC = () => {
   const {
@@ -15,7 +14,7 @@ export const NoteList: React.FC = () => {
 
   useEffect(() => {
     listNoteInteractor.getNotes();
-  }, [listNoteInteractor.getNotes]);
+  }, [listNoteInteractor]);
 
   return (
     <>
