@@ -54,6 +54,15 @@ describe('EditNoteInteractor', () => {
 
       expect(interactor.state.note).toEqual({ id: noteId, title: '', body: '' });
     });
+
+    it('cleans previous state', async () => {
+      await interactor.saveNote();
+
+      const noteId = uuid();
+      await interactor.getNote(noteId);
+
+      expect(interactor.state.errors).toEqual({});
+    });
   });
 
   describe('setTitle and setContent', () => {

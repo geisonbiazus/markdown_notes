@@ -7,6 +7,7 @@ import {
   validateRequired,
 } from '../../utils';
 import { AuthenticationClient, SessionRepository } from '../entities';
+import { USER_AUTHENTICATED_EVENT } from '../events';
 
 export interface SignInState {
   email: string;
@@ -83,7 +84,7 @@ export class SignInInteractor extends StateObservableInteractor<SignInState> {
   }
 
   private publishUserAuthenticatedEvent(token: string): void {
-    this.publisher.pusblish('user_authenticated', { token });
+    this.publisher.pusblish(USER_AUTHENTICATED_EVENT, { token });
   }
 
   @bind

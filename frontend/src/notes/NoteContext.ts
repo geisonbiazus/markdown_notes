@@ -1,6 +1,7 @@
 import { HTTPClient, PubSub } from '../utils';
 import { APINoteClient } from './clients';
 import { NoteClient } from './entities';
+import { NOTE_REMOVED_EVENT, NOTE_SAVED_EVENT } from './events';
 import { EditNoteInteractor, ListNoteInteractor, RemoveNoteInteractor } from './interactors';
 
 export class NoteContext {
@@ -11,8 +12,8 @@ export class NoteContext {
   constructor(private httpClient: HTTPClient, private pubSub: PubSub) {}
 
   public startSubscribers(): void {
-    this.pubSub.subscribe('note_saved', () => this.listNoteInteractor.getNotes());
-    this.pubSub.subscribe('note_removed', () => this.listNoteInteractor.getNotes());
+    this.pubSub.subscribe(NOTE_SAVED_EVENT, () => this.listNoteInteractor.getNotes());
+    this.pubSub.subscribe(NOTE_REMOVED_EVENT, () => this.listNoteInteractor.getNotes());
   }
 
   public get noteClient(): NoteClient {

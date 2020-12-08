@@ -1,4 +1,8 @@
-import { AuthenticationContext } from '../authentication';
+import {
+  AuthenticationContext,
+  UserAuthenticatedPayload,
+  USER_AUTHENTICATED_EVENT,
+} from '../authentication';
 import { NoteContext } from '../notes/NoteContext';
 import { AuthenticatedHTTPClient, HTTPClient, PubSub } from '../utils';
 import { AppConfig, getAppConfig } from './AppConfig';
@@ -47,7 +51,7 @@ export class AppContext {
   }
 
   public startSubscribers(): void {
-    this.pubSub.subscribe('user_authenticated', (event: string, payload: { token: string }) => {
+    this.pubSub.subscribe(USER_AUTHENTICATED_EVENT, (payload: UserAuthenticatedPayload) => {
       this.authenticatedHTTPClient.setToken(payload.token);
     });
     this.noteContext.startSubscribers();

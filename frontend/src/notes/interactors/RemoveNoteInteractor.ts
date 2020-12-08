@@ -1,6 +1,7 @@
 import bind from 'bind-decorator';
 import { Publisher, StateObservableInteractor } from '../../utils';
 import { Note, NoteClient } from '../entities';
+import { NoteRemovedPayload, NOTE_REMOVED_EVENT } from '../events';
 
 export interface RemoveNoteState {
   note?: Note;
@@ -30,7 +31,7 @@ export class RemoveNoteInteractor extends StateObservableInteractor<RemoveNoteSt
 
       await this.client.removeNote(this.state.note.id);
 
-      this.publisher.pusblish('note_removed', this.state.note);
+      this.publisher.pusblish<NoteRemovedPayload>(NOTE_REMOVED_EVENT, this.state.note);
 
       this.updateState({ note: undefined, promptConfirmation: false });
     });
