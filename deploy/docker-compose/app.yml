@@ -14,7 +14,7 @@ services:
     ports:
       - 4000:4000
   frontend:
-    image: geisonbiazus/markdown-notes-frontend:42
+    image: geisonbiazus/markdown-notes-frontend:45
     restart: always
     environment:
       REACT_APP_API_URL: https://api.notes.geisonbiazus.com
