@@ -1,19 +1,24 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './index.css';
-import './i18n';
-import * as serviceWorker from './serviceWorker';
 import { BrowserRouter } from 'react-router-dom';
-import { App } from './app';
+import { App, AppContext, AppProvider } from './app';
 import { AuthenticationProvider } from './authentication';
+import './i18n';
+import './index.css';
+import * as serviceWorker from './serviceWorker';
+
+const appContext = new AppContext();
+appContext.startSubscribers();
 
 ReactDOM.render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthenticationProvider>
-        <App />
-      </AuthenticationProvider>
+      <AppProvider appContext={appContext}>
+        <AuthenticationProvider>
+          <App />
+        </AuthenticationProvider>
+      </AppProvider>
     </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')

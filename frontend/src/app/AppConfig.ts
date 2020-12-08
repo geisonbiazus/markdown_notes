@@ -3,17 +3,17 @@ export interface AppConfig {
   appEnv: string;
 }
 
-export const getAppConfig = (): AppConfig => {
+export function getAppConfig(): AppConfig {
   return configFromWindow() || configFromEnv();
-};
+}
 
-const configFromWindow = (): AppConfig => {
+function configFromWindow(): AppConfig {
   return (window as any).__APP__CONFIG__ as AppConfig;
-};
+}
 
-const configFromEnv = () => {
+function configFromEnv(): AppConfig {
   return {
     apiURL: process.env.REACT_APP_API_URL,
     appEnv: process.env.REACT_APP_APP_ENV,
   } as AppConfig;
-};
+}

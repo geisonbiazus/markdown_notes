@@ -1,30 +1,26 @@
-import { newRemoveNoteState, RemoveNoteInteractor, RemoveNoteState } from './RemoveNoteInteractor';
-import { FakePublisher, StateManager, uuid } from '../../utils';
+import { FakePublisher, uuid } from '../../utils';
 import { InMemoryNoteClient } from '../clients';
-
-describe('newRemoveNoteState', () => {
-  it('returns an empty state', () => {
-    expect(newRemoveNoteState()).toEqual({
-      note: undefined,
-      promptConfirmation: false,
-      confirmNoteRemovalPending: false,
-    });
-  });
-});
+import { RemoveNoteInteractor } from './RemoveNoteInteractor';
 
 describe('RemoveNoteInteractor', () => {
-  let stateManager: StateManager<RemoveNoteState>;
   let client: InMemoryNoteClient;
   let publisher: FakePublisher;
   let interactor: RemoveNoteInteractor;
-  let state: RemoveNoteState;
 
   beforeEach(() => {
     client = new InMemoryNoteClient();
-    stateManager = new StateManager(newRemoveNoteState());
     publisher = new FakePublisher();
-    interactor = new RemoveNoteInteractor(stateManager, client, publisher);
-    state = stateManager.getState();
+    interactor = new RemoveNoteInteractor(client, publisher);
+  });
+
+  describe('constructor', () => {
+    it('initializes with an empty state', () => {
+      expect(interactor.state).toEqual({
+        note: undefined,
+        promptConfirmation: false,
+        confirmNoteRemovalPending: false,
+      });
+    });
   });
 
   describe('requestNoteRemoval', () => {
@@ -33,10 +29,8 @@ describe('RemoveNoteInteractor', () => {
 
       interactor.requestNoteRemoval(note);
 
-      const state = stateManager.getState();
-
-      expect(state.note).toEqual(note);
-      expect(state.promptConfirmation).toEqual(true);
+      expect(interactor.state.note).toEqual(note);
+      expect(interactor.state.promptConfirmation).toEqual(true);
     });
   });
 
@@ -47,10 +41,8 @@ describe('RemoveNoteInteractor', () => {
       interactor.requestNoteRemoval(note);
       interactor.cancelNoteRemoval();
 
-      const state = stateManager.getState();
-
-      expect(state.note).toEqual(undefined);
-      expect(state.promptConfirmation).toEqual(false);
+      expect(interactor.state.note).toEqual(undefined);
+      expect(interactor.state.promptConfirmation).toEqual(false);
     });
   });
 
@@ -63,10 +55,8 @@ describe('RemoveNoteInteractor', () => {
 
       await interactor.confirmNoteRemoval();
 
-      const state = stateManager.getState();
-
-      expect(state.note).toEqual(undefined);
-      expect(state.promptConfirmation).toEqual(false);
+      expect(interactor.state.note).toEqual(undefined);
+      expect(interactor.state.promptConfirmation).toEqual(false);
       expect(await client.getNote(note.id)).toEqual(null);
     });
 
@@ -82,11 +72,11 @@ describe('RemoveNoteInteractor', () => {
     });
 
     it('does not do anything when the prompt is closed', async () => {
-      const previousState = stateManager.getState();
+      const previousState = interactor.state;
 
       await interactor.confirmNoteRemoval();
 
-      expect(stateManager.getState()).toEqual(previousState);
+      expect(interactor.state).toEqual(previousState);
     });
   });
 });

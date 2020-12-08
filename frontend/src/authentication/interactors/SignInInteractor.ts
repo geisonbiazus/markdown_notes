@@ -1,6 +1,13 @@
 import bind from 'bind-decorator';
-import { Errors, isEmpty, validateRequired, StateBasedInteractor, StateManager } from '../../utils';
+import {
+  Errors,
+  isEmpty,
+  Publisher,
+  StateObservableInteractor,
+  validateRequired,
+} from '../../utils';
 import { AuthenticationClient, SessionRepository } from '../entities';
+import { USER_AUTHENTICATED_EVENT } from '../events';
 
 export interface SignInState {
   email: string;
@@ -10,17 +17,17 @@ export interface SignInState {
   authenticated: boolean;
 }
 
-export function newSignInState(initialState: Partial<SignInState> = {}): SignInState {
-  return { email: '', password: '', errors: {}, token: '', authenticated: false, ...initialState };
+function newSignInState(): SignInState {
+  return { email: '', password: '', errors: {}, token: '', authenticated: false };
 }
 
-export class SignInInteractor extends StateBasedInteractor<SignInState> {
+export class SignInInteractor extends StateObservableInteractor<SignInState> {
   constructor(
-    stateManager: StateManager<SignInState>,
     private authenticationClient: AuthenticationClient,
-    private sessionRepository: SessionRepository
+    private sessionRepository: SessionRepository,
+    private publisher: Publisher
   ) {
-    super(stateManager);
+    super(newSignInState());
   }
 
   @bind
@@ -65,14 +72,19 @@ export class SignInInteractor extends StateBasedInteractor<SignInState> {
   }
 
   private processSucessSignIn(token: string): void {
-    this.updateState({ authenticated: true, token });
     this.sessionRepository.setToken(token);
+    this.publishUserAuthenticatedEvent(token);
+    this.updateState({ authenticated: true, token });
   }
 
   public checkAuthentication(): void {
     const token = this.sessionRepository.getToken();
-
+    if (token) this.publishUserAuthenticatedEvent(token);
     this.updateState({ authenticated: !!token, token: token || '' });
+  }
+
+  private publishUserAuthenticatedEvent(token: string): void {
+    this.publisher.pusblish(USER_AUTHENTICATED_EVENT, { token });
   }
 
   @bind

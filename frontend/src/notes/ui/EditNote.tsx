@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useParams, Prompt } from 'react-router-dom';
-import { useNoteContext } from '../NoteContext';
+import { useNoteContext } from '../NoteReactContext';
 import { Form, FormRow, TextField, TextArea, Button, Loading } from '../../shared/components';
 import { useTranslation } from 'react-i18next';
 
@@ -12,7 +12,7 @@ export const EditNote: React.FC = () => {
 
   useEffect(() => {
     editNoteInteractor.getNote(id);
-  }, [editNoteInteractor.getNote, id]);
+  }, [editNoteInteractor, id]);
 
   if (editNoteState.getNotePending) {
     return <Loading />;

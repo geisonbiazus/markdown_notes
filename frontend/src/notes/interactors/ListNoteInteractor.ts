@@ -1,5 +1,5 @@
 import bind from 'bind-decorator';
-import { StateBasedInteractor, StateManager } from '../../utils';
+import { StateObservableInteractor } from '../../utils';
 import { Note, NoteClient } from '../entities';
 
 export interface ListNoteState {
@@ -7,13 +7,9 @@ export interface ListNoteState {
   getNotesPending: boolean;
 }
 
-export function newListNoteState(): ListNoteState {
-  return { notes: [], getNotesPending: false };
-}
-
-export class ListNoteInteractor extends StateBasedInteractor<ListNoteState> {
-  constructor(stateManager: StateManager<ListNoteState>, private noteClient: NoteClient) {
-    super(stateManager);
+export class ListNoteInteractor extends StateObservableInteractor<ListNoteState> {
+  constructor(private noteClient: NoteClient) {
+    super({ notes: [], getNotesPending: false });
   }
 
   @bind
