@@ -24,6 +24,7 @@ monitoringApp.listen(MONITORING_PORT, '0.0.0.0', () => {
 const appConfig = JSON.stringify({
   apiURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
   appEnv: process.env.REACT_APP_APP_ENV || 'production',
+  devMode: process.env.REACT_APP_DEV_MODE === 'true',
 });
 
 const app = express();

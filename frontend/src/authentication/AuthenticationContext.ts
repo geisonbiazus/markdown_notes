@@ -1,13 +1,15 @@
+import { AppConfig } from '../app';
 import { HTTPClient, PubSub } from '../utils';
-import { APIAuthenticationClient } from './clients';
+import { APIAuthenticationClient, InMemoryAuthenticationClient } from './clients';
 import { AuthenticationClient, SessionRepository } from './entities';
 import { SignInInteractor } from './interactors';
 import { LocalStorageSessionRepository } from './repositories';
 
 export class AuthenticationContext {
   private signInInteractorInstance?: SignInInteractor;
+  private authenticationClientInstance?: AuthenticationClient;
 
-  constructor(private httpClient: HTTPClient, private pubSub: PubSub) {}
+  constructor(private httpClient: HTTPClient, private pubSub: PubSub, private config: AppConfig) {}
 
   public get signInInteractor(): SignInInteractor {
     if (!this.signInInteractorInstance) {
@@ -25,6 +27,17 @@ export class AuthenticationContext {
   }
 
   public get authenticationClient(): AuthenticationClient {
-    return new APIAuthenticationClient(this.httpClient);
+    if (!this.authenticationClientInstance) {
+      this.authenticationClientInstance = this.config.devMode
+        ? this.initializeInMemoryAuthenticationClient()
+        : new APIAuthenticationClient(this.httpClient);
+    }
+    return this.authenticationClientInstance;
+  }
+
+  private initializeInMemoryAuthenticationClient(): InMemoryAuthenticationClient {
+    const client = new InMemoryAuthenticationClient();
+    client.addUser('user@example.com', 'password123', 'token');
+    return client;
   }
 }
