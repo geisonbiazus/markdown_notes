@@ -45,7 +45,11 @@ export class AppContext {
 
   public get authenticationContext(): AuthenticationContext {
     if (!this.authenticationContextInstance) {
-      this.authenticationContextInstance = new AuthenticationContext(this.httpClient, this.pubSub);
+      this.authenticationContextInstance = new AuthenticationContext(
+        this.httpClient,
+        this.pubSub,
+        this.config
+      );
     }
     return this.authenticationContextInstance;
   }
