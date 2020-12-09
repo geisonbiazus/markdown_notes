@@ -38,7 +38,11 @@ export class AppContext {
 
   public get noteContext(): NoteContext {
     if (!this.noteContextInstance) {
-      this.noteContextInstance = new NoteContext(this.authenticatedHTTPClient, this.pubSub);
+      this.noteContextInstance = new NoteContext(
+        this.authenticatedHTTPClient,
+        this.pubSub,
+        this.config
+      );
     }
     return this.noteContextInstance;
   }
