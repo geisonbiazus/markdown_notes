@@ -8,58 +8,56 @@ export class APINoteClient implements NoteClient {
     this.httpClient = httpClient;
   }
 
-  async getNote(id: string): Promise<Note | null> {
-    const response = await this.httpClient.get<GetNoteResponse>(`/notes/${id}`);
+  public async getNote(id: string): Promise<Note | null> {
+    const response = await this.httpClient.get<Note | APIError>(`/notes/${id}`);
 
-    if (response.status === 200 && response.data.status === 'success') {
-      return response.data.note as Note;
-    }
-
-    if (response.data.status === 'error' && response.data.type === 'not_found') return null;
+    if (response.status === 200) return response.data as Note;
+    if (response.status === 404) return null;
     if (response.status === 401) return null;
 
     throw handleError(response);
   }
 
-  async getNotes(): Promise<Note[]> {
-    const response = await this.httpClient.get<GetNotesResponse>('/notes');
+  public async getNotes(): Promise<Note[]> {
+    const response = await this.httpClient.get<Note[] | APIError>('/notes');
 
-    if (response.status === 200 && response.data.status === 'success') return response.data.notes;
+    if (response.status === 200) return response.data as Note[];
     if (response.status === 401) return [];
 
     throw handleError(response);
   }
 
-  async saveNote(note: Note): Promise<SaveNoteResponse> {
-    const response = await this.httpClient.put<SaveNoteResponse>(`/notes/${note.id}`, {
-      title: note.title,
-      body: note.body,
-    });
+  public async saveNote(note: Note): Promise<SaveNoteResponse> {
+    const response = await this.httpClient.put<Note | APIValidationError[] | APIError>(
+      `/notes/${note.id}`,
+      {
+        title: note.title,
+        body: note.body,
+      }
+    );
 
-    return response.data;
+    if (response.status == 200) return { status: 'success', note: response.data as Note };
+    if (response.status == 401) return { status: 'error', type: (response.data as APIError).type };
+    if (response.status == 422) {
+      return { status: 'validation_error', errors: response.data as APIValidationError[] };
+    }
+    throw handleError(response);
   }
 
-  async removeNote(id: string): Promise<void> {
-    const response = await this.httpClient.delete<RemoveNoteResponse>(`/notes/${id}`);
-    if (response.status === 200 && response.data.status === 'success') return;
+  public async removeNote(id: string): Promise<void> {
+    const response = await this.httpClient.delete<undefined | APIError>(`/notes/${id}`);
+    if (response.status === 200) return;
     if (response.status === 401) return;
 
     throw handleError(response);
   }
 }
 
-export interface GetNoteResponse {
-  status: 'success' | 'error';
-  type?: string;
-  note?: Note;
+export interface APIError {
+  type: string;
 }
 
-export interface GetNotesResponse {
-  status: 'success';
-  notes: Note[];
-}
-
-interface RemoveNoteResponse {
-  status: string;
-  type?: string;
+export interface APIValidationError {
+  field: string;
+  type: string;
 }

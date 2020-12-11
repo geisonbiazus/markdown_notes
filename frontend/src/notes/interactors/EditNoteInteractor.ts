@@ -7,7 +7,7 @@ import {
   StateObservableInteractor,
   validateRequired,
 } from '../../utils';
-import { Note, NoteClient, SaveNoteResponse } from '../entities';
+import { Note, NoteClient, SaveNoteResponse, ValidationErrorResponse } from '../entities';
 import { NoteSavedPayload, NOTE_SAVED_EVENT } from '../events';
 
 export interface EditNoteState {
@@ -87,7 +87,7 @@ export class EditNoteInteractor extends StateObservableInteractor<EditNoteState>
     this.updateState({ isDirty: false });
   }
 
-  private extractSaveNoteClientErrors(response: SaveNoteResponse): void {
+  private extractSaveNoteClientErrors(response: ValidationErrorResponse): void {
     let errors: Errors = {};
 
     response.errors?.forEach((error) => {

@@ -8,7 +8,6 @@ HTTPClient.useNodeAdapter();
 
 describe('APINoteClient', () => {
   let client: APINoteClient;
-  const unauthorizedResponse = { status: 'error', type: 'unauthorized' };
   const baseURL = 'http://localhost:4000';
   const nockScope = nock(baseURL);
 
@@ -24,31 +23,23 @@ describe('APINoteClient', () => {
   describe('saveNote', () => {
     it('requests to save the note throught the api and return success response', async () => {
       const note: Note = { id: uuid(), body: 'body', title: 'title' };
-      const expectedResponse = { status: 'success', note };
 
-      nockScope
-        .put(`/notes/${note.id}`, { title: note.title, body: note.body })
-        .reply(200, expectedResponse);
+      nockScope.put(`/notes/${note.id}`, { title: note.title, body: note.body }).reply(200, note);
 
       const response = await client.saveNote(note);
 
-      expect(response).toEqual(expectedResponse);
+      expect(response).toEqual({ status: 'success', note });
     });
 
     it('returns api errors when invalid', async () => {
       const note: Note = { id: uuid(), body: 'body', title: '' };
-      const expectedResponse = {
-        status: 'validation_error',
-        errors: [{ field: 'title', type: 'required' }],
-      };
+      const errors = [{ field: 'title', type: 'required' }];
 
-      nockScope
-        .put(`/notes/${note.id}`, { title: note.title, body: note.body })
-        .reply(200, expectedResponse);
+      nockScope.put(`/notes/${note.id}`, { title: note.title, body: note.body }).reply(422, errors);
 
       const response = await client.saveNote(note);
 
-      expect(response).toEqual(expectedResponse);
+      expect(response).toEqual({ status: 'validation_error', errors });
     });
 
     it('returns unauthorized status', async () => {
@@ -56,11 +47,11 @@ describe('APINoteClient', () => {
 
       nockScope
         .put(`/notes/${note.id}`, { title: note.title, body: note.body })
-        .reply(401, unauthorizedResponse);
+        .reply(401, { type: 'unauthorized' });
 
       const response = await client.saveNote(note);
 
-      expect(response).toEqual(unauthorizedResponse);
+      expect(response).toEqual({ status: 'error', type: 'unauthorized' });
     });
   });
 
@@ -68,7 +59,7 @@ describe('APINoteClient', () => {
     it('returns null when the note is not found', async () => {
       const id = uuid();
 
-      nockScope.get(`/notes/${id}`).reply(404, { status: 'error', type: 'not_found' });
+      nockScope.get(`/notes/${id}`).reply(404, { type: 'not_found' });
 
       const response = await client.getNote(id);
 
@@ -78,7 +69,7 @@ describe('APINoteClient', () => {
     it('returns the note when the note is found', async () => {
       const note: Note = { id: uuid(), body: 'body', title: '' };
 
-      nockScope.get(`/notes/${note.id}`).reply(200, { status: 'success', note });
+      nockScope.get(`/notes/${note.id}`).reply(200, note);
 
       const response = await client.getNote(note.id);
 
@@ -88,7 +79,7 @@ describe('APINoteClient', () => {
     it('returns null when unauthorized', async () => {
       const note: Note = { id: uuid(), body: 'body', title: '' };
 
-      nockScope.get(`/notes/${note.id}`).reply(401, unauthorizedResponse);
+      nockScope.get(`/notes/${note.id}`).reply(401, { type: 'unauthorized' });
 
       const response = await client.getNote(note.id);
 
@@ -103,7 +94,7 @@ describe('APINoteClient', () => {
         { id: uuid(), body: 'body 2', title: 'title 2' },
       ];
 
-      nockScope.get(`/notes`).reply(200, { status: 'success', notes: notes });
+      nockScope.get(`/notes`).reply(200, notes);
 
       const response = await client.getNotes();
 
@@ -124,7 +115,7 @@ describe('APINoteClient', () => {
     });
 
     it('returns empty when unauthorized', async () => {
-      nockScope.get(`/notes`).reply(401, unauthorizedResponse);
+      nockScope.get(`/notes`).reply(401, { type: 'unauthorized' });
 
       const response = await client.getNotes();
 
@@ -136,7 +127,7 @@ describe('APINoteClient', () => {
     it('requests to remove a note', async () => {
       const id = uuid();
 
-      nockScope.delete(`/notes/${id}`).reply(200, { status: 'success' });
+      nockScope.delete(`/notes/${id}`).reply(200);
 
       await client.removeNote(id);
     });
@@ -144,7 +135,7 @@ describe('APINoteClient', () => {
     it('throws error if not successful', async () => {
       const id = uuid();
 
-      nockScope.delete(`/notes/${id}`).reply(400, { status: 'error', type: 'not_found' });
+      nockScope.delete(`/notes/${id}`).reply(404, { type: 'not_found' });
 
       let error: Error | null = null;
 
@@ -155,13 +146,13 @@ describe('APINoteClient', () => {
       }
 
       expect(error).toEqual(
-        new Error('Something went wrong. Status: 400. Body: {"status":"error","type":"not_found"}')
+        new Error('Something went wrong. Status: 404. Body: {"type":"not_found"}')
       );
     });
 
     it('does not throws when unauthorized', async () => {
       const id = uuid();
-      nockScope.delete(`/notes/${id}`).reply(401, unauthorizedResponse);
+      nockScope.delete(`/notes/${id}`).reply(401, { type: 'unauthorized' });
 
       await client.removeNote(id);
     });

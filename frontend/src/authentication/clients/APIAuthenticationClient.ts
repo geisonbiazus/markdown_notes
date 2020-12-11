@@ -6,10 +6,8 @@ export class APIAuthenticationClient implements AuthenticationClient {
 
   public signIn = async (email: string, password: string): Promise<string | null> => {
     const response = await this.httpClient.post<SignInResponse>('/sign_in', { email, password });
-    if (response.data.status === 'success') return response.data.token!;
-    if (response.data.status === 'error' && response.data.type === 'not_found') {
-      return null;
-    }
+    if (response.status === 200) return response.data.token!;
+    if (response.status === 404) return null;
     throw handleError(response);
   };
 }
