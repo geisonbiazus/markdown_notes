@@ -31,6 +31,6 @@ export class AuthenticationMiddleware {
 
   private unauthorized(res: Response) {
     res.status(401);
-    res.json({ status: 'error', type: 'unauthorized' });
+    res.json({ type: 'unauthorized' });
   }
 }

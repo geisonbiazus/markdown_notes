@@ -22,7 +22,7 @@ describe('authentication', () => {
       '/protected',
       middleware.authenticate((req: Request, res: Response, user: User) => {
         res.status(200);
-        res.json({ status: 'success', user: user });
+        res.json(user);
       })
     );
   });
@@ -33,7 +33,7 @@ describe('authentication', () => {
       .expect('Content-Type', /json/)
       .expect(401);
 
-    expect(response.body).toEqual({ status: 'error', type: 'unauthorized' });
+    expect(response.body).toEqual({ type: 'unauthorized' });
   });
 
   it('returns error when token is invalid', async () => {
@@ -43,7 +43,7 @@ describe('authentication', () => {
       .expect('Content-Type', /json/)
       .expect(401);
 
-    expect(response.body).toEqual({ status: 'error', type: 'unauthorized' });
+    expect(response.body).toEqual({ type: 'unauthorized' });
   });
 
   it('returns error when token is valid but used does not exist', async () => {
@@ -55,7 +55,7 @@ describe('authentication', () => {
       .expect('Content-Type', /json/)
       .expect(401);
 
-    expect(response.body).toEqual({ status: 'error', type: 'unauthorized' });
+    expect(response.body).toEqual({ type: 'unauthorized' });
   });
 
   it('returns error when token is expired', async () => {
@@ -68,7 +68,7 @@ describe('authentication', () => {
       .expect('Content-Type', /json/)
       .expect(401);
 
-    expect(response.body).toEqual({ status: 'error', type: 'unauthorized' });
+    expect(response.body).toEqual({ type: 'unauthorized' });
   });
 
   it('successfully proceeds when user is authorized and inject the user in the request', async () => {
@@ -81,6 +81,6 @@ describe('authentication', () => {
       .expect('Content-Type', /json/)
       .expect(200);
 
-    expect(response.body).toEqual({ status: 'success', user: json(user) });
+    expect(response.body).toEqual(json(user));
   });
 });
