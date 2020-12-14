@@ -1,6 +1,6 @@
 import bind from 'bind-decorator';
 import { Request, Response } from 'express';
-import { Note, NoteInteractor, SaveNoteRequest } from '../../notes';
+import { Note, NoteInteractor, SaveNoteRequest, SaveNoteResponse } from '../../notes';
 import { InteractorResponse } from '../../utils/interactor';
 import { resolveHttpStatus } from '../helpers';
 
@@ -26,51 +26,48 @@ export class NoteController {
     };
   }
 
-  private sendSaveNoteResponse(res: Response, response: InteractorResponse<Note>): void {
-    const { status, validationErrors, data } = response;
-
-    if (status === 'success') {
+  private sendSaveNoteResponse(res: Response, response: SaveNoteResponse): void {
+    if (response.status === 'success') {
       res.status(200);
-      res.json(data);
-    } else {
+      res.json(response.note);
+    } else if (response.status === 'validation_error') {
       res.status(422);
-      res.json(validationErrors);
+      res.json(response.validationErrors);
+    } else {
+      res.status(500);
+      res.json();
     }
   }
 
   @bind
   public async getNote(req: Request, res: Response): Promise<void> {
-    const response = await this.noteInteractor.getNote(req.params.id);
-    const { status, type, data } = response;
+    const note = await this.noteInteractor.getNote(req.params.id);
 
-    if (status == 'success') {
+    if (note) {
       res.status(200);
-      res.json(data);
+      res.json(note);
     } else {
       res.status(404);
-      res.json({ type });
+      res.json({ type: 'not_found' });
     }
   }
 
   @bind
   public async getNotes(_req: Request, res: Response): Promise<void> {
-    const response = await this.noteInteractor.getNotes();
+    const notes = await this.noteInteractor.getNotes();
 
     res.status(200);
-    res.json(response.data);
+    res.json(notes);
   }
 
   @bind
   public async removeNote(req: Request, res: Response): Promise<void> {
-    const response = await this.noteInteractor.removeNote(req.params.id);
-    const { status, type } = response;
-
-    if (status == 'success') {
+    if (await this.noteInteractor.removeNote(req.params.id)) {
       res.status(200);
       res.json();
     } else {
       res.status(404);
-      res.json({ type });
+      res.json({ type: 'not_found' });
     }
   }
 }
