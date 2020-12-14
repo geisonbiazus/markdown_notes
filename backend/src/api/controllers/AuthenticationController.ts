@@ -16,14 +16,13 @@ export class AuthenticationController {
       req.body.email,
       req.body.password
     );
-    const { status, type, data } = response;
 
-    if (status == 'success' && data) {
+    if (response) {
       res.status(200);
-      res.json({ token: data.token });
+      res.json(response);
     } else {
       res.status(404);
-      res.json({ type });
+      res.json({ type: 'not_found' });
     }
   }
 }

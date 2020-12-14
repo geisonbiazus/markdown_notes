@@ -24,36 +24,26 @@ export class AuthenticationInteractor {
     private passwordManager: PasswordManager
   ) {}
 
-  async authenticate(
-    email: string,
-    password: string
-  ): Promise<InteractorResponse<AuthenticateResponse>> {
+  async authenticate(email: string, password: string): Promise<AuthenticateResponse | null> {
     const user = await this.repository.getUserByEmail(email);
 
-    if (!user) return InteractorResponse.notFound();
+    if (!user) return null;
+    if (!(await this.verifyPassword(user, password))) return null;
 
-    if (!(await this.verifyPassword(user, password))) return InteractorResponse.notFound();
-
-    return InteractorResponse.success<AuthenticateResponse>({
-      token: this.tokenManager.encode(user.id),
-    });
+    return { token: this.tokenManager.encode(user.id) };
   }
 
   private async verifyPassword(user: User, password: string): Promise<boolean> {
     return await this.passwordManager.verifyPassword(user.password, password, user.email);
   }
 
-  public async getAuthenticatedUser(token: string): Promise<InteractorResponse<User>> {
+  public async getAuthenticatedUser(token: string): Promise<User | null> {
     try {
       const userId = this.tokenManager.decode(token);
-      const user = await this.repository.getUserById(userId);
-
-      if (user) return InteractorResponse.success(user);
-
-      return InteractorResponse.notFound();
+      return await this.repository.getUserById(userId);
     } catch (e) {
-      if (e instanceof InvalidTokenError) return InteractorResponse.error('invalid_token');
-      if (e instanceof TokenExpiredError) return InteractorResponse.error('token_expired');
+      if (e instanceof InvalidTokenError) return null;
+      if (e instanceof TokenExpiredError) return null;
       throw e;
     }
   }
