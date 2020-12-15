@@ -1,8 +1,10 @@
-import express, { Express } from 'express';
-import { Router } from './router';
 import cors from 'cors';
+import express, { Express } from 'express';
+import swaggerUI from 'swagger-ui-express';
 import { AppContext } from '../AppContext';
 import { APIContext } from './APIContext';
+import { Router } from './router';
+import { swaggerDocument } from './swagger';
 
 export class Server {
   public server: Express;
@@ -18,6 +20,7 @@ export class Server {
     this.server = express();
     this.server.use(cors());
     this.server.use(router.router);
+    this.server.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
   }
 
   start() {
