@@ -1,8 +1,8 @@
-import { NoteInteractor } from './NoteInteractor';
 import { uuid } from '../../utils';
+import { ValidationError } from '../../utils/validations';
 import { Note } from '../entities';
 import { InMemoryNoteRepository } from '../repositories';
-import { InteractorResponse } from '../../utils/interactor';
+import { NoteInteractor } from './NoteInteractor';
 
 describe('NoteInteractor', () => {
   let noteInteractor: NoteInteractor;
@@ -16,24 +16,33 @@ describe('NoteInteractor', () => {
   describe('saveNote', () => {
     it('validates required ID', async () => {
       const params = { id: '', title: 'Title', body: 'Body' };
-      const response = InteractorResponse.validationError([{ field: 'id', type: 'required' }]);
+      const response = {
+        status: 'validation_error',
+        validationErrors: [new ValidationError('id', 'required')],
+      };
 
       expect(await noteInteractor.saveNote(params)).toEqual(response);
     });
 
     it('validates required title', async () => {
       const params = { id: uuid(), title: '', body: 'Body' };
-      const response = InteractorResponse.validationError([{ field: 'title', type: 'required' }]);
+      const response = {
+        status: 'validation_error',
+        validationErrors: [new ValidationError('title', 'required')],
+      };
 
       expect(await noteInteractor.saveNote(params)).toEqual(response);
     });
 
     it('returns all invalid fields', async () => {
       const params = { id: '', title: '', body: 'Body' };
-      const response = InteractorResponse.validationError([
-        { field: 'id', type: 'required' },
-        { field: 'title', type: 'required' },
-      ]);
+      const response = {
+        status: 'validation_error',
+        validationErrors: [
+          new ValidationError('id', 'required'),
+          new ValidationError('title', 'required'),
+        ],
+      };
 
       expect(await noteInteractor.saveNote(params)).toEqual(response);
     });
@@ -41,9 +50,10 @@ describe('NoteInteractor', () => {
     it('creates a new note', async () => {
       const noteId = uuid();
       const params = { id: noteId, title: 'Title', body: 'body' };
-      const response = InteractorResponse.success(
-        new Note({ id: noteId, title: 'Title', body: 'body' })
-      );
+      const response = {
+        status: 'success',
+        note: new Note({ id: noteId, title: 'Title', body: 'body' }),
+      };
 
       expect(await noteInteractor.saveNote(params)).toEqual(response);
     });
@@ -66,9 +76,11 @@ describe('NoteInteractor', () => {
 
       await noteInteractor.saveNote(request1);
 
-      expect(await noteInteractor.saveNote(request2)).toEqual(
-        InteractorResponse.success(expectedNote)
-      );
+      expect(await noteInteractor.saveNote(request2)).toEqual({
+        status: 'success',
+        note: expectedNote,
+      });
+
       expect(await repo.getNoteById(noteId)).toEqual(expectedNote);
     });
 
@@ -89,26 +101,22 @@ describe('NoteInteractor', () => {
   });
 
   describe('getNote', () => {
-    it('returns note not found when note does not exist', async () => {
-      const response = { status: 'error', type: 'not_found' };
-
-      expect(await noteInteractor.getNote(uuid())).toEqual(response);
+    it('returns null when note does not exist', async () => {
+      expect(await noteInteractor.getNote(uuid())).toBeNull();
     });
 
-    it('returns note not found when note does not exist', async () => {
+    it('returns note when it exists', async () => {
       const note = new Note({ id: uuid(), title: 'title', body: 'body' });
-      const response = { status: 'success', data: note };
 
       repo.saveNote(note);
 
-      expect(await noteInteractor.getNote(note.id)).toEqual(response);
+      expect(await noteInteractor.getNote(note.id)).toEqual(note);
     });
   });
 
   describe('getNotes', () => {
     it('returns an empty list when there is no note', async () => {
-      const response = { status: 'success', data: [] };
-      expect(await noteInteractor.getNotes()).toEqual(response);
+      expect(await noteInteractor.getNotes()).toEqual([]);
     });
 
     it('returns a note when it is saved', async () => {
@@ -116,8 +124,7 @@ describe('NoteInteractor', () => {
 
       repo.saveNote(note);
 
-      const response = { status: 'success', data: [note] };
-      expect(await noteInteractor.getNotes()).toEqual(response);
+      expect(await noteInteractor.getNotes()).toEqual([note]);
     });
 
     it('returns a list of notes sorted alphabetically', async () => {
@@ -129,25 +136,20 @@ describe('NoteInteractor', () => {
       repo.saveNote(note2);
       repo.saveNote(note3);
 
-      const response = { status: 'success', data: [note3, note1, note2] };
-      expect(await noteInteractor.getNotes()).toEqual(response);
+      expect(await noteInteractor.getNotes()).toEqual([note3, note1, note2]);
     });
   });
 
   describe('removeNote', () => {
-    it('returns not found error when note does not exit', async () => {
-      const response = { status: 'error', type: 'not_found' };
-
-      expect(await noteInteractor.removeNote(uuid())).toEqual(response);
+    it('returns false when note does not exit', async () => {
+      expect(await noteInteractor.removeNote(uuid())).toBeFalsy();
     });
 
-    it('removes the note when it exists', async () => {
+    it('returns true and removes the note when it exists', async () => {
       const note = new Note({ id: uuid(), title: 'title', body: 'body' });
       repo.saveNote(note);
 
-      const response = { status: 'success' };
-
-      expect(await noteInteractor.removeNote(note.id)).toEqual(response);
+      expect(await noteInteractor.removeNote(note.id)).toBeTruthy();
       expect(await repo.getNoteById(note.id)).toEqual(null);
     });
   });

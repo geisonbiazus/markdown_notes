@@ -27,26 +27,22 @@ describe('AuthenticationInteractor', () => {
       interactor = new AuthenticationInteractor(repository, tokenManager, passwordManager);
     });
 
-    it('Given no user exists for the email, it returns error', async () => {
+    it('returns null when no user exits', async () => {
       const email = 'user@example.com';
       const password = 'password';
 
-      const response = await interactor.authenticate(email, password);
-
-      expect(response).toEqual({ status: 'error', type: 'not_found' });
+      expect(await interactor.authenticate(email, password)).toBeNull();
     });
 
-    it('Given a user exists but the wrong password is provided, it returns error', async () => {
+    it('returns null when user exists but the wrong password is provided', async () => {
       const email = 'user@example.com';
       const password = 'password';
       await factory.createUser({ email, password });
 
-      const response = await interactor.authenticate(email, 'wrong password');
-
-      expect(response).toEqual({ status: 'error', type: 'not_found' });
+      expect(await interactor.authenticate(email, 'wrong password')).toBeNull();
     });
 
-    it('Given a user exists and the correct password is provided, it returns the user token', async () => {
+    it('returns the token when sucessful', async () => {
       const email = 'user@example.com';
       const password = 'password';
       await factory.createUser({ email, password });
@@ -55,32 +51,32 @@ describe('AuthenticationInteractor', () => {
 
       const response = await interactor.authenticate(email, password);
 
-      expect(response).toEqual({ status: 'success', data: { token: tokenManager.token } });
+      expect(response).toEqual({ token: tokenManager.token });
     });
   });
 
   describe('getAuthenticatedUser', () => {
-    it('returns error when invalid token is given', async () => {
+    it('returns null when invalid token is given', async () => {
       const token = 'invalid_token';
       const response = await interactor.getAuthenticatedUser(token);
 
-      expect(response).toEqual({ status: 'error', type: 'invalid_token' });
+      expect(response).toBeNull();
     });
 
-    it('returns error when token is valid but user does not exist', async () => {
+    it('returns null when token is valid but user does not exist', async () => {
       const userId = uuid();
       const token = tokenManager.encode(userId);
       const response = await interactor.getAuthenticatedUser(token);
 
-      expect(response).toEqual({ status: 'error', type: 'not_found' });
+      expect(response).toBeNull();
     });
 
-    it('returns error when token is expired', async () => {
+    it('returns null when token is expired', async () => {
       const userId = uuid();
       const token = tokenManager.encode(userId, 0);
       const response = await interactor.getAuthenticatedUser(token);
 
-      expect(response).toEqual({ status: 'error', type: 'token_expired' });
+      expect(response).toBeNull();
     });
 
     it('returns the user when token is valid', async () => {
@@ -89,7 +85,7 @@ describe('AuthenticationInteractor', () => {
       const token = tokenManager.encode(user.id);
       const response = await interactor.getAuthenticatedUser(token);
 
-      expect(response).toEqual({ status: 'success', data: user });
+      expect(response).toEqual(user);
     });
   });
 
@@ -100,9 +96,8 @@ describe('AuthenticationInteractor', () => {
       const user = await factory.createUser({ email, password });
 
       const tokenResponse = await interactor.authenticate(email, password);
-      const userResponse = await interactor.getAuthenticatedUser(tokenResponse.data!.token);
 
-      expect(userResponse.data).toEqual(user);
+      expect(await interactor.getAuthenticatedUser(tokenResponse!.token)).toEqual(user);
     });
   });
 });

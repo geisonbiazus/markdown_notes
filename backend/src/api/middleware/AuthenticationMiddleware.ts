@@ -14,13 +14,11 @@ export class AuthenticationMiddleware {
 
       if (!token) return this.unauthorized(res);
 
-      const response = await authenticationInteractor.getAuthenticatedUser(token);
+      const user = await authenticationInteractor.getAuthenticatedUser(token);
 
-      if (response.status == 'success' && response.data) {
-        return action(req, res, response.data);
-      }
+      if (!user) return this.unauthorized(res);
 
-      this.unauthorized(res);
+      return action(req, res, user);
     };
   };
 
@@ -31,6 +29,6 @@ export class AuthenticationMiddleware {
 
   private unauthorized(res: Response) {
     res.status(401);
-    res.json({ status: 'error', type: 'unauthorized' });
+    res.json({ type: 'unauthorized' });
   }
 }

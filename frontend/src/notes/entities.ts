@@ -4,11 +4,6 @@ export interface Note {
   body: string;
 }
 
-export interface ValidationError {
-  field: string;
-  type: string;
-}
-
 export interface NoteClient {
   saveNote(note: Note): Promise<SaveNoteResponse>;
   getNote(id: string): Promise<Note | null>;
@@ -16,8 +11,24 @@ export interface NoteClient {
   removeNote(id: string): Promise<void>;
 }
 
-export interface SaveNoteResponse {
-  status: 'success' | 'validation_error' | 'unauthorized';
-  note?: Note;
-  errors?: ValidationError[];
+export interface ValidationError {
+  field: string;
+  type: string;
 }
+
+export interface ValidationErrorResponse {
+  status: 'validation_error';
+  errors: ValidationError[];
+}
+
+export interface ErrorResponse {
+  status: 'error';
+  type: string;
+}
+
+export interface SuccessSaveNoteResponse {
+  status: 'success';
+  note: Note;
+}
+
+export type SaveNoteResponse = SuccessSaveNoteResponse | ErrorResponse | ValidationErrorResponse;

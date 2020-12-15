@@ -29,11 +29,7 @@ describe('NoteController', () => {
         .put(`/notes/${noteId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
-        .expect(
-          422,
-          { status: 'validation_error', errors: [{ field: 'title', type: 'required' }] },
-          done
-        );
+        .expect(422, [{ field: 'title', type: 'required' }], done);
     });
 
     it('returns the created note when valid', (done) => {
@@ -44,11 +40,7 @@ describe('NoteController', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({ title: 'title', body: 'body' })
         .expect('Content-Type', /application\/json/)
-        .expect(
-          200,
-          { status: 'success', note: { id: noteId, title: 'title', body: 'body' } },
-          done
-        );
+        .expect(200, { id: noteId, title: 'title', body: 'body' }, done);
     });
   });
 
@@ -60,7 +52,7 @@ describe('NoteController', () => {
         .get(`/notes/${noteId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
-        .expect(404, { status: 'error', type: 'not_found' }, done);
+        .expect(404, { type: 'not_found' }, done);
     });
 
     it('returns note when it exists', (done) => {
@@ -71,11 +63,7 @@ describe('NoteController', () => {
         .get(`/notes/${noteId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
-        .expect(
-          200,
-          { status: 'success', note: { id: noteId, title: 'title', body: 'body' } },
-          done
-        );
+        .expect(200, { id: noteId, title: 'title', body: 'body' }, done);
     });
   });
 
@@ -85,7 +73,7 @@ describe('NoteController', () => {
         .get(`/notes/`)
         .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
-        .expect(200, { status: 'success', notes: [] }, done);
+        .expect(200, [], done);
     });
 
     it('returns all notes when they exist', (done) => {
@@ -99,7 +87,7 @@ describe('NoteController', () => {
         .get(`/notes`)
         .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
-        .expect(200, { status: 'success', notes: json([note1, note2]) }, done);
+        .expect(200, json([note1, note2]), done);
     });
   });
 
@@ -109,7 +97,7 @@ describe('NoteController', () => {
         .delete(`/notes/${uuid()}`)
         .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
-        .expect(404, { status: 'error', type: 'not_found' }, done);
+        .expect(404, { type: 'not_found' }, done);
     });
 
     it('returns success and removes the note when it exists', (done) => {
@@ -120,7 +108,7 @@ describe('NoteController', () => {
         .delete(`/notes/${id}`)
         .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
-        .expect(200, { status: 'success' }, done);
+        .expect(200, done);
     });
   });
 });

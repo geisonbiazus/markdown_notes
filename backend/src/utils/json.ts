@@ -1,1 +1,3 @@
-export const json = (value: any): any => JSON.parse(JSON.stringify(value));
+export function json(value: any): any {
+  return JSON.parse(JSON.stringify(value));
+}

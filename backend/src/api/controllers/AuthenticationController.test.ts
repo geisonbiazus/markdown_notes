@@ -18,11 +18,11 @@ describe('AuthenticationController', () => {
         .post('/sign_in')
         .send({ email: 'user@example.com', password: 'password' })
         .expect('Content-Type', /json/)
-        .expect(404, { status: 'error', type: 'not_found' }, done);
+        .expect(404, { type: 'not_found' }, done);
     });
 
     it('returns token when successful', async () => {
-      const email = 'user@exmaple.com';
+      const email = 'user@example.com';
       const password = 'password';
       await context.authentication.entityFactory.createUser({ email, password });
 
@@ -32,7 +32,6 @@ describe('AuthenticationController', () => {
         .expect('Content-Type', /json/)
         .expect(200);
 
-      expect(response.body.status).toEqual('success');
       expect(response.body.token).toBeDefined();
     });
   });

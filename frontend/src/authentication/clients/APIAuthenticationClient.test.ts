@@ -24,7 +24,7 @@ describe('APIAuthenticationClient', () => {
       const password = 'password';
       const token = 'token';
 
-      nockScope.post(`/sign_in`, { email, password }).reply(200, { status: 'success', token });
+      nockScope.post(`/sign_in`, { email, password }).reply(200, { token });
 
       const response = await client.signIn(email, password);
       expect(response).toEqual(token);
@@ -34,9 +34,7 @@ describe('APIAuthenticationClient', () => {
       const email = 'user@example.com';
       const password = 'password';
 
-      nockScope
-        .post(`/sign_in`, { email, password })
-        .reply(404, { status: 'error', type: 'not_found' });
+      nockScope.post(`/sign_in`, { email, password }).reply(404, { type: 'not_found' });
 
       const response = await client.signIn(email, password);
       expect(response).toBeNull();
@@ -46,9 +44,7 @@ describe('APIAuthenticationClient', () => {
       const email = 'user@example.com';
       const password = 'password';
 
-      nockScope
-        .post(`/sign_in`, { email, password })
-        .reply(500, { status: 'error', type: 'unexpected' });
+      nockScope.post(`/sign_in`, { email, password }).reply(500, { type: 'unexpected' });
 
       let error: Error | null = null;
 
@@ -59,7 +55,7 @@ describe('APIAuthenticationClient', () => {
       }
 
       expect(error).toEqual(
-        new Error('Something went wrong. Status: 500. Body: {"status":"error","type":"unexpected"}')
+        new Error('Something went wrong. Status: 500. Body: {"type":"unexpected"}')
       );
     });
   });
