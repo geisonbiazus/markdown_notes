@@ -1,4 +1,3 @@
-import { InteractorResponse } from '../../utils/interactor';
 import {
   InvalidTokenError,
   PasswordManager,

@@ -1,8 +1,6 @@
 import bind from 'bind-decorator';
 import { Request, Response } from 'express';
-import { Note, NoteInteractor, SaveNoteRequest, SaveNoteResponse } from '../../notes';
-import { InteractorResponse } from '../../utils/interactor';
-import { resolveHttpStatus } from '../helpers';
+import { NoteInteractor, SaveNoteRequest, SaveNoteResponse } from '../../notes';
 
 export class NoteController {
   private noteInteractor: NoteInteractor;

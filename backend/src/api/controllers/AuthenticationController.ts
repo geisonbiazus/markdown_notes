@@ -1,7 +1,6 @@
 import bind from 'bind-decorator';
 import { Request, Response } from 'express';
 import { AuthenticationInteractor } from '../../authentication';
-import { resolveHttpStatus } from '../helpers';
 
 export class AuthenticationController {
   private authenticationInteractor: AuthenticationInteractor;

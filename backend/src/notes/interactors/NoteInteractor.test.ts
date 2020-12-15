@@ -1,8 +1,8 @@
-import { NoteInteractor } from './NoteInteractor';
 import { uuid } from '../../utils';
+import { ValidationError } from '../../utils/validations';
 import { Note } from '../entities';
 import { InMemoryNoteRepository } from '../repositories';
-import { InteractorResponse, ValidationError } from '../../utils/interactor';
+import { NoteInteractor } from './NoteInteractor';
 
 describe('NoteInteractor', () => {
   let noteInteractor: NoteInteractor;

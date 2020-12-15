@@ -36,9 +36,9 @@ export class APINoteClient implements NoteClient {
       }
     );
 
-    if (response.status == 200) return { status: 'success', note: response.data as Note };
-    if (response.status == 401) return { status: 'error', type: (response.data as APIError).type };
-    if (response.status == 422) {
+    if (response.status === 200) return { status: 'success', note: response.data as Note };
+    if (response.status === 401) return { status: 'error', type: (response.data as APIError).type };
+    if (response.status === 422) {
       return { status: 'validation_error', errors: response.data as APIValidationError[] };
     }
     throw handleError(response);
