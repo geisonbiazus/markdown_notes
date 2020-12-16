@@ -1,5 +1,7 @@
 import express from 'express';
+import swaggerUI from 'swagger-ui-express';
 import { APIContext } from './APIContext';
+import { swaggerDocument } from './swagger';
 
 export class Router {
   public router: express.Router;
@@ -15,8 +17,10 @@ export class Router {
   private assignRoutes(): void {
     const auth = this.context.authenticationMidleware.authenticate;
 
+    this.router.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+
     this.router.get('/', (_req, res) => {
-      res.send('MarkdownNotes API');
+      res.redirect('/api-docs');
     });
 
     this.router.post('/sign_in', this.context.authenticationController.signIn);

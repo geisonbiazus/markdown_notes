@@ -1,18 +1,34 @@
+import { notesPath } from './open_api/notes.swagger';
+
 export const swaggerDocument = {
-  openapi: '3.0.1',
+  openapi: '3.0.3',
   info: {
     version: '1.0.0',
-    title: 'APIs Document',
-    description: 'your description here',
-    termsOfService: '',
+    title: 'MarkdownNotes API',
     contact: {
-      name: 'Tran Son hoang',
-      email: 'son.hoang01@gmail.com',
-      url: 'https://hoangtran.co',
-    },
-    license: {
-      name: 'Apache 2.0',
-      url: 'https://www.apache.org/licenses/LICENSE-2.0.html',
+      name: 'Geison Biazus',
+      email: 'geisonbiazus@gmail.com',
     },
   },
+  servers: [
+    {
+      url: 'http://localhost:4000/',
+      description: 'Local',
+    },
+    {
+      url: 'https://api.notes.geisonbiazus.com/',
+      description: 'Production',
+    },
+  ],
+  components: {
+    schemas: {},
+    securitySchemes: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+      },
+    },
+  },
+  paths: { ...notesPath },
 };
