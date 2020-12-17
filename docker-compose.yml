@@ -13,6 +13,14 @@ services:
   #     REACT_APP_APP_ENV: production
   #   ports:
   #     - 3000:3000
+  swagger:
+    image: swaggerapi/swagger-ui:v3.38.0
+    ports:
+      - 4001:8080
+    volumes:
+      - ./docs:/docs
+    environment:
+      SWAGGER_JSON: /docs/openAPI.yml
   postgres:
     image: postgres:12
     restart: always
