@@ -1,4 +1,5 @@
 import express from 'express';
+import * as path from 'path';
 import { APIContext } from './APIContext';
 
 export class Router {
@@ -18,6 +19,8 @@ export class Router {
     this.router.get('/', (_req, res) => {
       res.send('MarkdownNotes API');
     });
+
+    this.router.use('/public/', express.static(path.join(__dirname, 'public')));
 
     this.router.post('/sign_in', this.context.authenticationController.signIn);
 
