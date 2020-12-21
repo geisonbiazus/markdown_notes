@@ -24,15 +24,58 @@ components:
           type: string
         body:
           type: string
-
+      example: { id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', 'title': 'Note Title', 'body': 'Note body in markdown' }
     Error:
       properties:
         type:
           type: string
+    ValidationError:
+      type: object
+      properties:
+        field:
+          type: string
+        type:
+          type: string
+
+  responses:
+    note:
+     description: 'Note'
+     content:
+      'application/json':
+        schema:
+          $ref: '#/components/schemas/Note'
+    unauthorized:
+      description: Unauthorized
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            unauthorized:
+              $ref: '#/components/examples/UnauthorizedError'
+    validation_error:
+      description: Invalid input
+      content:
+        'application/json':
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ValidationError'
+    not_found:
+      description: 'Not found'
+      content:
+        'application/json':
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            not_found:
+              $ref: '#/components/examples/NotFoundError'
 
   examples:
     NotFoundError:
       value: { 'type': 'not_found' }
+    UnauthorizedError:
+      value: { 'type': 'unauthorized' }
 
   securitySchemes:
     bearerAuth:
@@ -55,7 +98,10 @@ paths:
                   type: string
                   format: email
                 password:
-                  type: string
+                  type  : string
+              required:
+                - email
+                - password
             example: { 'email': 'user@example.com', 'password': 'password123' }
 
       responses:
@@ -69,14 +115,7 @@ paths:
                     type: string
                     description: 'Token to be used in subsequent requests'
         404:
-          description: 'User not found'
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/Error'
-              examples:
-                not_found:
-                  $ref: '#/components/examples/NotFoundError'
+          $ref:  "#/components/responses/not_found"
 
   '/notes':
     get:
@@ -94,6 +133,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Note'
+        401:
+          $ref:  "#/components/responses/unauthorized"
   '/notes/{id}':
     put:
       tags:
@@ -106,12 +147,70 @@ paths:
           schema:
             type: string
             format: uuid
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              properties:
+                title:
+                  type: string
+                body:
+                  type: string
+              required:
+                - title
+            example: { 'title': 'Note Title', 'body': 'Note body in markdown' }
       security:
         - bearerAuth: []
       responses:
         200:
-          description: 'The created or updated note.'
+          $ref:  "#/components/responses/note"
+        422:
+          $ref:  "#/components/responses/validation_error"
+        401:
+          $ref:  "#/components/responses/unauthorized"
+
+    get:
+      tags:
+        - Notes
+      description: Returns a note by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          $ref:  "#/components/responses/note"
+        404:
+          $ref:  "#/components/responses/not_found"
+        401:
+          $ref:  "#/components/responses/unauthorized"
+
+    delete:
+      tags:
+        - Notes
+      description: Removes a note by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Note sucessfully removed
           content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/Note'
+            application/json: {}
+        404:
+          $ref:  "#/components/responses/not_found"
+        401:
+          $ref:  "#/components/responses/unauthorized"
+
+              
