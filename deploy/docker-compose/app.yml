@@ -31,6 +31,7 @@ services:
     environment:
       URL: https://api.notes.geisonbiazus.com/public/OpenAPI.yml
       VIRTUAL_HOST: api-docs.notes.geisonbiazus.com
+      VIRTUAL_PORT: 8080
       LETSENCRYPT_HOST: api-docs.notes.geisonbiazus.com
   postgres:
     image: postgres:12
