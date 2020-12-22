@@ -18,7 +18,7 @@ services:
     ports:
       - 4001:8080
     environment:
-      URL: http://localhost:4000/public/OpenAPI.yml
+      URL: http://localhost:4000/public/open_api.yml
   postgres:
     image: postgres:12
     restart: always
