@@ -1,8 +1,8 @@
-import express, { Express } from 'express';
-import { Router } from './router';
 import cors from 'cors';
+import express, { Express } from 'express';
 import { AppContext } from '../AppContext';
 import { APIContext } from './APIContext';
+import { Router } from './router';
 
 export class Server {
   public server: Express;
