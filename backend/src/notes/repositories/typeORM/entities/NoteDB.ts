@@ -10,4 +10,7 @@ export class NoteDB {
 
   @Column()
   body?: string;
+
+  @Column()
+  html?: string;
 }

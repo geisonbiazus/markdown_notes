@@ -16,7 +16,7 @@ describe('TypeORMNoteRespository', () => {
       'saves the note in the DB when it does not exist',
       dbTest(async (entityManager) => {
         const repository = new TypeORMNoteRepository(entityManager);
-        const note = new Note({ id: uuid(), title: 'title', body: 'body' });
+        const note = new Note({ id: uuid(), title: 'title', body: 'body', html: '<p>note</p>' });
         await repository.saveNote(note);
 
         expect(await repository.getNoteById(note.id)).toEqual(note);
@@ -27,7 +27,7 @@ describe('TypeORMNoteRespository', () => {
       'updates the note in the DB when it does exists',
       dbTest(async (entityManager) => {
         const repository = new TypeORMNoteRepository(entityManager);
-        const note = new Note({ id: uuid(), title: 'title', body: 'body' });
+        const note = new Note({ id: uuid(), title: 'title', body: 'body', html: '<p>note</p>' });
         await repository.saveNote(note);
 
         const updatedNote = new Note({ ...note, title: 'updated title' });
@@ -43,9 +43,9 @@ describe('TypeORMNoteRespository', () => {
       dbTest(async (entityManager) => {
         const repository = new TypeORMNoteRepository(entityManager);
 
-        const note1 = new Note({ id: uuid(), title: 'title 1', body: 'body' });
-        const note2 = new Note({ id: uuid(), title: 'title 2', body: 'body' });
-        const note3 = new Note({ id: uuid(), title: 'title 3', body: 'body' });
+        const note1 = new Note({ id: uuid(), title: 'title 1', body: 'body', html: '<p>note</p>' });
+        const note2 = new Note({ id: uuid(), title: 'title 2', body: 'body', html: '<p>note</p>' });
+        const note3 = new Note({ id: uuid(), title: 'title 3', body: 'body', html: '<p>note</p>' });
 
         await repository.saveNote(note1);
         await repository.saveNote(note2);
@@ -71,7 +71,7 @@ describe('TypeORMNoteRespository', () => {
       'returns the note of the given ID',
       dbTest(async (entityManager) => {
         const repository = new TypeORMNoteRepository(entityManager);
-        const note = new Note({ id: uuid(), title: 'title', body: 'body' });
+        const note = new Note({ id: uuid(), title: 'title', body: 'body', html: '<p>note</p>' });
         await repository.saveNote(note);
 
         expect(await repository.getNoteById(note.id)).toEqual(note);
@@ -85,9 +85,9 @@ describe('TypeORMNoteRespository', () => {
       dbTest(async (entityManager) => {
         const repository = new TypeORMNoteRepository(entityManager);
 
-        const note1 = new Note({ id: uuid(), title: 'title 3', body: 'body' });
-        const note2 = new Note({ id: uuid(), title: 'title 1', body: 'body' });
-        const note3 = new Note({ id: uuid(), title: 'title 2', body: 'body' });
+        const note1 = new Note({ id: uuid(), title: 'title 3', body: 'body', html: '<p>note</p>' });
+        const note2 = new Note({ id: uuid(), title: 'title 1', body: 'body', html: '<p>note</p>' });
+        const note3 = new Note({ id: uuid(), title: 'title 2', body: 'body', html: '<p>note</p>' });
 
         await repository.saveNote(note1);
         await repository.saveNote(note2);
@@ -104,7 +104,7 @@ describe('TypeORMNoteRespository', () => {
       dbTest(async (entityManager) => {
         const repository = new TypeORMNoteRepository(entityManager);
 
-        const note = new Note({ id: uuid(), title: 'title', body: 'body' });
+        const note = new Note({ id: uuid(), title: 'title', body: 'body', html: '<p>note</p>' });
         await repository.saveNote(note);
 
         await repository.removeNote(note);
@@ -117,7 +117,7 @@ describe('TypeORMNoteRespository', () => {
       'does not break if the record does not exist',
       dbTest(async (entityManager) => {
         const repository = new TypeORMNoteRepository(entityManager);
-        const note = new Note({ id: uuid(), title: 'title', body: 'body' });
+        const note = new Note({ id: uuid(), title: 'title', body: 'body', html: '<p>note</p>' });
 
         await repository.removeNote(note);
 
