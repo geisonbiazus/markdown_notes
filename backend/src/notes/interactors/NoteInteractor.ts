@@ -1,5 +1,5 @@
 import { ValidationError } from '../../utils/validations';
-import { Note } from '../entities';
+import { MarkdownConverter, Note } from '../entities';
 import { SaveNoteValidator } from '../validators';
 
 export interface NoteRepository {
@@ -16,7 +16,7 @@ export interface SaveNoteRequest {
 }
 
 export class NoteInteractor {
-  constructor(private repo: NoteRepository) {}
+  constructor(private repo: NoteRepository, private markdownConverter: MarkdownConverter) {}
 
   public async saveNote(request: SaveNoteRequest): Promise<SaveNoteResponse> {
     const validator = new SaveNoteValidator(request);
@@ -24,6 +24,9 @@ export class NoteInteractor {
     if (!validator.isValid()) return validationErrorResponse(validator.errors);
 
     const note = new Note(request);
+
+    note.html = this.markdownConverter.convertToHTML(request.body!);
+
     await this.repo.saveNote(note);
 
     return { status: 'success', note };

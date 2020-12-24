@@ -1,4 +1,5 @@
 import { EntityManager, getConnection } from 'typeorm';
+import { MarkdownConverter } from './entities';
 import { NoteInteractor, NoteRepository } from './interactors';
 import { InMemoryNoteRepository, TypeORMNoteRepository } from './repositories';
 
@@ -12,7 +13,7 @@ export class NotesContext {
   constructor(public config: Config) {}
 
   public get noteInteractor(): NoteInteractor {
-    return new NoteInteractor(this.noteRepository);
+    return new NoteInteractor(this.noteRepository, new MarkdownConverter());
   }
 
   public get noteRepository(): NoteRepository {

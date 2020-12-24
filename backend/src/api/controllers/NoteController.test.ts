@@ -40,7 +40,7 @@ describe('NoteController', () => {
         .set('Authorization', `Bearer ${token}`)
         .send({ title: 'title', body: 'body' })
         .expect('Content-Type', /application\/json/)
-        .expect(200, { id: noteId, title: 'title', body: 'body' }, done);
+        .expect(200, { id: noteId, title: 'title', body: 'body', html: '<p>body</p>\n' }, done);
     });
   });
 
@@ -57,13 +57,13 @@ describe('NoteController', () => {
 
     it('returns note when it exists', (done) => {
       const noteId = uuid();
-      repo.saveNote(new Note({ id: noteId, title: 'title', body: 'body' }));
+      repo.saveNote(new Note({ id: noteId, title: 'title', body: 'body', html: '<p>body</p>\n' }));
 
       request(server)
         .get(`/notes/${noteId}`)
         .set('Authorization', `Bearer ${token}`)
         .expect('Content-Type', /json/)
-        .expect(200, { id: noteId, title: 'title', body: 'body' }, done);
+        .expect(200, { id: noteId, title: 'title', body: 'body', html: '<p>body</p>\n' }, done);
     });
   });
 
