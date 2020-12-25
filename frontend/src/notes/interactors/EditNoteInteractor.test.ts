@@ -1,6 +1,6 @@
 import { FakePublisher, uuid } from '../../utils';
 import { InMemoryNoteClient } from '../clients';
-import { Note } from '../entities';
+import { newNote, Note } from '../entities';
 import { EditNoteInteractor } from './EditNoteInteractor';
 
 describe('EditNoteInteractor', () => {
@@ -17,7 +17,7 @@ describe('EditNoteInteractor', () => {
   describe('constructor', () => {
     it('initializes with an empty state', () => {
       expect(interactor.state).toEqual({
-        note: { id: '', title: '', body: '' },
+        note: newNote(),
         errors: {},
         isDirty: false,
         getNotePending: false,
@@ -32,11 +32,11 @@ describe('EditNoteInteractor', () => {
 
       await interactor.getNote(noteId);
 
-      expect(interactor.state.note).toEqual({ id: noteId, title: '', body: '' });
+      expect(interactor.state.note).toEqual(newNote({ id: noteId, title: '', body: '' }));
     });
 
     it('sets the note in the state when it exists in the client', async () => {
-      const note: Note = { id: uuid(), title: 'title', body: 'body' };
+      const note: Note = newNote({ id: uuid(), title: 'title', body: 'body' });
       client.saveNote(note);
 
       await interactor.getNote(note.id!);
@@ -45,14 +45,14 @@ describe('EditNoteInteractor', () => {
     });
 
     it('sets an empty note when note does not exist and there was a note in the state before', async () => {
-      const note: Note = { id: uuid(), title: 'title', body: 'body' };
+      const note: Note = newNote({ id: uuid(), title: 'title', body: 'body' });
       client.saveNote(note);
       await interactor.getNote(note.id!);
 
       const noteId = uuid();
       await interactor.getNote(noteId);
 
-      expect(interactor.state.note).toEqual({ id: noteId, title: '', body: '' });
+      expect(interactor.state.note).toEqual(newNote({ id: noteId, title: '', body: '' }));
     });
 
     it('cleans previous state', async () => {
@@ -73,7 +73,9 @@ describe('EditNoteInteractor', () => {
       interactor.setTitle('new title');
       interactor.setBody('new body');
 
-      expect(interactor.state.note).toEqual({ id: noteId, title: 'new title', body: 'new body' });
+      expect(interactor.state.note).toEqual(
+        newNote({ id: noteId, title: 'new title', body: 'new body' })
+      );
       expect(interactor.state.isDirty).toEqual(true);
     });
   });
@@ -131,7 +133,7 @@ describe('EditNoteInteractor', () => {
 
       await interactor.saveNote();
 
-      expect(await client.getNote(id)).toEqual({ id, title, body });
+      expect(await client.getNote(id)).toEqual(newNote({ id, title, body }));
     });
 
     it('does not save the note in the client when invalid', async () => {

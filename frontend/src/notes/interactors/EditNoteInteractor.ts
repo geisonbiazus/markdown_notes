@@ -7,7 +7,7 @@ import {
   StateObservableInteractor,
   validateRequired,
 } from '../../utils';
-import { Note, NoteClient, ValidationErrorResponse } from '../entities';
+import { newNote, Note, NoteClient, ValidationErrorResponse } from '../entities';
 import { NoteSavedPayload, NOTE_SAVED_EVENT } from '../events';
 
 export interface EditNoteState {
@@ -20,7 +20,7 @@ export interface EditNoteState {
 
 function newEditNoteState(): EditNoteState {
   return {
-    note: { id: '', title: '', body: '' },
+    note: newNote(),
     errors: {},
     isDirty: false,
     getNotePending: false,
@@ -38,12 +38,8 @@ export class EditNoteInteractor extends StateObservableInteractor<EditNoteState>
     this.updateState(newEditNoteState());
     await this.withPendingState('getNotePending', async () => {
       let note = await this.noteClient.getNote(id);
-      this.updateState({ note: note || this.newNote(id) });
+      this.updateState({ note: note || newNote({ id }) });
     });
-  }
-
-  private newNote(id: string): Note {
-    return { id, title: '', body: '' };
   }
 
   @bind
