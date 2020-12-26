@@ -1,7 +1,7 @@
 import nock from 'nock';
 
 import { APINoteClient } from './APINoteClient';
-import { Note } from '../entities';
+import { newNote, Note } from '../entities';
 import { uuid, HTTPClient } from '../../utils';
 
 HTTPClient.useNodeAdapter();
@@ -22,7 +22,7 @@ describe('APINoteClient', () => {
 
   describe('saveNote', () => {
     it('requests to save the note throught the api and return success response', async () => {
-      const note: Note = { id: uuid(), body: 'body', title: 'title' };
+      const note: Note = newNote({ id: uuid(), body: 'body', title: 'title' });
 
       nockScope.put(`/notes/${note.id}`, { title: note.title, body: note.body }).reply(200, note);
 
@@ -32,7 +32,7 @@ describe('APINoteClient', () => {
     });
 
     it('returns api errors when invalid', async () => {
-      const note: Note = { id: uuid(), body: 'body', title: '' };
+      const note: Note = newNote({ id: uuid(), body: 'body', title: '' });
       const errors = [{ field: 'title', type: 'required' }];
 
       nockScope.put(`/notes/${note.id}`, { title: note.title, body: note.body }).reply(422, errors);
@@ -43,7 +43,7 @@ describe('APINoteClient', () => {
     });
 
     it('returns unauthorized status', async () => {
-      const note: Note = { id: uuid(), body: 'body', title: '' };
+      const note: Note = newNote({ id: uuid(), body: 'body', title: '' });
 
       nockScope
         .put(`/notes/${note.id}`, { title: note.title, body: note.body })
@@ -67,7 +67,7 @@ describe('APINoteClient', () => {
     });
 
     it('returns the note when the note is found', async () => {
-      const note: Note = { id: uuid(), body: 'body', title: '' };
+      const note: Note = newNote({ id: uuid(), body: 'body', title: '', html: '<p>body</p>' });
 
       nockScope.get(`/notes/${note.id}`).reply(200, note);
 
@@ -77,7 +77,7 @@ describe('APINoteClient', () => {
     });
 
     it('returns null when unauthorized', async () => {
-      const note: Note = { id: uuid(), body: 'body', title: '' };
+      const note: Note = newNote({ id: uuid(), body: 'body', title: '' });
 
       nockScope.get(`/notes/${note.id}`).reply(401, { type: 'unauthorized' });
 
@@ -90,8 +90,8 @@ describe('APINoteClient', () => {
   describe('getNotes', () => {
     it('returns a list of notes when request is successful', async () => {
       const notes: Note[] = [
-        { id: uuid(), body: 'body 1', title: 'title 1' },
-        { id: uuid(), body: 'body 2', title: 'title 2' },
+        newNote({ id: uuid(), body: 'body 1', title: 'title 1' }),
+        newNote({ id: uuid(), body: 'body 2', title: 'title 2' }),
       ];
 
       nockScope.get(`/notes`).reply(200, notes);
