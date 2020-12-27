@@ -2,7 +2,15 @@ import { AppConfig } from '../app';
 import { HTTPClient, PubSub, uuid } from '../utils';
 import { APINoteClient, InMemoryNoteClient } from './clients';
 import { NoteClient } from './entities';
-import { NOTE_REMOVED_EVENT, NOTE_SAVED_EVENT } from './events';
+import {
+  NoteLoadedForEditingPayload,
+  NoteLoadedForShowingPayload,
+  NoteSavedPayload,
+  NOTE_LOADED_FOR_EDITING_EVENT,
+  NOTE_LOADED_FOR_SHOWING_EVENT,
+  NOTE_REMOVED_EVENT,
+  NOTE_SAVED_EVENT,
+} from './events';
 import {
   EditNoteInteractor,
   ListNoteInteractor,
@@ -22,11 +30,23 @@ export class NoteContext {
   public startSubscribers(): void {
     this.pubSub.subscribe(NOTE_SAVED_EVENT, () => this.listNoteInteractor.getNotes());
     this.pubSub.subscribe(NOTE_REMOVED_EVENT, () => this.listNoteInteractor.getNotes());
+
+    this.pubSub.subscribe(NOTE_LOADED_FOR_SHOWING_EVENT, (payload: NoteLoadedForShowingPayload) =>
+      this.listNoteInteractor.setActiveNoteId(payload.id)
+    );
+
+    this.pubSub.subscribe(NOTE_LOADED_FOR_EDITING_EVENT, (payload: NoteLoadedForEditingPayload) =>
+      this.listNoteInteractor.setActiveNoteId(payload.id)
+    );
+
+    this.pubSub.subscribe(NOTE_SAVED_EVENT, (payload: NoteSavedPayload) =>
+      this.listNoteInteractor.setActiveNoteId(payload.id)
+    );
   }
 
   public get showNoteInteractor(): ShowNoteInteractor {
     if (!this.showNoteInteractorInstance) {
-      this.showNoteInteractorInstance = new ShowNoteInteractor(this.noteClient);
+      this.showNoteInteractorInstance = new ShowNoteInteractor(this.noteClient, this.pubSub);
     }
     return this.showNoteInteractorInstance;
   }

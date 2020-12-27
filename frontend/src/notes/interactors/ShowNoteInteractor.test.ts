@@ -1,15 +1,18 @@
-import { uuid } from '../../utils';
+import { FakePublisher, uuid } from '../../utils';
 import { InMemoryNoteClient } from '../clients';
 import { newNote } from '../entities';
+import { NOTE_LOADED_FOR_SHOWING_EVENT } from '../events';
 import { ShowNoteInteractor } from './ShowNoteInteractor';
 
 describe('ShowNoteInteractor', () => {
-  let noteClient: InMemoryNoteClient;
+  let client: InMemoryNoteClient;
+  let publisher: FakePublisher;
   let interactor: ShowNoteInteractor;
 
   beforeEach(() => {
-    noteClient = new InMemoryNoteClient();
-    interactor = new ShowNoteInteractor(noteClient);
+    client = new InMemoryNoteClient();
+    publisher = new FakePublisher();
+    interactor = new ShowNoteInteractor(client, publisher);
   });
 
   describe('constructor', () => {
@@ -29,7 +32,7 @@ describe('ShowNoteInteractor', () => {
 
     it('sets the note when note is found', async () => {
       const note = newNote({ id: uuid(), title: 'title', body: 'body', html: '<p>html</p>' });
-      await noteClient.saveNote(note);
+      await client.saveNote(note);
 
       await interactor.getNote(note.id);
 
@@ -39,13 +42,22 @@ describe('ShowNoteInteractor', () => {
 
     it('sets is found to true when it was not found before', async () => {
       const note = newNote({ id: uuid(), title: 'title', body: 'body', html: '<p>html</p>' });
-      await noteClient.saveNote(note);
+      await client.saveNote(note);
 
       await interactor.getNote(uuid());
       await interactor.getNote(note.id);
 
       expect(interactor.state.note).toEqual(note);
       expect(interactor.state.isFound).toBeTruthy();
+    });
+
+    it('publishes NOTE_LOADED_FOR_SHOWING_EVENT', async () => {
+      const note = newNote({ id: uuid(), title: 'title', body: 'body', html: '<p>html</p>' });
+      client.saveNote(note);
+
+      await interactor.getNote(note.id!);
+
+      expect(publisher.lastEvent).toEqual({ name: NOTE_LOADED_FOR_SHOWING_EVENT, payload: note });
     });
   });
 });

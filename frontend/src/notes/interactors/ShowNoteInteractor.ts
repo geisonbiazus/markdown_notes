@@ -1,6 +1,7 @@
 import bind from 'bind-decorator';
-import { StateObservableInteractor } from '../../utils';
+import { Publisher, StateObservableInteractor } from '../../utils';
 import { Note, NoteClient } from '../entities';
+import { NOTE_LOADED_FOR_SHOWING_EVENT } from '../events';
 
 export interface ShowNoteState {
   note?: Note;
@@ -16,7 +17,7 @@ function newShowNoteState(): ShowNoteState {
 }
 
 export class ShowNoteInteractor extends StateObservableInteractor<ShowNoteState> {
-  constructor(private noteClient: NoteClient) {
+  constructor(private noteClient: NoteClient, private publisher: Publisher) {
     super(newShowNoteState());
   }
 
@@ -26,6 +27,7 @@ export class ShowNoteInteractor extends StateObservableInteractor<ShowNoteState>
       const note = await this.noteClient.getNote(id);
       if (note) {
         this.updateState({ note, isFound: true });
+        this.publisher.pusblish(NOTE_LOADED_FOR_SHOWING_EVENT, note);
       } else {
         this.updateState({ isFound: false });
       }

@@ -1,6 +1,7 @@
 import { FakePublisher, uuid } from '../../utils';
 import { InMemoryNoteClient } from '../clients';
 import { newNote, Note } from '../entities';
+import { NOTE_LOADED_FOR_EDITING_EVENT, NOTE_SAVED_EVENT } from '../events';
 import { EditNoteInteractor } from './EditNoteInteractor';
 
 describe('EditNoteInteractor', () => {
@@ -53,6 +54,15 @@ describe('EditNoteInteractor', () => {
       await interactor.getNote(noteId);
 
       expect(interactor.state.note).toEqual(newNote({ id: noteId, title: '', body: '' }));
+    });
+
+    it('publishes NOTE_LOADED_FOR_EDITING_EVENT', async () => {
+      const note: Note = newNote({ id: uuid(), title: 'title', body: 'body' });
+      client.saveNote(note);
+
+      await interactor.getNote(note.id!);
+
+      expect(publisher.lastEvent).toEqual({ name: NOTE_LOADED_FOR_EDITING_EVENT, payload: note });
     });
 
     it('cleans previous state', async () => {
@@ -167,7 +177,10 @@ describe('EditNoteInteractor', () => {
 
       await interactor.saveNote();
 
-      expect(publisher.events).toEqual([{ name: 'note_saved', payload: interactor.state.note }]);
+      expect(publisher.lastEvent).toEqual({
+        name: NOTE_SAVED_EVENT,
+        payload: interactor.state.note,
+      });
     });
   });
 });

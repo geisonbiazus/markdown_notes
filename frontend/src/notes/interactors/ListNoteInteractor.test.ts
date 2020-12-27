@@ -14,7 +14,10 @@ describe('ListNoteInteractor', () => {
 
   describe('constructor', () => {
     it('initializes with an empty state', () => {
-      expect(interactor.state).toEqual({ notes: [], getNotesPending: false });
+      expect(interactor.state).toEqual({
+        notes: [],
+        getNotesPending: false,
+      });
     });
   });
 
@@ -34,6 +37,15 @@ describe('ListNoteInteractor', () => {
       await interactor.getNotes();
 
       expect(interactor.state.notes).toEqual([note1, note2]);
+    });
+  });
+
+  describe('setActiveNoteId', () => {
+    it('sets the active note ID', () => {
+      const noteId = uuid();
+      interactor.setActiveNoteId(noteId);
+
+      expect(interactor.state.activeNoteId).toEqual(noteId);
     });
   });
 });
