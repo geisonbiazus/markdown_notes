@@ -17,8 +17,6 @@ function useSigninInteractor(): [SignInState, SignInInteractor] {
   useEffect(() => {
     const dispose = signInInteractor.observe(setSignInState);
 
-    signInInteractor.checkAuthentication();
-
     return dispose;
   }, [signInInteractor, setSignInState]);
 

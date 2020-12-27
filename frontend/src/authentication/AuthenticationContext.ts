@@ -18,6 +18,8 @@ export class AuthenticationContext {
         this.sessionRepository,
         this.pubSub
       );
+
+      this.signInInteractorInstance.checkAuthentication();
     }
     return this.signInInteractorInstance;
   }
