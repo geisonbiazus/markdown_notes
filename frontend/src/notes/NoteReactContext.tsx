@@ -7,11 +7,15 @@ import {
   ListNoteState,
   RemoveNoteInteractor,
   RemoveNoteState,
+  ShowNoteInteractor,
+  ShowNoteState,
 } from './interactors';
 
 export interface NoteContextValue {
   listNoteState: ListNoteState;
   listNoteInteractor: ListNoteInteractor;
+  showNoteState: ShowNoteState;
+  showNoteInteractor: ShowNoteInteractor;
   editNoteState: EditNoteState;
   editNoteInteractor: EditNoteInteractor;
   removeNoteState: RemoveNoteState;
@@ -59,16 +63,32 @@ function useEditNoteInteractor(): [EditNoteState, EditNoteInteractor] {
   return [editNoteState, editNoteInteractor];
 }
 
+function useShowNoteInteractor(): [ShowNoteState, ShowNoteInteractor] {
+  const { noteContext } = useAppContext();
+  const { showNoteInteractor } = noteContext;
+  const [showNoteState, setShowNoteState] = useState(showNoteInteractor.state);
+
+  useEffect(() => {
+    const dispose = showNoteInteractor.observe(setShowNoteState);
+    return dispose;
+  }, [showNoteState, showNoteInteractor]);
+
+  return [showNoteState, showNoteInteractor];
+}
+
 export const NoteProvider: React.FC = ({ children }) => {
   const [listNoteState, listNoteInteractor] = useListNoteInteractor();
   const [removeNoteState, removeNoteInteractor] = useRemoveNoteInteractor();
   const [editNoteState, editNoteInteractor] = useEditNoteInteractor();
+  const [showNoteState, showNoteInteractor] = useShowNoteInteractor();
 
   return (
     <NoteReactContext.Provider
       value={{
         listNoteState,
         listNoteInteractor,
+        showNoteState,
+        showNoteInteractor,
         editNoteState,
         editNoteInteractor,
         removeNoteState,
