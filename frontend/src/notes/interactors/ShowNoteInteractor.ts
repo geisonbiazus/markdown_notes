@@ -29,7 +29,7 @@ export class ShowNoteInteractor extends StateObservableInteractor<ShowNoteState>
         this.updateState({ note, isFound: true });
         this.publisher.pusblish(NOTE_LOADED_FOR_SHOWING_EVENT, note);
       } else {
-        this.updateState({ isFound: false });
+        this.updateState({ note: undefined, isFound: false });
       }
     });
   }

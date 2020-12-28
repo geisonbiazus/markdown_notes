@@ -51,6 +51,17 @@ describe('ShowNoteInteractor', () => {
       expect(interactor.state.isFound).toBeTruthy();
     });
 
+    it('sets note to undefined when not was found before', async () => {
+      const note = newNote({ id: uuid(), title: 'title', body: 'body', html: '<p>html</p>' });
+      await client.saveNote(note);
+
+      await interactor.getNote(note.id);
+      await interactor.getNote(uuid());
+
+      expect(interactor.state.note).toBeUndefined();
+      expect(interactor.state.isFound).toBeFalsy();
+    });
+
     it('publishes NOTE_LOADED_FOR_SHOWING_EVENT', async () => {
       const note = newNote({ id: uuid(), title: 'title', body: 'body', html: '<p>html</p>' });
       client.saveNote(note);
