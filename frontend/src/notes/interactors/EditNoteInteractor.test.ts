@@ -1,6 +1,7 @@
 import { FakePublisher, uuid } from '../../utils';
 import { InMemoryNoteClient } from '../clients';
-import { Note } from '../entities';
+import { newNote, Note } from '../entities';
+import { NOTE_LOADED_FOR_EDITING_EVENT, NOTE_SAVED_EVENT } from '../events';
 import { EditNoteInteractor } from './EditNoteInteractor';
 
 describe('EditNoteInteractor', () => {
@@ -17,7 +18,7 @@ describe('EditNoteInteractor', () => {
   describe('constructor', () => {
     it('initializes with an empty state', () => {
       expect(interactor.state).toEqual({
-        note: { id: '', title: '', body: '' },
+        note: newNote(),
         errors: {},
         isDirty: false,
         getNotePending: false,
@@ -32,11 +33,11 @@ describe('EditNoteInteractor', () => {
 
       await interactor.getNote(noteId);
 
-      expect(interactor.state.note).toEqual({ id: noteId, title: '', body: '' });
+      expect(interactor.state.note).toEqual(newNote({ id: noteId, title: '', body: '' }));
     });
 
     it('sets the note in the state when it exists in the client', async () => {
-      const note: Note = { id: uuid(), title: 'title', body: 'body' };
+      const note: Note = newNote({ id: uuid(), title: 'title', body: 'body' });
       client.saveNote(note);
 
       await interactor.getNote(note.id!);
@@ -45,14 +46,23 @@ describe('EditNoteInteractor', () => {
     });
 
     it('sets an empty note when note does not exist and there was a note in the state before', async () => {
-      const note: Note = { id: uuid(), title: 'title', body: 'body' };
+      const note: Note = newNote({ id: uuid(), title: 'title', body: 'body' });
       client.saveNote(note);
       await interactor.getNote(note.id!);
 
       const noteId = uuid();
       await interactor.getNote(noteId);
 
-      expect(interactor.state.note).toEqual({ id: noteId, title: '', body: '' });
+      expect(interactor.state.note).toEqual(newNote({ id: noteId, title: '', body: '' }));
+    });
+
+    it('publishes NOTE_LOADED_FOR_EDITING_EVENT', async () => {
+      const note: Note = newNote({ id: uuid(), title: 'title', body: 'body' });
+      client.saveNote(note);
+
+      await interactor.getNote(note.id!);
+
+      expect(publisher.lastEvent).toEqual({ name: NOTE_LOADED_FOR_EDITING_EVENT, payload: note });
     });
 
     it('cleans previous state', async () => {
@@ -73,7 +83,9 @@ describe('EditNoteInteractor', () => {
       interactor.setTitle('new title');
       interactor.setBody('new body');
 
-      expect(interactor.state.note).toEqual({ id: noteId, title: 'new title', body: 'new body' });
+      expect(interactor.state.note).toEqual(
+        newNote({ id: noteId, title: 'new title', body: 'new body' })
+      );
       expect(interactor.state.isDirty).toEqual(true);
     });
   });
@@ -89,8 +101,9 @@ describe('EditNoteInteractor', () => {
       interactor.setTitle('');
       interactor.setBody('body');
 
-      await interactor.saveNote();
+      const result = await interactor.saveNote();
 
+      expect(result).toBeFalsy();
       expect(interactor.state.errors).toEqual({ title: 'required' });
     });
 
@@ -98,8 +111,9 @@ describe('EditNoteInteractor', () => {
       interactor.setTitle('title');
       interactor.setBody('body');
 
-      await interactor.saveNote();
+      const result = await interactor.saveNote();
 
+      expect(result).toBeTruthy();
       expect(interactor.state.errors).toEqual({});
     });
 
@@ -131,7 +145,7 @@ describe('EditNoteInteractor', () => {
 
       await interactor.saveNote();
 
-      expect(await client.getNote(id)).toEqual({ id, title, body });
+      expect(await client.getNote(id)).toEqual(newNote({ id, title, body }));
     });
 
     it('does not save the note in the client when invalid', async () => {
@@ -165,7 +179,10 @@ describe('EditNoteInteractor', () => {
 
       await interactor.saveNote();
 
-      expect(publisher.events).toEqual([{ name: 'note_saved', payload: interactor.state.note }]);
+      expect(publisher.lastEvent).toEqual({
+        name: NOTE_SAVED_EVENT,
+        payload: interactor.state.note,
+      });
     });
   });
 });

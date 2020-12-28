@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { useAuthenticationContext } from '../../authentication';
 import { EditNote, NoteList, NoteProvider } from '../../notes';
+import { ShowNote } from '../../notes/ui/ShowNote';
 import { Row, Col, AppBar, AppContainer, Button } from '../../shared/components';
 
 export const AuthenticatedApp: React.FC = () => (
@@ -15,7 +16,8 @@ export const AuthenticatedApp: React.FC = () => (
         </Col>
         <Col>
           <Switch>
-            <Route exact path="/notes/:id" component={EditNote} />
+            <Route exact path="/notes/:id" component={ShowNote} />
+            <Route exact path="/notes/:id/edit" component={EditNote} />
             <Route path="/sign_in">
               <Redirect to="/" />
             </Route>

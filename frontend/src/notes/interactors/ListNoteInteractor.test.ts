@@ -1,5 +1,6 @@
 import { uuid } from '../../utils';
 import { InMemoryNoteClient } from '../clients';
+import { newNote } from '../entities';
 import { ListNoteInteractor } from './ListNoteInteractor';
 
 describe('ListNoteInteractor', () => {
@@ -13,7 +14,10 @@ describe('ListNoteInteractor', () => {
 
   describe('constructor', () => {
     it('initializes with an empty state', () => {
-      expect(interactor.state).toEqual({ notes: [], getNotesPending: false });
+      expect(interactor.state).toEqual({
+        notes: [],
+        getNotesPending: false,
+      });
     });
   });
 
@@ -24,8 +28,8 @@ describe('ListNoteInteractor', () => {
     });
 
     it('returns the note list when there are some notes', async () => {
-      const note1 = { id: uuid(), title: 'Title 1', body: 'body 1' };
-      const note2 = { id: uuid(), title: 'Title 2', body: 'body 2' };
+      const note1 = newNote({ id: uuid(), title: 'Title 1', body: 'body 1' });
+      const note2 = newNote({ id: uuid(), title: 'Title 2', body: 'body 2' });
 
       client.saveNote(note1);
       client.saveNote(note2);
@@ -33,6 +37,15 @@ describe('ListNoteInteractor', () => {
       await interactor.getNotes();
 
       expect(interactor.state.notes).toEqual([note1, note2]);
+    });
+  });
+
+  describe('setActiveNoteId', () => {
+    it('sets the active note ID', () => {
+      const noteId = uuid();
+      interactor.setActiveNoteId(noteId);
+
+      expect(interactor.state.activeNoteId).toEqual(noteId);
     });
   });
 });

@@ -21,12 +21,14 @@ describe('StateObservableInteractor', () => {
   describe('withPendingState', () => {
     it('sets the given boolean as true before running the callback and reverts it after', async () => {
       let callbackCalled = false;
-      await interactor.withPendingState('pending', async () => {
+      const result = await interactor.withPendingState('pending', async () => {
         expect(interactor.state.pending).toBeTruthy();
         callbackCalled = true;
+        return 5;
       });
       expect(callbackCalled).toBeTruthy();
       expect(interactor.state.pending).toBeFalsy();
+      expect(result).toEqual(5);
     });
   });
 
@@ -84,9 +86,9 @@ describe('StateObservableInteractor', () => {
       dispose1();
 
       interactor.updateState({ key2: 'new key2 value' });
-      
+
       dispose2();
-      
+
       interactor.updateState({ key2: 'another key2 value' });
 
       expect(observer1TimesCalled).toEqual(1);
@@ -114,10 +116,10 @@ class TestInteractor extends StateObservableInteractor<TestState> {
     super.updateState(update);
   }
 
-  public async withPendingState(
+  public async withPendingState<TReturn>(
     field: BooleanKey<TestState>,
-    callback: () => Promise<any>
-  ): Promise<void> {
+    callback: () => Promise<TReturn>
+  ): Promise<TReturn> {
     return super.withPendingState(field, callback);
   }
 }

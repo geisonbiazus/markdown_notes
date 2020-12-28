@@ -24,7 +24,15 @@ components:
           type: string
         body:
           type: string
-      example: { id: '3fa85f64-5717-4562-b3fc-2c963f66afa6', 'title': 'Note Title', 'body': 'Note body in markdown' }
+          description: Body in markdown format
+        html:
+          type: string
+          description: Body rended in HTML
+      example: 
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+        title': 'Note Title'
+        body': '# Note body in markdown'
+        html': '<h1>Note body in markdown</h1>'
     Error:
       properties:
         type:
@@ -158,7 +166,9 @@ paths:
                   type: string
               required:
                 - title
-            example: { 'title': 'Note Title', 'body': 'Note body in markdown' }
+            example: 
+              title: 'Note Title'
+              body: '# Note body in markdown'
       security:
         - bearerAuth: []
       responses:

@@ -2,10 +2,24 @@ import { AppConfig } from '../app';
 import { HTTPClient, PubSub, uuid } from '../utils';
 import { APINoteClient, InMemoryNoteClient } from './clients';
 import { NoteClient } from './entities';
-import { NOTE_REMOVED_EVENT, NOTE_SAVED_EVENT } from './events';
-import { EditNoteInteractor, ListNoteInteractor, RemoveNoteInteractor } from './interactors';
+import {
+  NoteLoadedForEditingPayload,
+  NoteLoadedForShowingPayload,
+  NoteSavedPayload,
+  NOTE_LOADED_FOR_EDITING_EVENT,
+  NOTE_LOADED_FOR_SHOWING_EVENT,
+  NOTE_REMOVED_EVENT,
+  NOTE_SAVED_EVENT,
+} from './events';
+import {
+  EditNoteInteractor,
+  ListNoteInteractor,
+  RemoveNoteInteractor,
+  ShowNoteInteractor,
+} from './interactors';
 
 export class NoteContext {
+  private showNoteInteractorInstance?: ShowNoteInteractor;
   private editNoteInteractorInstance?: EditNoteInteractor;
   private listNoteInteractorInstance?: ListNoteInteractor;
   private removeNoteInteractorInstance?: RemoveNoteInteractor;
@@ -16,6 +30,25 @@ export class NoteContext {
   public startSubscribers(): void {
     this.pubSub.subscribe(NOTE_SAVED_EVENT, () => this.listNoteInteractor.getNotes());
     this.pubSub.subscribe(NOTE_REMOVED_EVENT, () => this.listNoteInteractor.getNotes());
+
+    this.pubSub.subscribe(NOTE_LOADED_FOR_SHOWING_EVENT, (payload: NoteLoadedForShowingPayload) =>
+      this.listNoteInteractor.setActiveNoteId(payload.id)
+    );
+
+    this.pubSub.subscribe(NOTE_LOADED_FOR_EDITING_EVENT, (payload: NoteLoadedForEditingPayload) =>
+      this.listNoteInteractor.setActiveNoteId(payload.id)
+    );
+
+    this.pubSub.subscribe(NOTE_SAVED_EVENT, (payload: NoteSavedPayload) =>
+      this.listNoteInteractor.setActiveNoteId(payload.id)
+    );
+  }
+
+  public get showNoteInteractor(): ShowNoteInteractor {
+    if (!this.showNoteInteractorInstance) {
+      this.showNoteInteractorInstance = new ShowNoteInteractor(this.noteClient, this.pubSub);
+    }
+    return this.showNoteInteractorInstance;
   }
 
   public get editNoteInteractor(): EditNoteInteractor {
@@ -51,9 +84,24 @@ export class NoteContext {
   private initializeInMemoryNoteClient(): InMemoryNoteClient {
     const client = new InMemoryNoteClient();
 
-    client.saveNote({ id: uuid(), title: 'Note 1', body: 'Content 1' });
-    client.saveNote({ id: uuid(), title: 'Note 2', body: 'Content 2' });
-    client.saveNote({ id: uuid(), title: 'Note 3', body: 'Content 3' });
+    client.saveNote({
+      id: uuid(),
+      title: 'Note 1',
+      body: '# Content 1',
+      html: '<h1>Content 1</h1>',
+    });
+    client.saveNote({
+      id: uuid(),
+      title: 'Note 2',
+      body: '# Content 2',
+      html: '<h1>Content 2</h1>',
+    });
+    client.saveNote({
+      id: uuid(),
+      title: 'Note 3',
+      body: '# Content 3',
+      html: '<h1>Content 3</h1>',
+    });
 
     return client;
   }

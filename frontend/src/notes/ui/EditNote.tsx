@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams, Prompt } from 'react-router-dom';
+import { useParams, Prompt, useHistory } from 'react-router-dom';
 import { useNoteContext } from '../NoteReactContext';
 import { Form, FormRow, TextField, TextArea, Button, Loading } from '../../shared/components';
 import { useTranslation } from 'react-i18next';
@@ -8,11 +8,19 @@ export const EditNote: React.FC = () => {
   const { editNoteState, editNoteInteractor } = useNoteContext();
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
+  const history = useHistory();
+
   const { title, body } = editNoteState.note;
 
   useEffect(() => {
     editNoteInteractor.getNote(id);
   }, [editNoteInteractor, id]);
+
+  const saveAndClose = async () => {
+    if (await editNoteInteractor.saveNote()) {
+      history.push(`/notes/${id}`);
+    }
+  };
 
   if (editNoteState.getNotePending) {
     return <Loading />;
@@ -55,6 +63,14 @@ export const EditNote: React.FC = () => {
           disabled={editNoteState.saveNotePending}
         >
           {t('Save')}
+        </Button>{' '}
+        <Button
+          variant="secondary"
+          onClick={saveAndClose}
+          loading={editNoteState.saveNotePending}
+          disabled={editNoteState.saveNotePending}
+        >
+          {t('Save and close')}
         </Button>
       </Form>
     </>

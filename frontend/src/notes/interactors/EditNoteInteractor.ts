@@ -7,8 +7,8 @@ import {
   StateObservableInteractor,
   validateRequired,
 } from '../../utils';
-import { Note, NoteClient, ValidationErrorResponse } from '../entities';
-import { NoteSavedPayload, NOTE_SAVED_EVENT } from '../events';
+import { newNote, Note, NoteClient, ValidationErrorResponse } from '../entities';
+import { NoteSavedPayload, NOTE_LOADED_FOR_EDITING_EVENT, NOTE_SAVED_EVENT } from '../events';
 
 export interface EditNoteState {
   note: Note;
@@ -20,7 +20,7 @@ export interface EditNoteState {
 
 function newEditNoteState(): EditNoteState {
   return {
-    note: { id: '', title: '', body: '' },
+    note: newNote(),
     errors: {},
     isDirty: false,
     getNotePending: false,
@@ -38,12 +38,14 @@ export class EditNoteInteractor extends StateObservableInteractor<EditNoteState>
     this.updateState(newEditNoteState());
     await this.withPendingState('getNotePending', async () => {
       let note = await this.noteClient.getNote(id);
-      this.updateState({ note: note || this.newNote(id) });
-    });
-  }
 
-  private newNote(id: string): Note {
-    return { id, title: '', body: '' };
+      if (note) {
+        this.updateState({ note });
+        this.publiser.pusblish(NOTE_LOADED_FOR_EDITING_EVENT, note);
+      } else {
+        this.updateState({ note: newNote({ id }) });
+      }
+    });
   }
 
   @bind
@@ -59,11 +61,12 @@ export class EditNoteInteractor extends StateObservableInteractor<EditNoteState>
   }
 
   @bind
-  public async saveNote(): Promise<void> {
-    await this.withPendingState('saveNotePending', async () => {
-      if (!this.validateNote()) return;
+  public async saveNote(): Promise<boolean> {
+    return await this.withPendingState('saveNotePending', async () => {
+      if (!this.validateNote()) return false;
       await this.maybeSaveNoteInTheClient();
       this.publiser.pusblish<NoteSavedPayload>(NOTE_SAVED_EVENT, this.state.note);
+      return true;
     });
   }
 

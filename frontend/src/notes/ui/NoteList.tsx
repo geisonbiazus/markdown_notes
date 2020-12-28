@@ -5,12 +5,7 @@ import { VerticalNav, NavItem, NavIcon, ConfirmModal, Loading } from '../../shar
 import { useTranslation } from 'react-i18next';
 
 export const NoteList: React.FC = () => {
-  const {
-    listNoteState,
-    editNoteState,
-    listNoteInteractor,
-    removeNoteInteractor,
-  } = useNoteContext();
+  const { listNoteState, listNoteInteractor, removeNoteInteractor } = useNoteContext();
 
   useEffect(() => {
     listNoteInteractor.getNotes();
@@ -29,7 +24,7 @@ export const NoteList: React.FC = () => {
               key={note.id}
               text={note.title}
               href={`/notes/${note.id}`}
-              active={note.id === editNoteState.note.id}
+              active={note.id === listNoteState.activeNoteId}
             >
               <NavIcon onClick={() => removeNoteInteractor.requestNoteRemoval(note)} />
             </NavItem>

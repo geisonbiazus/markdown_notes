@@ -19,6 +19,7 @@ export class TypeORMNoteRepository implements NoteRepository {
     record.id = note.id;
     record.title = note.title;
     record.body = note.body;
+    record.html = note.html;
 
     await this.entityManager.save(record);
   }

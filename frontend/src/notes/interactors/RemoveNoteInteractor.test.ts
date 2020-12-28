@@ -1,5 +1,6 @@
 import { FakePublisher, uuid } from '../../utils';
 import { InMemoryNoteClient } from '../clients';
+import { newNote } from '../entities';
 import { RemoveNoteInteractor } from './RemoveNoteInteractor';
 
 describe('RemoveNoteInteractor', () => {
@@ -25,7 +26,7 @@ describe('RemoveNoteInteractor', () => {
 
   describe('requestNoteRemoval', () => {
     it('prompts confirmation for the removal of the given note', () => {
-      const note = { id: uuid(), title: 'title', body: 'body' };
+      const note = newNote({ id: uuid(), title: 'title', body: 'body' });
 
       interactor.requestNoteRemoval(note);
 
@@ -36,7 +37,7 @@ describe('RemoveNoteInteractor', () => {
 
   describe('cancelNoteRemoval', () => {
     it('closes the prompt for removing the note', () => {
-      const note = { id: uuid(), title: 'title', body: 'body' };
+      const note = newNote({ id: uuid(), title: 'title', body: 'body' });
 
       interactor.requestNoteRemoval(note);
       interactor.cancelNoteRemoval();
@@ -48,7 +49,7 @@ describe('RemoveNoteInteractor', () => {
 
   describe('confirmNoteRemoval', () => {
     it('removes the note in the client', async () => {
-      const note = { id: uuid(), title: 'title', body: 'body' };
+      const note = newNote({ id: uuid(), title: 'title', body: 'body' });
       await client.saveNote(note);
 
       interactor.requestNoteRemoval(note);
@@ -61,7 +62,7 @@ describe('RemoveNoteInteractor', () => {
     });
 
     it('publishes note_removed event', async () => {
-      const note = { id: uuid(), title: 'title', body: 'body' };
+      const note = newNote({ id: uuid(), title: 'title', body: 'body' });
       await client.saveNote(note);
 
       interactor.requestNoteRemoval(note);

@@ -5,6 +5,7 @@ import { Note, NoteClient } from '../entities';
 export interface ListNoteState {
   notes: Note[];
   getNotesPending: boolean;
+  activeNoteId?: string;
 }
 
 export class ListNoteInteractor extends StateObservableInteractor<ListNoteState> {
@@ -18,5 +19,10 @@ export class ListNoteInteractor extends StateObservableInteractor<ListNoteState>
       const notes = await this.noteClient.getNotes();
       this.updateState({ notes });
     });
+  }
+
+  @bind
+  public setActiveNoteId(noteId: string): void {
+    this.updateState({ activeNoteId: noteId });
   }
 }
