@@ -1,7 +1,6 @@
-import { render } from '@testing-library/react';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { Loading } from '../../shared/components';
 import { useNoteContext } from '../NoteReactContext';
 
@@ -21,13 +20,20 @@ export const ShowNote: React.FC = () => {
   if (showNoteState.isFound && showNoteState.note) {
     return (
       <>
+        <EditNoteLink id={id} />
         <h1>{showNoteState.note.title}</h1>
-        {(showNoteState.note.html && <NoteHTML html={showNoteState.note.html} />) || <NoContent />}
+        {showNoteState.note.html ? <NoteHTML html={showNoteState.note.html} /> : <NoContent />}
+        <EditNoteLink id={id} />
       </>
     );
   }
 
   return <h3>{t('Note not found')}</h3>;
+};
+
+const EditNoteLink: React.FC<{ id: string }> = ({ id }) => {
+  const { t } = useTranslation();
+  return <Link to={`/notes/${id}/edit`}>{t('Edit note')}</Link>;
 };
 
 const NoteHTML: React.FC<{ html: string }> = ({ html }) => {
