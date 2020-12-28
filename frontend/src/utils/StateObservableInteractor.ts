@@ -28,13 +28,14 @@ export abstract class StateObservableInteractor<T> {
     this.observers.forEach((observer) => observer(updatedState));
   }
 
-  protected async withPendingState(
+  protected async withPendingState<TReturn>(
     field: BooleanKey<T>,
-    callback: () => Promise<any>
-  ): Promise<void> {
+    callback: () => Promise<TReturn>
+  ): Promise<TReturn> {
     this.updateState({ [field]: true } as any);
-    await callback();
+    const result = await callback();
     this.updateState({ [field]: false } as any);
+    return result;
   }
 }
 

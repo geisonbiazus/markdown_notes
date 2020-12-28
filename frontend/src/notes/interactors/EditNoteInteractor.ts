@@ -61,11 +61,12 @@ export class EditNoteInteractor extends StateObservableInteractor<EditNoteState>
   }
 
   @bind
-  public async saveNote(): Promise<void> {
-    await this.withPendingState('saveNotePending', async () => {
-      if (!this.validateNote()) return;
+  public async saveNote(): Promise<boolean> {
+    return await this.withPendingState('saveNotePending', async () => {
+      if (!this.validateNote()) return false;
       await this.maybeSaveNoteInTheClient();
       this.publiser.pusblish<NoteSavedPayload>(NOTE_SAVED_EVENT, this.state.note);
+      return true;
     });
   }
 

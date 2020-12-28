@@ -101,8 +101,9 @@ describe('EditNoteInteractor', () => {
       interactor.setTitle('');
       interactor.setBody('body');
 
-      await interactor.saveNote();
+      const result = await interactor.saveNote();
 
+      expect(result).toBeFalsy();
       expect(interactor.state.errors).toEqual({ title: 'required' });
     });
 
@@ -110,8 +111,9 @@ describe('EditNoteInteractor', () => {
       interactor.setTitle('title');
       interactor.setBody('body');
 
-      await interactor.saveNote();
+      const result = await interactor.saveNote();
 
+      expect(result).toBeTruthy();
       expect(interactor.state.errors).toEqual({});
     });
 
