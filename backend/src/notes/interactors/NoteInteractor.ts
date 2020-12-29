@@ -32,8 +32,13 @@ export class NoteInteractor {
     return { status: 'success', note };
   }
 
-  public async getNote(id: string): Promise<Note | null> {
-    return await this.repo.getNoteById(id);
+  public async getNote(userId: string, noteId: string): Promise<Note | null> {
+    const note = await this.repo.getNoteById(noteId);
+
+    if (!note) return null;
+    if (note.userId !== userId) return null;
+
+    return note;
   }
 
   public async getNotes(): Promise<Note[]> {

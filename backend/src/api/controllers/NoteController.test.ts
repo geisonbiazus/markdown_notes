@@ -5,11 +5,13 @@ import { uuid, json } from '../../utils';
 import { InMemoryNoteRepository, Note, NoteRepository } from '../../notes';
 import { AppContext } from '../../AppContext';
 import { authenticate, createUser } from '../helpers';
+import { User } from '../../authentication';
 
 describe('NoteController', () => {
   let context: AppContext;
   let server: Express;
   let repo: NoteRepository;
+  let user: User;
   let token: string;
 
   beforeEach(async () => {
@@ -17,7 +19,7 @@ describe('NoteController', () => {
     repo = context.notes.noteRepository;
     server = new Server(context).server;
 
-    const user = await createUser(context);
+    user = await createUser(context);
     token = authenticate(context, user);
   });
 
@@ -57,7 +59,15 @@ describe('NoteController', () => {
 
     it('returns note when it exists', (done) => {
       const noteId = uuid();
-      repo.saveNote(new Note({ id: noteId, title: 'title', body: 'body', html: '<p>body</p>\n' }));
+      repo.saveNote(
+        new Note({
+          id: noteId,
+          title: 'title',
+          body: 'body',
+          html: '<p>body</p>\n',
+          userId: user.id,
+        })
+      );
 
       request(server)
         .get(`/notes/${noteId}`)

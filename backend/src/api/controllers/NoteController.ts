@@ -47,8 +47,8 @@ export class NoteController {
   }
 
   @bind
-  public async getNote(req: Request, res: Response): Promise<void> {
-    const note = await this.noteInteractor.getNote(req.params.id);
+  public async getNote(req: Request, res: Response, user: User): Promise<void> {
+    const note = await this.noteInteractor.getNote(user.id, req.params.id);
 
     if (note) {
       res.status(200);

@@ -185,15 +185,37 @@ describe('NoteInteractor', () => {
 
   describe('getNote', () => {
     it('returns null when note does not exist', async () => {
-      expect(await noteInteractor.getNote(uuid())).toBeNull();
+      expect(await noteInteractor.getNote(uuid(), uuid())).toBeNull();
     });
 
     it('returns note when it exists', async () => {
-      const note = new Note({ id: uuid(), title: 'title', body: 'body', html: '<p>body</p>' });
+      const userId = uuid();
+      const note = new Note({
+        id: uuid(),
+        title: 'title',
+        body: 'body',
+        html: '<p>body</p>',
+        userId,
+      });
 
       repo.saveNote(note);
 
-      expect(await noteInteractor.getNote(note.id)).toEqual(note);
+      expect(await noteInteractor.getNote(userId, note.id)).toEqual(note);
+    });
+
+    it('returns null when note belongs to another user', async () => {
+      const userId = uuid();
+      const note = new Note({
+        id: uuid(),
+        title: 'title',
+        body: 'body',
+        html: '<p>body</p>',
+        userId: uuid(),
+      });
+
+      repo.saveNote(note);
+
+      expect(await noteInteractor.getNote(userId, note.id)).toBeNull();
     });
   });
 
