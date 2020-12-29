@@ -13,6 +13,7 @@ export interface SaveNoteRequest {
   id?: string;
   title?: string;
   body?: string;
+  userId: string;
 }
 
 export class NoteInteractor {
@@ -24,8 +25,7 @@ export class NoteInteractor {
     if (!validator.isValid()) return validationErrorResponse(validator.errors);
 
     const note = new Note(request);
-
-    note.html = this.markdownConverter.convertToHTML(request.body!);
+    note.html = this.markdownConverter.convertToHTML(note.body);
 
     await this.repo.saveNote(note);
 

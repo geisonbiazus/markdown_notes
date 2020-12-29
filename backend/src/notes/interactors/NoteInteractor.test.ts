@@ -17,7 +17,8 @@ describe('NoteInteractor', () => {
 
   describe('saveNote', () => {
     it('validates required ID', async () => {
-      const params = { id: '', title: 'Title', body: 'Body' };
+      const userId = uuid();
+      const params = { id: '', title: 'Title', body: 'Body', userId };
       const response = {
         status: 'validation_error',
         validationErrors: [new ValidationError('id', 'required')],
@@ -27,7 +28,8 @@ describe('NoteInteractor', () => {
     });
 
     it('validates required title', async () => {
-      const params = { id: uuid(), title: '', body: 'Body' };
+      const userId = uuid();
+      const params = { id: uuid(), title: '', body: 'Body', userId };
       const response = {
         status: 'validation_error',
         validationErrors: [new ValidationError('title', 'required')],
@@ -37,7 +39,22 @@ describe('NoteInteractor', () => {
     });
 
     it('returns all invalid fields', async () => {
-      const params = { id: '', title: '', body: 'Body' };
+      const userId = uuid();
+      const params = { id: '', title: '', body: 'Body', userId };
+      const response = {
+        status: 'validation_error',
+        validationErrors: [
+          new ValidationError('id', 'required'),
+          new ValidationError('title', 'required'),
+        ],
+      };
+
+      expect(await noteInteractor.saveNote(params)).toEqual(response);
+    });
+
+    it('validates presence of undefined fields', async () => {
+      const userId = uuid();
+      const params = { id: undefined, title: undefined, body: undefined, userId };
       const response = {
         status: 'validation_error',
         validationErrors: [
@@ -51,24 +68,27 @@ describe('NoteInteractor', () => {
 
     it('creates a new note', async () => {
       const noteId = uuid();
-      const params = { id: noteId, title: 'Title', body: 'body' };
+      const userId = uuid();
+      const params = { id: noteId, title: 'Title', body: 'body', userId };
       const response = {
         status: 'success',
-        note: new Note({ id: noteId, title: 'Title', body: 'body', html: '<p>body</p>\n' }),
+        note: new Note({ id: noteId, title: 'Title', body: 'body', html: '<p>body</p>\n', userId }),
       };
 
       expect(await noteInteractor.saveNote(params)).toEqual(response);
     });
 
     it('persists the created note', async () => {
+      const userId = uuid();
       const noteId = uuid();
       const expectedNote = new Note({
         id: noteId,
         title: 'Title',
         body: 'body',
         html: '<p>body</p>\n',
+        userId,
       });
-      const request = { id: noteId, title: 'Title', body: 'body' };
+      const request = { id: noteId, title: 'Title', body: 'body', userId };
 
       await noteInteractor.saveNote(request);
 
@@ -77,10 +97,35 @@ describe('NoteInteractor', () => {
 
     it('converts body markdown to HTML', async () => {
       const noteId = uuid();
-      const params = { id: noteId, title: 'Title', body: '# Body' };
+      const userId = uuid();
+      const params = { id: noteId, title: 'Title', body: '# Body', userId };
       const response = {
         status: 'success',
-        note: new Note({ id: noteId, title: 'Title', body: '# Body', html: '<h1>Body</h1>\n' }),
+        note: new Note({
+          id: noteId,
+          title: 'Title',
+          body: '# Body',
+          html: '<h1>Body</h1>\n',
+          userId,
+        }),
+      };
+
+      expect(await noteInteractor.saveNote(params)).toEqual(response);
+    });
+
+    it('works when not sending body', async () => {
+      const noteId = uuid();
+      const userId = uuid();
+      const params = { id: noteId, title: 'Title', userId };
+      const response = {
+        status: 'success',
+        note: new Note({
+          id: noteId,
+          title: 'Title',
+          body: '',
+          html: '',
+          userId,
+        }),
       };
 
       expect(await noteInteractor.saveNote(params)).toEqual(response);
@@ -88,14 +133,16 @@ describe('NoteInteractor', () => {
 
     it('updates the note when it already exists', async () => {
       const noteId = uuid();
+      const userId = uuid();
       const expectedNote = new Note({
         id: noteId,
         title: 'Title 2',
         body: 'Body 2',
         html: '<p>Body 2</p>\n',
+        userId,
       });
-      const request1 = { id: noteId, title: 'Title 1', body: 'Body 1' };
-      const request2 = { id: noteId, title: 'Title 2', body: 'Body 2' };
+      const request1 = { id: noteId, title: 'Title 1', body: 'Body 1', userId };
+      const request2 = { id: noteId, title: 'Title 2', body: 'Body 2', userId };
 
       await noteInteractor.saveNote(request1);
 
@@ -108,6 +155,7 @@ describe('NoteInteractor', () => {
     });
 
     it('stores different IDs independently', async () => {
+      const userId = uuid();
       const noteId1 = uuid();
       const noteId2 = uuid();
       const expectedNote1 = new Note({
@@ -115,15 +163,17 @@ describe('NoteInteractor', () => {
         title: 'Title',
         body: 'Body',
         html: '<p>Body</p>\n',
+        userId,
       });
       const expectedNote2 = new Note({
         id: noteId2,
         title: 'Title',
         body: 'Body',
         html: '<p>Body</p>\n',
+        userId,
       });
-      const request1 = { id: noteId1, title: 'Title', body: 'Body' };
-      const request2 = { id: noteId2, title: 'Title', body: 'Body' };
+      const request1 = { id: noteId1, title: 'Title', body: 'Body', userId };
+      const request2 = { id: noteId2, title: 'Title', body: 'Body', userId };
 
       await noteInteractor.saveNote(request1);
       await noteInteractor.saveNote(request2);
