@@ -13,4 +13,7 @@ export class NoteDB {
 
   @Column()
   html?: string;
+
+  @Column({ name: 'user_id' })
+  userId?: string;
 }
