@@ -2,16 +2,9 @@ import { ValidationError } from '../../utils/validations';
 import { SaveNoteRequest } from '../interactors';
 
 export class SaveNoteValidator {
-  public id: string;
-  public title: string;
-  public body: string;
   public errors: ValidationError[] = [];
 
-  constructor({ id = '', title = '', body = '' }: SaveNoteRequest) {
-    this.id = id;
-    this.title = title;
-    this.body = body;
-  }
+  constructor(public request: SaveNoteRequest) {}
 
   isValid(): boolean {
     this.validateRequired('id');
@@ -21,7 +14,7 @@ export class SaveNoteValidator {
   }
 
   private validateRequired(field: keyof SaveNoteRequest): void {
-    if (this[field] === '') {
+    if (!this.request[field] || this.request[field] === '') {
       this.errors.push(new ValidationError(field, 'required'));
     }
   }

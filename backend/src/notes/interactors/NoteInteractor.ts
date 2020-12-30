@@ -5,7 +5,7 @@ import { SaveNoteValidator } from '../validators';
 export interface NoteRepository {
   getNoteById(id: string): Promise<Note | null>;
   saveNote(note: Note): Promise<void>;
-  getNotesSortedByTitle(): Promise<Note[]>;
+  getUserNotesSortedByTitle(userId: string): Promise<Note[]>;
   removeNote(note: Note): Promise<void>;
 }
 
@@ -13,6 +13,7 @@ export interface SaveNoteRequest {
   id?: string;
   title?: string;
   body?: string;
+  userId: string;
 }
 
 export class NoteInteractor {
@@ -24,20 +25,24 @@ export class NoteInteractor {
     if (!validator.isValid()) return validationErrorResponse(validator.errors);
 
     const note = new Note(request);
-
-    note.html = this.markdownConverter.convertToHTML(request.body!);
+    note.html = this.markdownConverter.convertToHTML(note.body);
 
     await this.repo.saveNote(note);
 
     return { status: 'success', note };
   }
 
-  public async getNote(id: string): Promise<Note | null> {
-    return await this.repo.getNoteById(id);
+  public async getNote(userId: string, noteId: string): Promise<Note | null> {
+    const note = await this.repo.getNoteById(noteId);
+
+    if (!note) return null;
+    if (note.userId !== userId) return null;
+
+    return note;
   }
 
-  public async getNotes(): Promise<Note[]> {
-    return await this.repo.getNotesSortedByTitle();
+  public async getNotes(userId: string): Promise<Note[]> {
+    return await this.repo.getUserNotesSortedByTitle(userId);
   }
 
   public async removeNote(id: string): Promise<boolean> {
