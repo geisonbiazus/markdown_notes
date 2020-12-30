@@ -12,10 +12,10 @@ export class InMemoryNoteRepository implements NoteRepository {
     this.notes[note.id] = note;
   }
 
-  async getNotesSortedByTitle(): Promise<Note[]> {
-    return Object.values(this.notes).sort(
-      (a, b) => (a.title < b.title && -1) || (a.title < b.title && 1) || 0
-    );
+  async getUserNotesSortedByTitle(userId: string): Promise<Note[]> {
+    return Object.values(this.notes)
+      .filter((note) => note.userId === userId)
+      .sort((a, b) => (a.title < b.title && -1) || (a.title < b.title && 1) || 0);
   }
 
   async removeNote(note: Note): Promise<void> {

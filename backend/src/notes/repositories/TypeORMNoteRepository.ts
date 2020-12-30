@@ -24,7 +24,7 @@ export class TypeORMNoteRepository implements NoteRepository {
     await this.entityManager.save(record);
   }
 
-  async getNotesSortedByTitle(): Promise<Note[]> {
+  async getUserNotesSortedByTitle(userId: string): Promise<Note[]> {
     const records = await this.entityManager.find(NoteDB, { order: { title: 'ASC' } });
     return records.map((record) => new Note(record));
   }

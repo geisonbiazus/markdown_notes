@@ -221,27 +221,58 @@ describe('NoteInteractor', () => {
 
   describe('getNotes', () => {
     it('returns an empty list when there is no note', async () => {
-      expect(await noteInteractor.getNotes()).toEqual([]);
+      const userId = uuid();
+      expect(await noteInteractor.getNotes(userId)).toEqual([]);
     });
 
     it('returns a note when it is saved', async () => {
-      const note = new Note({ id: uuid(), title: 'title', body: 'body' });
+      const userId = uuid();
+      const note = new Note({ id: uuid(), title: 'title', body: 'body', userId });
 
       repo.saveNote(note);
 
-      expect(await noteInteractor.getNotes()).toEqual([note]);
+      expect(await noteInteractor.getNotes(userId)).toEqual([note]);
     });
 
-    it('returns a list of notes sorted alphabetically', async () => {
-      const note1 = new Note({ id: uuid(), title: 'Note B', body: 'body', html: '<p>body</p>' });
-      const note2 = new Note({ id: uuid(), title: 'Note C', body: 'body', html: '<p>body</p>' });
-      const note3 = new Note({ id: uuid(), title: 'Note A', body: 'body', html: '<p>body</p>' });
+    it('returns a list of notes of the give user sorted alphabetically', async () => {
+      const userId1 = uuid();
+      const userId2 = uuid();
+
+      const note1 = new Note({
+        id: uuid(),
+        title: 'Note B',
+        body: 'body',
+        html: '<p>body</p>',
+        userId: userId1,
+      });
+      const note2 = new Note({
+        id: uuid(),
+        title: 'Note C',
+        body: 'body',
+        html: '<p>body</p>',
+        userId: userId1,
+      });
+      const note3 = new Note({
+        id: uuid(),
+        title: 'Note A',
+        body: 'body',
+        html: '<p>body</p>',
+        userId: userId1,
+      });
+      const note4 = new Note({
+        id: uuid(),
+        title: 'Note D',
+        body: 'body',
+        html: '<p>body</p>',
+        userId: userId2,
+      });
 
       repo.saveNote(note1);
       repo.saveNote(note2);
       repo.saveNote(note3);
+      repo.saveNote(note4);
 
-      expect(await noteInteractor.getNotes()).toEqual([note3, note1, note2]);
+      expect(await noteInteractor.getNotes(userId1)).toEqual([note3, note1, note2]);
     });
   });
 

@@ -93,7 +93,7 @@ describe('TypeORMNoteRespository', () => {
         await repository.saveNote(note2);
         await repository.saveNote(note3);
 
-        expect(await repository.getNotesSortedByTitle()).toEqual([note2, note3, note1]);
+        expect(await repository.getUserNotesSortedByTitle(uuid())).toEqual([note2, note3, note1]);
       })
     );
   });

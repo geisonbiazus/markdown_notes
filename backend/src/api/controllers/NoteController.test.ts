@@ -1,11 +1,11 @@
 import { Express } from 'express';
 import request from 'supertest';
-import { Server } from '../index';
-import { uuid, json } from '../../utils';
-import { InMemoryNoteRepository, Note, NoteRepository } from '../../notes';
 import { AppContext } from '../../AppContext';
-import { authenticate, createUser } from '../helpers';
 import { User } from '../../authentication';
+import { Note, NoteRepository } from '../../notes';
+import { uuid } from '../../utils';
+import { authenticate, createUser } from '../helpers';
+import { Server } from '../index';
 
 describe('NoteController', () => {
   let context: AppContext;
@@ -87,9 +87,8 @@ describe('NoteController', () => {
     });
 
     it('returns all notes when they exist', (done) => {
-      const userId = uuid();
-      const note1 = new Note({ id: uuid(), title: 'title 1', body: 'body', userId });
-      const note2 = new Note({ id: uuid(), title: 'title 2', body: 'body', userId });
+      const note1 = new Note({ id: uuid(), title: 'title 1', body: 'body', userId: user.id });
+      const note2 = new Note({ id: uuid(), title: 'title 2', body: 'body', userId: user.id });
 
       repo.saveNote(note1);
       repo.saveNote(note2);

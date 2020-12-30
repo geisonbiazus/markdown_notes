@@ -5,7 +5,7 @@ import { SaveNoteValidator } from '../validators';
 export interface NoteRepository {
   getNoteById(id: string): Promise<Note | null>;
   saveNote(note: Note): Promise<void>;
-  getNotesSortedByTitle(): Promise<Note[]>;
+  getUserNotesSortedByTitle(userId: string): Promise<Note[]>;
   removeNote(note: Note): Promise<void>;
 }
 
@@ -41,8 +41,8 @@ export class NoteInteractor {
     return note;
   }
 
-  public async getNotes(): Promise<Note[]> {
-    return await this.repo.getNotesSortedByTitle();
+  public async getNotes(userId: string): Promise<Note[]> {
+    return await this.repo.getUserNotesSortedByTitle(userId);
   }
 
   public async removeNote(id: string): Promise<boolean> {

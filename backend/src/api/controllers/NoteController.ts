@@ -60,8 +60,8 @@ export class NoteController {
   }
 
   @bind
-  public async getNotes(_req: Request, res: Response): Promise<void> {
-    const notes = await this.noteInteractor.getNotes();
+  public async getNotes(_req: Request, res: Response, user: User): Promise<void> {
+    const notes = await this.noteInteractor.getNotes(user.id);
 
     res.status(200);
     res.json(notes.map(this.noteJson));
