@@ -101,7 +101,7 @@ components:
       bearerFormat: 'JWT'
 
 paths:
-  '/sign_in':
+  '/users/sign_in':
     post:
       tags:
         - Authentication
@@ -134,7 +134,7 @@ paths:
         404:
           $ref:  "#/components/responses/not_found"
 
-  '/register':
+  '/users/register':
     post:
       tags:
         - Authentication
@@ -172,7 +172,33 @@ paths:
               examples:
                 conflict:
                   value: { 'type': 'email_not_available' }
-
+                  
+  '/users/{token}/activate':
+    post:
+      tags:
+        - Authentication
+      description: Activates a newly registered pending user
+      parameters:
+        - name: token
+          description: Activation token sent by email upon registering
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        202:
+          description: 'User activated.'
+          content:
+            application/json: {}
+        404:
+          description: 'User not found or token expired, invalid, or already used'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                not_found:
+                  $ref: '#/components/examples/NotFoundError'
 
   '/notes':
     get:
@@ -192,6 +218,7 @@ paths:
                   $ref: '#/components/schemas/Note'
         401:
           $ref:  "#/components/responses/unauthorized"
+          
   '/notes/{id}':
     put:
       tags:
