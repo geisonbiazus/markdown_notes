@@ -150,6 +150,9 @@ paths:
                 password:
                   type: string
                   minLength: 8
+              required:
+                - email
+                - password
             example: { 'email': 'user@example.com', 'password': 'password123' }
       responses:
         201:
