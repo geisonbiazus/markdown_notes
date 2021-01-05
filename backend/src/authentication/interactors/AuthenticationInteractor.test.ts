@@ -1,4 +1,5 @@
 import { uuid } from '../../utils';
+import { ValidationError } from '../../utils/validations';
 import { PasswordManager, TokenManager, User } from '../entities';
 import { EntityFactory } from '../EntityFactory';
 import { InMemoryAuthenticationRepository } from '../repositories';
@@ -86,6 +87,20 @@ describe('AuthenticationInteractor', () => {
       const response = await interactor.getAuthenticatedUser(token);
 
       expect(response).toEqual(user);
+    });
+  });
+
+  describe('registerUser', () => {
+    it('returns validation errors when request is invalid', async () => {
+      const request = { email: '', password: '' };
+      const response = await interactor.registerUser(request);
+      expect(response).toEqual({
+        status: 'validation_error',
+        validationErrors: [
+          new ValidationError('email', 'required'),
+          new ValidationError('password', 'required'),
+        ],
+      });
     });
   });
 

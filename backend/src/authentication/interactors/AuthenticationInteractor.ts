@@ -1,20 +1,16 @@
 import {
+  ValidationError,
+  validationErrorResponse,
+  ValidationErrorResponse,
+} from '../../utils/validations';
+import {
   InvalidTokenError,
   PasswordManager,
   TokenExpiredError,
   TokenManager,
   User,
 } from '../entities';
-
-export interface AuthenticationRepository {
-  getUserByEmail(email: string): Promise<User | null>;
-  getUserById(id: string): Promise<User | null>;
-  saveUser(user: User): Promise<void>;
-}
-
-export interface AuthenticateResponse {
-  token: string;
-}
+import { RegisterUserValidator } from '../validators/RegisterUserValidator';
 
 export class AuthenticationInteractor {
   constructor(
@@ -23,7 +19,7 @@ export class AuthenticationInteractor {
     private passwordManager: PasswordManager
   ) {}
 
-  async authenticate(email: string, password: string): Promise<AuthenticateResponse | null> {
+  public async authenticate(email: string, password: string): Promise<AuthenticateResponse | null> {
     const user = await this.repository.getUserByEmail(email);
 
     if (!user) return null;
@@ -46,4 +42,31 @@ export class AuthenticationInteractor {
       throw e;
     }
   }
+
+  public async registerUser(request: RegisterUserRequest): Promise<RegisterUserResponse> {
+    const validator = new RegisterUserValidator(request);
+    validator.isValid();
+    return validationErrorResponse(validator.errors);
+  }
+}
+
+export interface AuthenticationRepository {
+  getUserByEmail(email: string): Promise<User | null>;
+  getUserById(id: string): Promise<User | null>;
+  saveUser(user: User): Promise<void>;
+}
+
+export interface AuthenticateResponse {
+  token: string;
+}
+
+export interface RegisterUserRequest {
+  email?: string;
+  password?: string;
+}
+
+export type RegisterUserResponse = RegisterUserSuccessResponse | ValidationErrorResponse;
+
+export interface RegisterUserSuccessResponse {
+  status: 'success';
 }
