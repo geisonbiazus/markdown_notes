@@ -1,4 +1,5 @@
 import { uuid } from '../../utils';
+import { FakeIDGenerator, IDGenerator } from '../../utils/IDGenerator';
 import { ValidationError } from '../../utils/validations';
 import { PasswordManager, TokenManager, User } from '../entities';
 import { EntityFactory } from '../EntityFactory';
@@ -10,13 +11,20 @@ describe('AuthenticationInteractor', () => {
   let repository: InMemoryAuthenticationRepository;
   let tokenManager: TokenManager;
   let passwordManager: PasswordManager;
+  let idGenerator: FakeIDGenerator;
   let factory: EntityFactory;
 
   beforeEach(() => {
     passwordManager = new PasswordManager('secret');
     repository = new InMemoryAuthenticationRepository();
     tokenManager = new TokenManager('secret');
-    interactor = new AuthenticationInteractor(repository, tokenManager, passwordManager);
+    idGenerator = new FakeIDGenerator();
+    interactor = new AuthenticationInteractor(
+      repository,
+      tokenManager,
+      passwordManager,
+      idGenerator
+    );
     factory = new EntityFactory(repository, passwordManager);
   });
 
@@ -25,7 +33,12 @@ describe('AuthenticationInteractor', () => {
 
     beforeEach(() => {
       tokenManager = new TokenManagerStub();
-      interactor = new AuthenticationInteractor(repository, tokenManager, passwordManager);
+      interactor = new AuthenticationInteractor(
+        repository,
+        tokenManager,
+        passwordManager,
+        idGenerator
+      );
     });
 
     it('returns null when no user exits', async () => {
@@ -94,6 +107,7 @@ describe('AuthenticationInteractor', () => {
     it('returns validation errors when request is invalid', async () => {
       const request = { email: '', password: '' };
       const response = await interactor.registerUser(request);
+
       expect(response).toEqual({
         status: 'validation_error',
         validationErrors: [
@@ -101,6 +115,31 @@ describe('AuthenticationInteractor', () => {
           new ValidationError('password', 'required'),
         ],
       });
+    });
+
+    it('returns error when another user with the same email exists', async () => {
+      const request = { email: 'user@example.com', password: 'password123' };
+
+      repository.saveUser(new User({ id: uuid(), email: request.email, password: 'any' }));
+
+      const response = await interactor.registerUser(request);
+
+      expect(response).toEqual({
+        status: 'error',
+        type: 'email_not_available',
+      });
+    });
+
+    it('creates and returns the user', async () => {
+      const request = { email: 'user@example.com', password: 'password123' };
+      const response = await interactor.registerUser(request);
+
+      expect(response.status).toEqual('success');
+
+      if (response.status == 'success') {
+        expect(response.user.id).toEqual(idGenerator.nextId);
+        expect(response.user.email).toEqual('user@example.com');
+      }
     });
   });
 

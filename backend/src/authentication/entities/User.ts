@@ -9,9 +9,9 @@ export class User {
   public email: string;
   public password: string;
 
-  constructor(params: UserParams) {
-    this.id = params.id || '';
-    this.email = params.email || '';
-    this.password = params.password || '';
+  constructor(params?: UserParams) {
+    this.id = params?.id || '';
+    this.email = params?.email || '';
+    this.password = params?.password || '';
   }
 }

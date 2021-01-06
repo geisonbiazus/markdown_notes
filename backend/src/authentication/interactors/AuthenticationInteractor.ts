@@ -1,8 +1,5 @@
-import {
-  ValidationError,
-  validationErrorResponse,
-  ValidationErrorResponse,
-} from '../../utils/validations';
+import { IDGenerator } from '../../utils/IDGenerator';
+import { validationErrorResponse, ValidationErrorResponse } from '../../utils/validations';
 import {
   InvalidTokenError,
   PasswordManager,
@@ -16,7 +13,8 @@ export class AuthenticationInteractor {
   constructor(
     private repository: AuthenticationRepository,
     private tokenManager: TokenManager,
-    private passwordManager: PasswordManager
+    private passwordManager: PasswordManager,
+    private idGenerator: IDGenerator
   ) {}
 
   public async authenticate(email: string, password: string): Promise<AuthenticateResponse | null> {
@@ -45,8 +43,18 @@ export class AuthenticationInteractor {
 
   public async registerUser(request: RegisterUserRequest): Promise<RegisterUserResponse> {
     const validator = new RegisterUserValidator(request);
-    validator.isValid();
-    return validationErrorResponse(validator.errors);
+
+    if (!validator.isValid()) return validationErrorResponse(validator.errors);
+
+    if (await this.repository.getUserByEmail(request.email!))
+      return errorResponse('email_not_available');
+
+    const user = new User({
+      id: this.idGenerator.generate(),
+      email: request.email,
+    });
+
+    return { status: 'success', user };
   }
 }
 
@@ -65,8 +73,21 @@ export interface RegisterUserRequest {
   password?: string;
 }
 
-export type RegisterUserResponse = RegisterUserSuccessResponse | ValidationErrorResponse;
+export type RegisterUserResponse =
+  | RegisterUserSuccessResponse
+  | ValidationErrorResponse
+  | ErrorResponse;
 
 export interface RegisterUserSuccessResponse {
   status: 'success';
+  user: User;
+}
+
+export interface ErrorResponse {
+  status: 'error';
+  type: string;
+}
+
+export function errorResponse(type: string): ErrorResponse {
+  return { status: 'error', type };
 }
