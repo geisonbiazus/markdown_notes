@@ -6,5 +6,6 @@ export class RegisterUserValidator extends BaseValidator<RegisterUserRequest> {
     this.validateRequired('email');
     this.validateEmail('email');
     this.validateRequired('password');
+    this.validateLength('password', { minimum: 8 });
   }
 }

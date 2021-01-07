@@ -1,5 +1,9 @@
 export class ValidationError {
-  constructor(public field: string, public type: string) {}
+  constructor(
+    public field: string,
+    public type: string,
+    public constraints?: Record<string, number | string | undefined>
+  ) {}
 }
 
 export interface ValidationErrorResponse {
@@ -40,4 +44,19 @@ export abstract class BaseValidator<TRequest> {
       this.errors.push(new ValidationError(field as string, 'invalid_email'));
     }
   }
+
+  protected validateLength(field: keyof TRequest, constraints: LengthConstraints): void {
+    const value = `${this.request[field] || ''}`;
+    const { minimum } = constraints;
+
+    if (minimum && value != '') {
+      if (value.length < minimum) {
+        this.errors.push(new ValidationError(field as string, 'length', { minimum }));
+      }
+    }
+  }
+}
+
+export interface LengthConstraints {
+  minimum?: number;
 }

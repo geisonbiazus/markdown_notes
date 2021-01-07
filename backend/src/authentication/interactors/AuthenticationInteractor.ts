@@ -44,17 +44,34 @@ export class AuthenticationInteractor {
   public async registerUser(request: RegisterUserRequest): Promise<RegisterUserResponse> {
     const validator = new RegisterUserValidator(request);
 
-    if (!validator.isValid()) return validationErrorResponse(validator.errors);
+    if (!validator.isValid()) {
+      return validationErrorResponse(validator.errors);
+    }
 
-    if (await this.repository.getUserByEmail(request.email!))
+    if (!(await this.isEmailAvailable(request.email))) {
       return errorResponse('email_not_available');
+    }
 
-    const user = new User({
-      id: this.idGenerator.generate(),
-      email: request.email,
-    });
+    const user = await this.createNewUser(request.email, request.password);
 
     return { status: 'success', user };
+  }
+
+  private async isEmailAvailable(email: string): Promise<boolean> {
+    return (await this.repository.getUserByEmail(email)) === null;
+  }
+
+  private async createNewUser(email: string, password: string): Promise<User> {
+    const user = new User({
+      id: this.idGenerator.generate(),
+      email: email,
+      password: await this.passwordManager.hashPassword(password, email),
+      status: 'pending',
+    });
+
+    await this.repository.saveUser(user);
+
+    return user;
   }
 }
 
@@ -69,8 +86,8 @@ export interface AuthenticateResponse {
 }
 
 export interface RegisterUserRequest {
-  email?: string;
-  password?: string;
+  email: string;
+  password: string;
 }
 
 export type RegisterUserResponse =

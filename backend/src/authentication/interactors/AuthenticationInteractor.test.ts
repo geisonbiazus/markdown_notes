@@ -104,6 +104,18 @@ describe('AuthenticationInteractor', () => {
   });
 
   describe('registerUser', () => {
+    let passwordManager: FakePasswordManager;
+
+    beforeEach(() => {
+      passwordManager = new FakePasswordManager('nothing');
+      interactor = new AuthenticationInteractor(
+        repository,
+        tokenManager,
+        passwordManager,
+        idGenerator
+      );
+    });
+
     it('returns validation errors when request is invalid', async () => {
       const request = { email: '', password: '' };
       const response = await interactor.registerUser(request);
@@ -137,8 +149,25 @@ describe('AuthenticationInteractor', () => {
       expect(response.status).toEqual('success');
 
       if (response.status == 'success') {
-        expect(response.user.id).toEqual(idGenerator.nextId);
-        expect(response.user.email).toEqual('user@example.com');
+        const { user } = response;
+
+        expect(user.id).toEqual(idGenerator.nextId);
+        expect(user.email).toEqual('user@example.com');
+        expect(user.password).toEqual(
+          await passwordManager.hashPassword(request.password, request.email)
+        );
+        expect(user.status).toEqual('pending');
+      }
+    });
+
+    it('persists the new user', async () => {
+      const request = { email: 'user@example.com', password: 'password123' };
+      const response = await interactor.registerUser(request);
+
+      expect(response.status).toEqual('success');
+
+      if (response.status == 'success') {
+        expect(await repository.getUserById(response.user.id)).toEqual(response.user);
       }
     });
   });
@@ -165,5 +194,11 @@ export class TokenManagerStub extends TokenManager {
 
   public encode(_userId: string): string {
     return this.token;
+  }
+}
+
+export class FakePasswordManager extends PasswordManager {
+  public async hashPassword(password: string, salt: string): Promise<string> {
+    return `hashed-${password}-${salt}`;
   }
 }
