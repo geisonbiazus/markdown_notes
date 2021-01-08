@@ -35,4 +35,40 @@ describe('AuthenticationController', () => {
       expect(response.body.token).toBeDefined();
     });
   });
+
+  describe('POST /users/register', () => {
+    it('returns the created user when sucessful', async () => {
+      const email = 'user@example.com';
+
+      await request(server)
+        .post('/users/register')
+        .send({ email: email, password: 'password123' })
+        .expect('Content-Type', /json/)
+        .expect(201, { email, status: 'pending' });
+    });
+
+    it('returns validation errors when request is invalid', async () => {
+      const email = 'user@example.com';
+
+      await request(server)
+        .post('/users/register')
+        .expect('Content-Type', /json/)
+        .expect(422, [
+          { field: 'email', type: 'required' },
+          { field: 'password', type: 'required' },
+        ]);
+    });
+
+    it('returns error when email is already taken', async () => {
+      const email = 'user@example.com';
+      const password = 'password';
+      await context.authentication.entityFactory.createUser({ email, password });
+
+      await request(server)
+        .post('/users/register')
+        .send({ email: email, password: 'password123' })
+        .expect('Content-Type', /json/)
+        .expect(409, { type: 'email_not_available' });
+    });
+  });
 });
