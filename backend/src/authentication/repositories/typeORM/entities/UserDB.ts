@@ -1,4 +1,5 @@
 import { Entity, PrimaryColumn, Column } from 'typeorm';
+import { UserStatus } from '../../../entities';
 
 @Entity({ name: 'users' })
 export class UserDB {
@@ -10,4 +11,7 @@ export class UserDB {
 
   @Column()
   password?: string;
+
+  @Column()
+  status?: UserStatus;
 }
