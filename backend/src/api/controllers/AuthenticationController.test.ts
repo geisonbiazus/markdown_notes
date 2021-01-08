@@ -12,10 +12,10 @@ describe('AuthenticationController', () => {
     server = new Server(context).server;
   });
 
-  describe('POST /sign_in', () => {
+  describe('POST /users/sign_in', () => {
     it('returns error when invalid', (done) => {
       request(server)
-        .post('/sign_in')
+        .post('/users/sign_in')
         .send({ email: 'user@example.com', password: 'password' })
         .expect('Content-Type', /json/)
         .expect(404, { type: 'not_found' }, done);
@@ -27,7 +27,7 @@ describe('AuthenticationController', () => {
       await context.authentication.entityFactory.createUser({ email, password });
 
       const response = await request(server)
-        .post('/sign_in')
+        .post('/users/sign_in')
         .send({ email: email, password: password })
         .expect('Content-Type', /json/)
         .expect(200);
