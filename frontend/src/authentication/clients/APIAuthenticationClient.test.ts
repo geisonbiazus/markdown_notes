@@ -24,7 +24,7 @@ describe('APIAuthenticationClient', () => {
       const password = 'password';
       const token = 'token';
 
-      nockScope.post(`/sign_in`, { email, password }).reply(200, { token });
+      nockScope.post(`/users/sign_in`, { email, password }).reply(200, { token });
 
       const response = await client.signIn(email, password);
       expect(response).toEqual(token);
@@ -34,7 +34,7 @@ describe('APIAuthenticationClient', () => {
       const email = 'user@example.com';
       const password = 'password';
 
-      nockScope.post(`/sign_in`, { email, password }).reply(404, { type: 'not_found' });
+      nockScope.post(`/users/sign_in`, { email, password }).reply(404, { type: 'not_found' });
 
       const response = await client.signIn(email, password);
       expect(response).toBeNull();
@@ -44,7 +44,7 @@ describe('APIAuthenticationClient', () => {
       const email = 'user@example.com';
       const password = 'password';
 
-      nockScope.post(`/sign_in`, { email, password }).reply(500, { type: 'unexpected' });
+      nockScope.post(`/users/sign_in`, { email, password }).reply(500, { type: 'unexpected' });
 
       let error: Error | null = null;
 
