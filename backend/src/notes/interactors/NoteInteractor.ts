@@ -1,4 +1,4 @@
-import { ValidationError } from '../../utils/validations';
+import { validationErrorResponse, ValidationErrorResponse } from '../../utils/validations';
 import { MarkdownConverter, Note } from '../entities';
 import { SaveNoteValidator } from '../validators';
 
@@ -61,13 +61,4 @@ export type SaveNoteResponse = SaveNoteSuccessResponse | ValidationErrorResponse
 export interface SaveNoteSuccessResponse {
   status: 'success';
   note: Note;
-}
-
-export interface ValidationErrorResponse {
-  status: 'validation_error';
-  validationErrors: ValidationError[];
-}
-
-function validationErrorResponse(validationErrors: ValidationError[]): ValidationErrorResponse {
-  return { status: 'validation_error', validationErrors };
 }

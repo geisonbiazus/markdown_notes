@@ -1,4 +1,5 @@
 import { EntityManager, getConnection } from 'typeorm';
+import { IDGenerator, UUIDGenerator } from '../utils/IDGenerator';
 import { PasswordManager, TokenManager } from './entities';
 import { EntityFactory } from './EntityFactory';
 import { AuthenticationInteractor, AuthenticationRepository } from './interactors';
@@ -18,7 +19,8 @@ export class AuthenticationContext {
     return new AuthenticationInteractor(
       this.authenticationRepository,
       this.tokenManager,
-      this.passwordManager
+      this.passwordManager,
+      this.idGenerator
     );
   }
 
@@ -41,6 +43,10 @@ export class AuthenticationContext {
 
   public get entityFactory(): EntityFactory {
     return new EntityFactory(this.authenticationRepository, this.passwordManager);
+  }
+
+  public get idGenerator(): IDGenerator {
+    return new UUIDGenerator();
   }
 
   private get isTest(): boolean {

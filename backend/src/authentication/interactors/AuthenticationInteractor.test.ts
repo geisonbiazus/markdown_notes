@@ -1,4 +1,6 @@
 import { uuid } from '../../utils';
+import { FakeIDGenerator, IDGenerator } from '../../utils/IDGenerator';
+import { ValidationError } from '../../utils/validations';
 import { PasswordManager, TokenManager, User } from '../entities';
 import { EntityFactory } from '../EntityFactory';
 import { InMemoryAuthenticationRepository } from '../repositories';
@@ -9,13 +11,20 @@ describe('AuthenticationInteractor', () => {
   let repository: InMemoryAuthenticationRepository;
   let tokenManager: TokenManager;
   let passwordManager: PasswordManager;
+  let idGenerator: FakeIDGenerator;
   let factory: EntityFactory;
 
   beforeEach(() => {
     passwordManager = new PasswordManager('secret');
     repository = new InMemoryAuthenticationRepository();
     tokenManager = new TokenManager('secret');
-    interactor = new AuthenticationInteractor(repository, tokenManager, passwordManager);
+    idGenerator = new FakeIDGenerator();
+    interactor = new AuthenticationInteractor(
+      repository,
+      tokenManager,
+      passwordManager,
+      idGenerator
+    );
     factory = new EntityFactory(repository, passwordManager);
   });
 
@@ -24,7 +33,12 @@ describe('AuthenticationInteractor', () => {
 
     beforeEach(() => {
       tokenManager = new TokenManagerStub();
-      interactor = new AuthenticationInteractor(repository, tokenManager, passwordManager);
+      interactor = new AuthenticationInteractor(
+        repository,
+        tokenManager,
+        passwordManager,
+        idGenerator
+      );
     });
 
     it('returns null when no user exits', async () => {
@@ -89,6 +103,75 @@ describe('AuthenticationInteractor', () => {
     });
   });
 
+  describe('registerUser', () => {
+    let passwordManager: FakePasswordManager;
+
+    beforeEach(() => {
+      passwordManager = new FakePasswordManager('nothing');
+      interactor = new AuthenticationInteractor(
+        repository,
+        tokenManager,
+        passwordManager,
+        idGenerator
+      );
+    });
+
+    it('returns validation errors when request is invalid', async () => {
+      const request = { email: '', password: '' };
+      const response = await interactor.registerUser(request);
+
+      expect(response).toEqual({
+        status: 'validation_error',
+        validationErrors: [
+          new ValidationError('email', 'required'),
+          new ValidationError('password', 'required'),
+        ],
+      });
+    });
+
+    it('returns error when another user with the same email exists', async () => {
+      const request = { email: 'user@example.com', password: 'password123' };
+
+      repository.saveUser(new User({ id: uuid(), email: request.email, password: 'any' }));
+
+      const response = await interactor.registerUser(request);
+
+      expect(response).toEqual({
+        status: 'error',
+        type: 'email_not_available',
+      });
+    });
+
+    it('creates and returns the user', async () => {
+      const request = { email: 'user@example.com', password: 'password123' };
+      const response = await interactor.registerUser(request);
+
+      expect(response.status).toEqual('success');
+
+      if (response.status == 'success') {
+        const { user } = response;
+
+        expect(user.id).toEqual(idGenerator.nextId);
+        expect(user.email).toEqual('user@example.com');
+        expect(user.password).toEqual(
+          await passwordManager.hashPassword(request.password, request.email)
+        );
+        expect(user.status).toEqual('pending');
+      }
+    });
+
+    it('persists the new user', async () => {
+      const request = { email: 'user@example.com', password: 'password123' };
+      const response = await interactor.registerUser(request);
+
+      expect(response.status).toEqual('success');
+
+      if (response.status == 'success') {
+        expect(await repository.getUserById(response.user.id)).toEqual(response.user);
+      }
+    });
+  });
+
   describe('integration', () => {
     it('authenticates and gets authenticated user', async () => {
       const email = 'user@example.com';
@@ -111,5 +194,11 @@ export class TokenManagerStub extends TokenManager {
 
   public encode(_userId: string): string {
     return this.token;
+  }
+}
+
+export class FakePasswordManager extends PasswordManager {
+  public async hashPassword(password: string, salt: string): Promise<string> {
+    return `hashed-${password}-${salt}`;
   }
 }

@@ -14,6 +14,15 @@ servers:
 
 components:
   schemas:
+    User:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        status:
+          type: string
+          enum: [pending, active]
     Note:
       type: object
       properties:
@@ -92,7 +101,7 @@ components:
       bearerFormat: 'JWT'
 
 paths:
-  '/sign_in':
+  '/users/sign_in':
     post:
       tags:
         - Authentication
@@ -125,6 +134,72 @@ paths:
         404:
           $ref:  "#/components/responses/not_found"
 
+  '/users/register':
+    post:
+      tags:
+        - Authentication
+      description: Registers a new user
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              properties:
+                email:
+                  type: string
+                  format: 'email'
+                password:
+                  type: string
+                  minLength: 8
+              required:
+                - email
+                - password
+            example: { 'email': 'user@example.com', 'password': 'password123' }
+      responses:
+        201:
+          description: 'User registered.'
+          content:
+            'application/json':
+              schema:
+                $ref: "#/components/schemas/User"
+        422:
+          $ref:  "#/components/responses/validation_error"
+        409:
+          description: 'Email already in use'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                conflict:
+                  value: { 'type': 'email_not_available' }
+                  
+  '/users/{token}/activate':
+    post:
+      tags:
+        - Authentication
+      description: Activates a newly registered pending user
+      parameters:
+        - name: token
+          description: Activation token sent by email upon registering
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        202:
+          description: 'User activated.'
+          content:
+            application/json: {}
+        404:
+          description: 'User not found or token expired, invalid, or already used'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                not_found:
+                  $ref: '#/components/examples/NotFoundError'
+
   '/notes':
     get:
       tags:
@@ -143,6 +218,7 @@ paths:
                   $ref: '#/components/schemas/Note'
         401:
           $ref:  "#/components/responses/unauthorized"
+          
   '/notes/{id}':
     put:
       tags:

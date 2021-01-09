@@ -22,7 +22,8 @@ export class Router {
 
     this.router.use('/public/', express.static(path.join(__dirname, 'public')));
 
-    this.router.post('/sign_in', this.context.authenticationController.signIn);
+    this.router.post('/users/sign_in', this.context.authenticationController.signIn);
+    this.router.post('/users/register', this.context.authenticationController.register);
 
     this.router.get('/notes', auth(this.context.noteController.getNotes));
     this.router.get('/notes/:id', auth(this.context.noteController.getNote));

@@ -29,6 +29,7 @@ export class TypeORMAuthenticationRepository implements AuthenticationRepository
     record.id = user.id;
     record.email = user.email;
     record.password = user.password;
+    record.status = user.status;
 
     await this.entityManager.save(record);
   }

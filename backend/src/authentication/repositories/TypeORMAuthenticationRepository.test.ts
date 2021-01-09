@@ -16,7 +16,12 @@ describe('TypeORMAuthenticationRepository', () => {
       'saves a new user',
       dbTest(async (entityManager) => {
         const repository = new TypeORMAuthenticationRepository(entityManager);
-        const user = new User({ id: uuid(), email: 'user@example.com', password: 'password' });
+        const user = new User({
+          id: uuid(),
+          email: 'user@example.com',
+          password: 'password',
+          status: 'active',
+        });
 
         await repository.saveUser(user);
 
@@ -28,7 +33,12 @@ describe('TypeORMAuthenticationRepository', () => {
       'updates existing user',
       dbTest(async (entityManager) => {
         const repository = new TypeORMAuthenticationRepository(entityManager);
-        const user = new User({ id: uuid(), email: 'user@example.com', password: 'password' });
+        const user = new User({
+          id: uuid(),
+          email: 'user@example.com',
+          password: 'password',
+          status: 'active',
+        });
 
         await repository.saveUser(user);
 
@@ -53,7 +63,12 @@ describe('TypeORMAuthenticationRepository', () => {
         'returns user when it exists',
         dbTest(async (entityManager) => {
           const repository = new TypeORMAuthenticationRepository(entityManager);
-          const user = new User({ id: uuid(), email: 'user@example.com', password: 'password' });
+          const user = new User({
+            id: uuid(),
+            email: 'user@example.com',
+            password: 'password',
+            status: 'active',
+          });
 
           await repository.saveUser(user);
 
@@ -76,7 +91,12 @@ describe('TypeORMAuthenticationRepository', () => {
         'returns user when it exists',
         dbTest(async (entityManager) => {
           const repository = new TypeORMAuthenticationRepository(entityManager);
-          const user = new User({ id: uuid(), email: 'user@example.com', password: 'password' });
+          const user = new User({
+            id: uuid(),
+            email: 'user@example.com',
+            password: 'password',
+            status: 'active',
+          });
 
           await repository.saveUser(user);
 
