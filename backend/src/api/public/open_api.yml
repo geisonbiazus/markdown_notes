@@ -173,18 +173,21 @@ paths:
                 conflict:
                   value: { 'type': 'email_not_available' }
                   
-  '/users/{token}/activate':
+  '/users/activate':
     post:
       tags:
         - Authentication
-      description: Activates a newly registered pending user
-      parameters:
-        - name: token
-          description: Activation token sent by email upon registering
-          in: path
-          required: true
-          schema:
-            type: string
+      description: Activates a newly registered pending user with the token sent by email.
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              properties:
+                token:
+                  description: Activation token sent by email upon registering
+                  type: string
+              required:
+                - token
       responses:
         202:
           description: 'User activated.'
