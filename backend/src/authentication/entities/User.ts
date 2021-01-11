@@ -19,4 +19,8 @@ export class User {
     this.password = params?.password || '';
     this.status = params?.status || 'pending';
   }
+
+  public isPending(): boolean {
+    return this.status == 'pending';
+  }
 }

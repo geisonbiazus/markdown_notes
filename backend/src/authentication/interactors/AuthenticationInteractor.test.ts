@@ -1,3 +1,4 @@
+import { assert } from 'console';
 import { uuid } from '../../utils';
 import { FakeIDGenerator, IDGenerator } from '../../utils/IDGenerator';
 import { ValidationError } from '../../utils/validations';
@@ -169,6 +170,41 @@ describe('AuthenticationInteractor', () => {
       if (response.status == 'success') {
         expect(await repository.getUserById(response.user.id)).toEqual(response.user);
       }
+    });
+  });
+
+  describe('activateUser', () => {
+    it('returns false when token is invalid', async () => {
+      expect(await interactor.activateUser('invalid token')).toBeFalsy();
+    });
+
+    it('activates the user when token is valid', async () => {
+      const user = await factory.createUser({ status: 'pending' });
+      const token = tokenManager.encode(user.id);
+
+      expect(await interactor.activateUser(token)).toBeTruthy();
+
+      const activatedUser = await repository.getUserById(user.id);
+      expect(activatedUser!.status).toEqual('active');
+    });
+
+    it('returns false when user does not exist', async () => {
+      const token = tokenManager.encode(uuid());
+      expect(await interactor.activateUser(token)).toBeFalsy();
+    });
+
+    it('returns false when token is expired', async () => {
+      const user = await factory.createUser({ status: 'pending' });
+      const token = tokenManager.encode(user.id, 0);
+
+      expect(await interactor.activateUser(token)).toBeFalsy();
+    });
+
+    it('returns false when user is already active', async () => {
+      const user = await factory.createUser({ status: 'active' });
+      const token = tokenManager.encode(user.id);
+
+      expect(await interactor.activateUser(token)).toBeFalsy();
     });
   });
 
