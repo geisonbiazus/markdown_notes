@@ -46,4 +46,18 @@ export class AuthenticationController {
       res.json({ type: response.type });
     }
   }
+
+  @bind
+  public async activateUser(req: Request, res: Response): Promise<void> {
+    const token = req.body.token || '';
+    const isActivated = await this.authenticationInteractor.activateUser(token);
+
+    if (isActivated) {
+      res.status(202);
+      res.json();
+    } else {
+      res.status(404);
+      res.json({ type: 'not_found' });
+    }
+  }
 }

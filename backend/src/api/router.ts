@@ -24,6 +24,7 @@ export class Router {
 
     this.router.post('/users/sign_in', this.context.authenticationController.signIn);
     this.router.post('/users/register', this.context.authenticationController.register);
+    this.router.post('/users/activate', this.context.authenticationController.activateUser);
 
     this.router.get('/notes', auth(this.context.noteController.getNotes));
     this.router.get('/notes/:id', auth(this.context.noteController.getNote));

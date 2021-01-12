@@ -71,4 +71,25 @@ describe('AuthenticationController', () => {
         .expect(409, { type: 'email_not_available' });
     });
   });
+
+  describe('POST /users/activate', () => {
+    it('returns 202 when user is successfully activated', async () => {
+      const user = await context.authentication.entityFactory.createUser({ status: 'pending' });
+      const token = context.authentication.tokenManager.encode(user.id);
+
+      await request(server)
+        .post('/users/activate')
+        .send({ token })
+        .expect('Content-Type', /json/)
+        .expect(202);
+    });
+
+    it('returns 404 when token ist invalid', async () => {
+      await request(server)
+        .post('/users/activate')
+        .send({ token: 'invalid' })
+        .expect('Content-Type', /json/)
+        .expect(404, { type: 'not_found' });
+    });
+  });
 });
