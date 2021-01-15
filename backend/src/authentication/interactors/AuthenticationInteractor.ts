@@ -52,7 +52,7 @@ export class AuthenticationInteractor {
       return errorResponse('email_not_available');
     }
 
-    const user = await this.createNewUser(request.email, request.password);
+    const user = await this.createNewUser(request);
 
     return { status: 'success', user };
   }
@@ -61,11 +61,12 @@ export class AuthenticationInteractor {
     return (await this.repository.getUserByEmail(email)) === null;
   }
 
-  private async createNewUser(email: string, password: string): Promise<User> {
+  private async createNewUser(request: RegisterUserRequest): Promise<User> {
     const user = new User({
       id: this.idGenerator.generate(),
-      email: email,
-      password: await this.passwordManager.hashPassword(password, email),
+      name: request.name,
+      email: request.email,
+      password: await this.passwordManager.hashPassword(request.password, request.email),
       status: 'pending',
     });
 
@@ -121,6 +122,7 @@ export interface AuthenticateResponse {
 }
 
 export interface RegisterUserRequest {
+  name: string;
   email: string;
   password: string;
 }

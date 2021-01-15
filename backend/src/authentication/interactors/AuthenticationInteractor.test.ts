@@ -5,7 +5,7 @@ import { ValidationError } from '../../utils/validations';
 import { PasswordManager, TokenManager, User } from '../entities';
 import { EntityFactory } from '../EntityFactory';
 import { InMemoryAuthenticationRepository } from '../repositories';
-import { AuthenticationInteractor } from './AuthenticationInteractor';
+import { AuthenticationInteractor, RegisterUserSuccessResponse } from './AuthenticationInteractor';
 
 describe('AuthenticationInteractor', () => {
   let interactor: AuthenticationInteractor;
@@ -118,12 +118,13 @@ describe('AuthenticationInteractor', () => {
     });
 
     it('returns validation errors when request is invalid', async () => {
-      const request = { email: '', password: '' };
+      const request = { name: '', email: '', password: '' };
       const response = await interactor.registerUser(request);
 
       expect(response).toEqual({
         status: 'validation_error',
         validationErrors: [
+          new ValidationError('name', 'required'),
           new ValidationError('email', 'required'),
           new ValidationError('password', 'required'),
         ],
@@ -131,7 +132,7 @@ describe('AuthenticationInteractor', () => {
     });
 
     it('returns error when another user with the same email exists', async () => {
-      const request = { email: 'user@example.com', password: 'password123' };
+      const request = { name: 'User Name', email: 'user@example.com', password: 'password123' };
 
       repository.saveUser(new User({ id: uuid(), email: request.email, password: 'any' }));
 
@@ -144,31 +145,31 @@ describe('AuthenticationInteractor', () => {
     });
 
     it('creates and returns the user', async () => {
-      const request = { email: 'user@example.com', password: 'password123' };
+      const request = { name: 'User Name', email: 'user@example.com', password: 'password123' };
       const response = await interactor.registerUser(request);
 
       expect(response.status).toEqual('success');
 
-      if (response.status == 'success') {
-        const { user } = response;
+      const { user } = response as RegisterUserSuccessResponse;
 
-        expect(user.id).toEqual(idGenerator.nextId);
-        expect(user.email).toEqual('user@example.com');
-        expect(user.password).toEqual(
-          await passwordManager.hashPassword(request.password, request.email)
-        );
-        expect(user.status).toEqual('pending');
-      }
+      expect(user.id).toEqual(idGenerator.nextId);
+      expect(user.name).toEqual('User Name');
+      expect(user.email).toEqual('user@example.com');
+      expect(user.password).toEqual(
+        await passwordManager.hashPassword(request.password, request.email)
+      );
+      expect(user.status).toEqual('pending');
     });
 
     it('persists the new user', async () => {
-      const request = { email: 'user@example.com', password: 'password123' };
+      const request = { name: 'User Name', email: 'user@example.com', password: 'password123' };
       const response = await interactor.registerUser(request);
 
       expect(response.status).toEqual('success');
+      const { user } = response as RegisterUserSuccessResponse;
 
       if (response.status == 'success') {
-        expect(await repository.getUserById(response.user.id)).toEqual(response.user);
+        expect(await repository.getUserById(response.user.id)).toEqual(user);
       }
     });
   });

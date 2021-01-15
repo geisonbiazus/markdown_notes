@@ -28,16 +28,17 @@ export class AuthenticationController {
   @bind
   public async register(req: Request, res: Response): Promise<void> {
     const request = {
-      email: req.body.email,
-      password: req.body.password,
+      name: req.body.name || '',
+      email: req.body.email || '',
+      password: req.body.password || '',
     };
 
     const response = await this.authenticationInteractor.registerUser(request);
 
     if (response.status == 'success') {
-      const { email, status } = response.user;
+      const { name, email, status } = response.user;
       res.status(201);
-      res.json({ email, status });
+      res.json({ name, email, status });
     } else if (response.status == 'validation_error') {
       res.status(422);
       res.json(response.validationErrors);

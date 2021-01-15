@@ -2,7 +2,11 @@ import { ValidationError } from '../../utils/validations';
 import { RegisterUserRequest } from '../interactors';
 import { RegisterUserValidator } from './RegisterUserValidator';
 
-const validRequest: RegisterUserRequest = { email: 'user@example.com', password: 'password123' };
+const validRequest: RegisterUserRequest = {
+  name: 'User Name',
+  email: 'user@example.com',
+  password: 'password123',
+};
 
 describe('RegisterUserValidator', () => {
   it('is valid when request is valid', () => {
@@ -16,6 +20,8 @@ describe('RegisterUserValidator', () => {
 
     assertInvalidRequest({ password: '' }, 'password', 'required');
     assertInvalidRequest({ password: 'short' }, 'password', 'length', { minimum: 8 });
+
+    assertInvalidRequest({ name: '' }, 'name', 'required');
   });
 });
 
