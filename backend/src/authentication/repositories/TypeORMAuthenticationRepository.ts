@@ -27,6 +27,7 @@ export class TypeORMAuthenticationRepository implements AuthenticationRepository
   public async saveUser(user: User): Promise<void> {
     const record = new UserDB();
     record.id = user.id;
+    record.name = user.name;
     record.email = user.email;
     record.password = user.password;
     record.status = user.status;
