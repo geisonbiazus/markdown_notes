@@ -1,5 +1,6 @@
 import { EntityManager, getConnection } from 'typeorm';
 import { IDGenerator, UUIDGenerator } from '../utils/IDGenerator';
+import { FakeEmailProvider } from './adapters';
 import { PasswordManager, TokenManager } from './entities';
 import { EntityFactory } from './EntityFactory';
 import { AuthenticationInteractor, AuthenticationRepository } from './interactors';
@@ -20,7 +21,9 @@ export class AuthenticationContext {
       this.authenticationRepository,
       this.tokenManager,
       this.passwordManager,
-      this.idGenerator
+      this.idGenerator,
+      'http://localhost:3000',
+      new FakeEmailProvider()
     );
   }
 

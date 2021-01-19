@@ -1,14 +1,12 @@
-import { assert } from 'console';
-import { userInfo } from 'os';
 import { uuid } from '../../utils';
-import { FakeIDGenerator, IDGenerator } from '../../utils/IDGenerator';
+import { FakeIDGenerator } from '../../utils/IDGenerator';
 import { ValidationError } from '../../utils/validations';
+import { FakeEmailProvider } from '../adapters';
 import { Email, EmailType, PasswordManager, TokenManager, User } from '../entities';
 import { EntityFactory } from '../EntityFactory';
 import { InMemoryAuthenticationRepository } from '../repositories';
 import {
   AuthenticationInteractor,
-  EmailProvider,
   RegisterUserSuccessResponse,
   UserNotFoundError,
 } from './AuthenticationInteractor';
@@ -303,13 +301,5 @@ export class TokenManagerStub extends TokenManager {
 export class FakePasswordManager extends PasswordManager {
   public async hashPassword(password: string, salt: string): Promise<string> {
     return `hashed-${password}-${salt}`;
-  }
-}
-
-export class FakeEmailProvider implements EmailProvider {
-  public lastEmail?: Email;
-
-  public async send(email: Email): Promise<void> {
-    this.lastEmail = email;
   }
 }
