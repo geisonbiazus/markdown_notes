@@ -1,6 +1,8 @@
 import { IDGenerator } from '../../utils/IDGenerator';
 import { validationErrorResponse, ValidationErrorResponse } from '../../utils/validations';
 import {
+  Email,
+  EmailType,
   InvalidTokenError,
   PasswordManager,
   TokenExpiredError,
@@ -14,7 +16,9 @@ export class AuthenticationInteractor {
     private repository: AuthenticationRepository,
     private tokenManager: TokenManager,
     private passwordManager: PasswordManager,
-    private idGenerator: IDGenerator
+    private idGenerator: IDGenerator,
+    private frontendURL: string,
+    private emailProvider: EmailProvider
   ) {}
 
   public async authenticate(email: string, password: string): Promise<AuthenticateResponse | null> {
@@ -109,12 +113,36 @@ export class AuthenticationInteractor {
 
     return true;
   }
+
+  public async notifyUserActivation(userId: string): Promise<void> {
+    const user = await this.repository.getUserById(userId);
+
+    if (!user) throw new UserNotFoundError();
+
+    const token = this.tokenManager.encode(userId);
+    const activateUserUrl = `${this.frontendURL}/activate/${token}`;
+
+    const email = new Email({
+      type: EmailType.USER_ACTIVATION,
+      recipient: user.email,
+      variables: {
+        FULL_NAME: user.name,
+        ACTIVATE_USER_URL: activateUserUrl,
+      },
+    });
+
+    this.emailProvider.send(email);
+  }
 }
 
 export interface AuthenticationRepository {
   getUserByEmail(email: string): Promise<User | null>;
   getUserById(id: string): Promise<User | null>;
   saveUser(user: User): Promise<void>;
+}
+
+export interface EmailProvider {
+  send(email: Email): Promise<void>;
 }
 
 export interface AuthenticateResponse {
@@ -144,4 +172,11 @@ export interface ErrorResponse {
 
 export function errorResponse(type: string): ErrorResponse {
   return { status: 'error', type };
+}
+
+export class UserNotFoundError extends Error {
+  constructor() {
+    super('User not found');
+    Object.setPrototypeOf(this, UserNotFoundError.prototype);
+  }
 }

@@ -1,11 +1,17 @@
 import { assert } from 'console';
+import { userInfo } from 'os';
 import { uuid } from '../../utils';
 import { FakeIDGenerator, IDGenerator } from '../../utils/IDGenerator';
 import { ValidationError } from '../../utils/validations';
-import { PasswordManager, TokenManager, User } from '../entities';
+import { Email, EmailType, PasswordManager, TokenManager, User } from '../entities';
 import { EntityFactory } from '../EntityFactory';
 import { InMemoryAuthenticationRepository } from '../repositories';
-import { AuthenticationInteractor, RegisterUserSuccessResponse } from './AuthenticationInteractor';
+import {
+  AuthenticationInteractor,
+  EmailProvider,
+  RegisterUserSuccessResponse,
+  UserNotFoundError,
+} from './AuthenticationInteractor';
 
 describe('AuthenticationInteractor', () => {
   let interactor: AuthenticationInteractor;
@@ -14,17 +20,22 @@ describe('AuthenticationInteractor', () => {
   let passwordManager: PasswordManager;
   let idGenerator: FakeIDGenerator;
   let factory: EntityFactory;
+  let emailProvider: FakeEmailProvider;
+  const frontendURL = 'http://example.com';
 
   beforeEach(() => {
     passwordManager = new PasswordManager('secret');
     repository = new InMemoryAuthenticationRepository();
     tokenManager = new TokenManager('secret');
     idGenerator = new FakeIDGenerator();
+    emailProvider = new FakeEmailProvider();
     interactor = new AuthenticationInteractor(
       repository,
       tokenManager,
       passwordManager,
-      idGenerator
+      idGenerator,
+      frontendURL,
+      emailProvider
     );
     factory = new EntityFactory(repository, passwordManager);
   });
@@ -38,7 +49,9 @@ describe('AuthenticationInteractor', () => {
         repository,
         tokenManager,
         passwordManager,
-        idGenerator
+        idGenerator,
+        frontendURL,
+        emailProvider
       );
     });
 
@@ -113,7 +126,9 @@ describe('AuthenticationInteractor', () => {
         repository,
         tokenManager,
         passwordManager,
-        idGenerator
+        idGenerator,
+        frontendURL,
+        emailProvider
       );
     });
 
@@ -209,6 +224,57 @@ describe('AuthenticationInteractor', () => {
     });
   });
 
+  describe('notifyUserActivation', () => {
+    let tokenManager: TokenManagerStub;
+
+    beforeEach(() => {
+      tokenManager = new TokenManagerStub();
+      interactor = new AuthenticationInteractor(
+        repository,
+        tokenManager,
+        passwordManager,
+        idGenerator,
+        frontendURL,
+        emailProvider
+      );
+    });
+
+    it('reises error if user does not exit', async () => {
+      let errorThrown = false;
+
+      try {
+        await interactor.notifyUserActivation(uuid());
+      } catch (e) {
+        if (e instanceof UserNotFoundError) {
+          errorThrown = true;
+        }
+      }
+
+      expect(errorThrown).toBeTruthy();
+    });
+
+    it('sends the activation email to the user', async () => {
+      const user = await factory.createUser({ status: 'pending' });
+      const token = 'activation_token';
+      const activateUserUrl = `${frontendURL}/activate/${token}`;
+
+      tokenManager.token = token;
+
+      await interactor.notifyUserActivation(user.id);
+
+      expect(emailProvider.lastEmail).toEqual(
+        new Email({
+          type: EmailType.USER_ACTIVATION,
+          recipient: user.email,
+          variables: {
+            FULL_NAME: user.name,
+            ACTIVATE_USER_URL: activateUserUrl,
+          },
+        })
+      );
+    });
+  });
+
   describe('integration', () => {
     it('authenticates and gets authenticated user', async () => {
       const email = 'user@example.com';
@@ -237,5 +303,13 @@ export class TokenManagerStub extends TokenManager {
 export class FakePasswordManager extends PasswordManager {
   public async hashPassword(password: string, salt: string): Promise<string> {
     return `hashed-${password}-${salt}`;
+  }
+}
+
+export class FakeEmailProvider implements EmailProvider {
+  public lastEmail?: Email;
+
+  public async send(email: Email): Promise<void> {
+    this.lastEmail = email;
   }
 }
