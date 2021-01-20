@@ -1,4 +1,10 @@
+import dotenv from 'dotenv';
+
 export class Config {
+  constructor() {
+    dotenv.config();
+  }
+
   public get env(): string {
     return process.env.NODE_ENV || 'development';
   }
@@ -13,5 +19,21 @@ export class Config {
 
   public get authenticationPasswordSecret(): string {
     return process.env.AUTHENTICATION_PASSWORD_SECRET || 'password_secret';
+  }
+
+  public get defaultEmailSender(): string {
+    return process.env.DEFAULT_EMAIL_SENDER || '';
+  }
+
+  public get sendgridApiKey(): string {
+    return process.env.SENDGRID_API_KEY || '';
+  }
+
+  public get sendgridUserActivationTemplateId(): string {
+    return process.env.SENDGRID_USER_ACTIVATION_TEMPLATE_ID || '';
+  }
+
+  public get frontendAppURL(): string {
+    return process.env.FRONTEND_APP_URL || 'http://localhost:3000';
   }
 }

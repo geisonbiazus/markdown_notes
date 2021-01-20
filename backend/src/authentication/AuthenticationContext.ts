@@ -1,15 +1,19 @@
 import { EntityManager, getConnection } from 'typeorm';
 import { IDGenerator, UUIDGenerator } from '../utils/IDGenerator';
-import { FakeEmailProvider } from './adapters';
+import { FakeEmailProvider, SendGridEmailProvider, TemplateIdsMap } from './adapters';
 import { PasswordManager, TokenManager } from './entities';
 import { EntityFactory } from './EntityFactory';
-import { AuthenticationInteractor, AuthenticationRepository } from './interactors';
+import { AuthenticationInteractor, AuthenticationRepository, EmailProvider } from './interactors';
 import { InMemoryAuthenticationRepository, TypeORMAuthenticationRepository } from './repositories';
 
 export interface Config {
   env: string;
   authenticationTokenSecret: string;
   authenticationPasswordSecret: string;
+  defaultEmailSender: string;
+  sendgridApiKey: string;
+  sendgridUserActivationTemplateId: string;
+  frontendAppURL: string;
 }
 export class AuthenticationContext {
   private authenticationRepo?: AuthenticationRepository;
@@ -22,8 +26,8 @@ export class AuthenticationContext {
       this.tokenManager,
       this.passwordManager,
       this.idGenerator,
-      'http://localhost:3000',
-      new FakeEmailProvider()
+      this.config.frontendAppURL,
+      this.emailProvider
     );
   }
 
@@ -42,6 +46,20 @@ export class AuthenticationContext {
 
   public get passwordManager(): PasswordManager {
     return new PasswordManager(this.config.authenticationPasswordSecret);
+  }
+
+  public get emailProvider(): EmailProvider {
+    const templateIdsMap: TemplateIdsMap = {
+      userActivation: this.config.sendgridUserActivationTemplateId,
+    };
+
+    return this.isTest
+      ? new FakeEmailProvider()
+      : new SendGridEmailProvider(
+          this.config.sendgridApiKey,
+          this.config.defaultEmailSender,
+          templateIdsMap
+        );
   }
 
   public get entityFactory(): EntityFactory {
