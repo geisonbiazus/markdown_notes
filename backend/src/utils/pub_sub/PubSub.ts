@@ -8,6 +8,7 @@ export interface Publisher {
 
 export interface Subscriber {
   subscribe<TEvent extends Event<string, any>>(
+    subscriberId: string,
     eventName: TEvent['name'],
     callback: (payload: TEvent['payload']) => Promise<void> | void
   ): Promise<void>;
