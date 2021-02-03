@@ -48,6 +48,27 @@ describe('RabbitMQPubSub', () => {
     expect(receivedPayload2).toEqual({ key: 'value 2' });
   });
 
+  it('consumes only the event it is subscribed for', async () => {
+    await pubSub.createQueueForSubscriber('subscriber_1', 'test_event');
+    await pubSub.createQueueForSubscriber('subscriber_2', 'test_event_2');
+
+    await pubSub.publish(new TestEvent({ key: 'value' }));
+    await pubSub.publish(new TestEvent2({ key2: 'value' }));
+
+    const receivedPayload1 = await subscribeAndWaitForPayload<TestEvent>(
+      'subscriber_1',
+      'test_event'
+    );
+
+    const receivedPayload2 = await subscribeAndWaitForPayload<TestEvent2>(
+      'subscriber_2',
+      'test_event_2'
+    );
+
+    expect(receivedPayload1).toEqual({ key: 'value' });
+    expect(receivedPayload2).toEqual({ key2: 'value' });
+  });
+
   async function subscribeAndWaitForPayload<TEvent extends Event<string, any>>(
     subscriberId: string,
     eventName: TEvent['name']
@@ -67,5 +88,15 @@ interface TestEventPayload {
 class TestEvent extends Event<'test_event', TestEventPayload> {
   constructor(public payload: TestEventPayload) {
     super('test_event', payload);
+  }
+}
+
+interface TestEvent2Payload {
+  key2: string;
+}
+
+class TestEvent2 extends Event<'test_event_2', TestEvent2Payload> {
+  constructor(public payload: TestEvent2Payload) {
+    super('test_event_2', payload);
   }
 }

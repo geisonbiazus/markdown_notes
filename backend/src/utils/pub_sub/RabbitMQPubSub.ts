@@ -31,17 +31,23 @@ export class RabbitMQPubSub implements Publisher, Subscriber {
     for (const consumer of this.consumers) {
       await channel.cancel(consumer.consumerTag);
       await channel.deleteQueue(consumer.queue);
+      await channel.deleteExchange(this.exchangeName);
     }
   }
 
   public async publish<TEvent extends Event<string, any>>(event: TEvent): Promise<void> {
     const channel = await this.connection.createChannel();
 
-    await channel.assertExchange(this.exchangeName, 'fanout', { durable: true });
+    await channel.assertExchange(this.exchangeName, 'direct', { durable: true });
 
-    channel.publish(this.exchangeName, '', Buffer.from(Buffer.from(JSON.stringify(event))), {
-      persistent: true,
-    });
+    channel.publish(
+      this.exchangeName,
+      event.name,
+      Buffer.from(Buffer.from(JSON.stringify(event))),
+      {
+        persistent: true,
+      }
+    );
   }
 
   async subscribe<TEvent extends Event<string, any>>(
@@ -56,7 +62,11 @@ export class RabbitMQPubSub implements Publisher, Subscriber {
     const consume = await channel.consume(queueName, (msg: amqp.ConsumeMessage | null) => {
       if (msg?.content) {
         const event = JSON.parse(msg.content.toString()) as TEvent;
-        callback(event.payload);
+
+        if (event.name === eventName) {
+          callback(event.payload);
+        }
+
         channel.ack(msg);
       }
     });
@@ -73,12 +83,12 @@ export class RabbitMQPubSub implements Publisher, Subscriber {
       channel = await this.connection.createChannel();
     }
 
-    await channel.assertExchange(this.exchangeName, 'fanout', { durable: true });
+    await channel.assertExchange(this.exchangeName, 'direct', { durable: true });
 
     const queueName = `${subscriberId}_${eventName}`;
 
     const queue = await channel.assertQueue(queueName, { durable: true });
-    await channel.bindQueue(queueName, this.exchangeName, '');
+    await channel.bindQueue(queueName, this.exchangeName, eventName);
 
     return queue.queue;
   }
