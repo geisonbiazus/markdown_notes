@@ -1,5 +1,5 @@
 import { sleep } from '../sleep';
-import { Event } from './PubSub';
+import { AnyEvent, Event, Name, Payload } from './PubSub';
 import { RabbitMQPubSub } from './RabbitMQPubSub';
 
 describe('RabbitMQPubSub', () => {
@@ -11,7 +11,7 @@ describe('RabbitMQPubSub', () => {
   });
 
   afterEach(async () => {
-    await sleep(200); // We need to wait to give time for the client to send ack and publish commands to RabbitMQ
+    await sleep(200); // Give time for the client to send ack and publish commands to RabbitMQ
     await pubSub.cleanUp();
     await pubSub.disconnect();
   });
@@ -69,11 +69,11 @@ describe('RabbitMQPubSub', () => {
     expect(receivedPayload2).toEqual({ key2: 'value' });
   });
 
-  async function subscribeAndWaitForPayload<TEvent extends Event<string, any>>(
+  async function subscribeAndWaitForPayload<TEvent extends AnyEvent>(
     subscriberId: string,
-    eventName: TEvent['name']
-  ): Promise<TEvent['payload']> {
-    return new Promise<TEvent['payload']>((resolve) => {
+    eventName: Name<TEvent>
+  ): Promise<Payload<TEvent>> {
+    return new Promise<Payload<TEvent>>((resolve) => {
       pubSub.subscribe<TEvent>(subscriberId, eventName, (payload: TestEventPayload) => {
         resolve(payload);
       });

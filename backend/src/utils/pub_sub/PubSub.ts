@@ -2,14 +2,21 @@ export abstract class Event<TName, TPayload> {
   constructor(public name: TName, public payload: TPayload) {}
 }
 
+export type AnyEvent = Event<string, any>;
+export type Name<TEvent extends Event<string, any>> = TEvent['name'];
+export type Payload<TEvent extends Event<string, any>> = TEvent['payload'];
+export type SubscriberCallback<TEvent extends AnyEvent> = (
+  payload: Payload<TEvent>
+) => Promise<void> | void;
+
 export interface Publisher {
-  publish<TEvent extends Event<string, any>>(event: TEvent): Promise<void>;
+  publish<TEvent extends AnyEvent>(event: TEvent): Promise<void>;
 }
 
 export interface Subscriber {
-  subscribe<TEvent extends Event<string, any>>(
+  subscribe<TEvent extends AnyEvent>(
     subscriberId: string,
-    eventName: TEvent['name'],
-    callback: (payload: TEvent['payload']) => Promise<void> | void
+    eventName: Name<TEvent>,
+    callback: SubscriberCallback<TEvent>
   ): Promise<void>;
 }
