@@ -6,7 +6,8 @@ describe('RabbitMQPubSub', () => {
   let pubSub: RabbitMQPubSub;
 
   beforeEach(async () => {
-    pubSub = new RabbitMQPubSub('test_exchange');
+    const url = process.env.RABBITMQ_URL || 'amqp://localhost';
+    pubSub = new RabbitMQPubSub(url, 'test_exchange');
     await pubSub.connect();
   });
 

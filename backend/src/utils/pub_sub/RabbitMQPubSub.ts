@@ -12,7 +12,7 @@ export class RabbitMQPubSub implements Publisher, Subscriber {
 
   public consumers: ConsumerInfo[] = [];
 
-  constructor(public exchangeName: string) {}
+  constructor(public url: string, public exchangeName: string) {}
 
   public get connection(): amqp.Connection {
     if (!this.conn) throw new Error('Not connected to RabbitMQ');
@@ -20,7 +20,7 @@ export class RabbitMQPubSub implements Publisher, Subscriber {
   }
 
   public async connect(): Promise<void> {
-    this.conn = await amqp.connect('amqp://localhost');
+    this.conn = await amqp.connect(this.url);
   }
 
   public async disconnect(): Promise<void> {
