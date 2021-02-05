@@ -1,4 +1,6 @@
+import { use } from 'marked';
 import { IDGenerator } from '../../utils/IDGenerator';
+import { Publisher } from '../../utils/pub_sub';
 import { validationErrorResponse, ValidationErrorResponse } from '../../utils/validations';
 import {
   Email,
@@ -9,6 +11,7 @@ import {
   TokenManager,
   User,
 } from '../entities';
+import { UserCreatedEvent } from '../events';
 import { RegisterUserValidator } from '../validators/RegisterUserValidator';
 
 export class AuthenticationInteractor {
@@ -18,7 +21,8 @@ export class AuthenticationInteractor {
     private passwordManager: PasswordManager,
     private idGenerator: IDGenerator,
     private frontendURL: string,
-    private emailProvider: EmailProvider
+    private emailProvider: EmailProvider,
+    private publisher: Publisher
   ) {}
 
   public async authenticate(email: string, password: string): Promise<AuthenticateResponse | null> {
@@ -57,6 +61,7 @@ export class AuthenticationInteractor {
     }
 
     const user = await this.createNewUser(request);
+    await this.publishUserCreatedEvent(user);
 
     return { status: 'success', user };
   }
@@ -77,6 +82,17 @@ export class AuthenticationInteractor {
     await this.repository.saveUser(user);
 
     return user;
+  }
+
+  private async publishUserCreatedEvent(user: User): Promise<void> {
+    await this.publisher.publish(
+      new UserCreatedEvent({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        status: user.status,
+      })
+    );
   }
 
   public async activateUser(token: string): Promise<boolean> {

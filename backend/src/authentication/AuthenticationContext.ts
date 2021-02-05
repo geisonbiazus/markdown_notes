@@ -1,5 +1,6 @@
 import { EntityManager, getConnection } from 'typeorm';
 import { IDGenerator, UUIDGenerator } from '../utils/IDGenerator';
+import { FakePublisher } from '../utils/pub_sub';
 import { FakeEmailProvider, SendGridEmailProvider, TemplateIdsMap } from './adapters';
 import { PasswordManager, TokenManager } from './entities';
 import { EntityFactory } from './EntityFactory';
@@ -27,7 +28,8 @@ export class AuthenticationContext {
       this.passwordManager,
       this.idGenerator,
       this.config.frontendAppURL,
-      this.emailProvider
+      this.emailProvider,
+      new FakePublisher()
     );
   }
 

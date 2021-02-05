@@ -1,9 +1,12 @@
+import { userInfo } from 'os';
 import { uuid } from '../../utils';
 import { FakeIDGenerator } from '../../utils/IDGenerator';
+import { FakePublisher } from '../../utils/pub_sub';
 import { ValidationError } from '../../utils/validations';
 import { FakeEmailProvider } from '../adapters';
 import { Email, EmailType, PasswordManager, TokenManager, User } from '../entities';
 import { EntityFactory } from '../EntityFactory';
+import { UserCreatedEvent } from '../events';
 import { InMemoryAuthenticationRepository } from '../repositories';
 import {
   AuthenticationInteractor,
@@ -19,6 +22,7 @@ describe('AuthenticationInteractor', () => {
   let idGenerator: FakeIDGenerator;
   let factory: EntityFactory;
   let emailProvider: FakeEmailProvider;
+  let publisher: FakePublisher;
   const frontendURL = 'http://example.com';
 
   beforeEach(() => {
@@ -27,13 +31,15 @@ describe('AuthenticationInteractor', () => {
     tokenManager = new TokenManager('secret');
     idGenerator = new FakeIDGenerator();
     emailProvider = new FakeEmailProvider();
+    publisher = new FakePublisher();
     interactor = new AuthenticationInteractor(
       repository,
       tokenManager,
       passwordManager,
       idGenerator,
       frontendURL,
-      emailProvider
+      emailProvider,
+      publisher
     );
     factory = new EntityFactory(repository, passwordManager);
   });
@@ -49,7 +55,8 @@ describe('AuthenticationInteractor', () => {
         passwordManager,
         idGenerator,
         frontendURL,
-        emailProvider
+        emailProvider,
+        publisher
       );
     });
 
@@ -126,7 +133,8 @@ describe('AuthenticationInteractor', () => {
         passwordManager,
         idGenerator,
         frontendURL,
-        emailProvider
+        emailProvider,
+        publisher
       );
     });
 
@@ -185,6 +193,22 @@ describe('AuthenticationInteractor', () => {
         expect(await repository.getUserById(response.user.id)).toEqual(user);
       }
     });
+
+    it('publishes UserCreatedEvent', async () => {
+      const request = { name: 'User Name', email: 'user@example.com', password: 'password123' };
+      const response = await interactor.registerUser(request);
+
+      const { user } = response as RegisterUserSuccessResponse;
+
+      const event = new UserCreatedEvent({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        status: user.status,
+      });
+
+      expect(publisher.lastPublishedEvent).toEqual(event);
+    });
   });
 
   describe('activateUser', () => {
@@ -233,7 +257,8 @@ describe('AuthenticationInteractor', () => {
         passwordManager,
         idGenerator,
         frontendURL,
-        emailProvider
+        emailProvider,
+        publisher
       );
     });
 
