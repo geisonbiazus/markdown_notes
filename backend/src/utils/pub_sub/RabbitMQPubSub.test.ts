@@ -70,6 +70,21 @@ describe('RabbitMQPubSub', () => {
     expect(receivedPayload2).toEqual({ key2: 'value' });
   });
 
+  it('continues consuming if an error happens', async () => {
+    let runs = 0;
+
+    await pubSub.subscribe<TestEvent>('subscriber', 'test_event', (payload: TestEventPayload) => {
+      if (runs++) throw new Error('Some error');
+    });
+
+    pubSub.publish(new TestEvent({ key: 'value' }));
+    pubSub.publish(new TestEvent({ key: 'value' }));
+
+    await sleep(200);
+
+    expect(runs).toEqual(2);
+  });
+
   async function subscribeAndWaitForPayload<TEvent extends AnyEvent>(
     subscriberId: string,
     eventName: Name<TEvent>

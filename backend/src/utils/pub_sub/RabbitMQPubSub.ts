@@ -94,12 +94,19 @@ export class RabbitMQPubSub implements Publisher, Subscriber {
   ): (msg: amqp.ConsumeMessage | null) => void {
     return (msg: amqp.ConsumeMessage | null) => {
       if (msg?.content) {
-        const event = JSON.parse(msg.content.toString()) as TEvent;
+        try {
+          const event = JSON.parse(msg.content.toString()) as TEvent;
 
-        if (event.name === eventName) {
-          callback(event.payload);
+          if (event.name === eventName) {
+            callback(event.payload);
+          }
+        } catch (e) {
+          if (process.env.NODE_ENV !== 'test') {
+            console.log(e);
+            console.log(msg);
+            console.log(msg.content.toString());
+          }
         }
-
         channel.ack(msg);
       }
     };
