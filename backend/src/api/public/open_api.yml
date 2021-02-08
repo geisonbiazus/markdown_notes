@@ -123,7 +123,7 @@ paths:
                 - password
             example:
               email: user@example.com 
-              password': password123
+              password: password123
 
       responses:
         200:
@@ -163,7 +163,7 @@ paths:
             example:
               name: Example User
               email: user@example.com 
-              password': password123
+              password: password123
       responses:
         201:
           description: 'User registered.'

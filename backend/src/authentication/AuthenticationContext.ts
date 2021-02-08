@@ -1,9 +1,10 @@
 import { EntityManager, getConnection } from 'typeorm';
 import { IDGenerator, UUIDGenerator } from '../utils/IDGenerator';
-import { FakePublisher } from '../utils/pub_sub';
+import { Publisher, Subscriber } from '../utils/pub_sub';
 import { FakeEmailProvider, SendGridEmailProvider, TemplateIdsMap } from './adapters';
 import { PasswordManager, TokenManager } from './entities';
 import { EntityFactory } from './EntityFactory';
+import { UserCreatedEvent } from './events';
 import { AuthenticationInteractor, AuthenticationRepository, EmailProvider } from './interactors';
 import { InMemoryAuthenticationRepository, TypeORMAuthenticationRepository } from './repositories';
 
@@ -19,7 +20,7 @@ export interface Config {
 export class AuthenticationContext {
   private authenticationRepo?: AuthenticationRepository;
 
-  constructor(public config: Config) {}
+  constructor(public config: Config, public publisher: Publisher, public subscriber: Subscriber) {}
 
   public get authenticationInteractor(): AuthenticationInteractor {
     return new AuthenticationInteractor(
@@ -29,7 +30,17 @@ export class AuthenticationContext {
       this.idGenerator,
       this.config.frontendAppURL,
       this.emailProvider,
-      new FakePublisher()
+      this.publisher
+    );
+  }
+
+  public async startConsumers(): Promise<void> {
+    await this.subscriber.subscribe<UserCreatedEvent>(
+      'authentication',
+      'user_created',
+      (payload) => {
+        this.authenticationInteractor.notifyUserActivation(payload.id);
+      }
     );
   }
 

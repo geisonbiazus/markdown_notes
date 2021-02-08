@@ -36,4 +36,12 @@ export class Config {
   public get frontendAppURL(): string {
     return process.env.FRONTEND_APP_URL || 'http://localhost:3000';
   }
+
+  public get rabbitmqURL(): string {
+    return process.env.RABBITMQ_URL || 'amqp://localhost';
+  }
+
+  public get rabbitmqExchange(): string {
+    return process.env.RABBITMQ_EXCHANGE || 'markdown_notes';
+  }
 }
