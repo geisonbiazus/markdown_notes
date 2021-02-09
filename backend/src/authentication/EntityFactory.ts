@@ -11,6 +11,7 @@ export class EntityFactory {
   public async createUser(params: UserParams = {}): Promise<User> {
     const userParams: UserParams = {
       id: uuid(),
+      name: 'User Name',
       email: 'user@exmaple.com',
       password: 'password',
       ...params,

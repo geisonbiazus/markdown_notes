@@ -1,12 +1,17 @@
+import { use } from 'marked';
 import { IDGenerator } from '../../utils/IDGenerator';
+import { Publisher } from '../../utils/pub_sub';
 import { validationErrorResponse, ValidationErrorResponse } from '../../utils/validations';
 import {
+  Email,
+  EmailType,
   InvalidTokenError,
   PasswordManager,
   TokenExpiredError,
   TokenManager,
   User,
 } from '../entities';
+import { UserCreatedEvent } from '../events';
 import { RegisterUserValidator } from '../validators/RegisterUserValidator';
 
 export class AuthenticationInteractor {
@@ -14,7 +19,10 @@ export class AuthenticationInteractor {
     private repository: AuthenticationRepository,
     private tokenManager: TokenManager,
     private passwordManager: PasswordManager,
-    private idGenerator: IDGenerator
+    private idGenerator: IDGenerator,
+    private frontendURL: string,
+    private emailProvider: EmailProvider,
+    private publisher: Publisher
   ) {}
 
   public async authenticate(email: string, password: string): Promise<AuthenticateResponse | null> {
@@ -52,7 +60,8 @@ export class AuthenticationInteractor {
       return errorResponse('email_not_available');
     }
 
-    const user = await this.createNewUser(request.email, request.password);
+    const user = await this.createNewUser(request);
+    await this.publishUserCreatedEvent(user);
 
     return { status: 'success', user };
   }
@@ -61,17 +70,84 @@ export class AuthenticationInteractor {
     return (await this.repository.getUserByEmail(email)) === null;
   }
 
-  private async createNewUser(email: string, password: string): Promise<User> {
+  private async createNewUser(request: RegisterUserRequest): Promise<User> {
     const user = new User({
       id: this.idGenerator.generate(),
-      email: email,
-      password: await this.passwordManager.hashPassword(password, email),
+      name: request.name,
+      email: request.email,
+      password: await this.passwordManager.hashPassword(request.password, request.email),
       status: 'pending',
     });
 
     await this.repository.saveUser(user);
 
     return user;
+  }
+
+  private async publishUserCreatedEvent(user: User): Promise<void> {
+    await this.publisher.publish(
+      new UserCreatedEvent({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        status: user.status,
+      })
+    );
+  }
+
+  public async activateUser(token: string): Promise<boolean> {
+    const user = await this.getUserFromToken(token);
+
+    if (!user) return false;
+
+    return await this.activatePendingUser(user);
+  }
+
+  private async getUserFromToken(token: string): Promise<User | null> {
+    const userId = this.getUserIdFromToken(token);
+
+    if (!userId) return null;
+
+    return await this.repository.getUserById(userId);
+  }
+
+  private getUserIdFromToken(token: string): string | null {
+    try {
+      return this.tokenManager.decode(token);
+    } catch (e) {
+      if (e instanceof InvalidTokenError) return null;
+      if (e instanceof TokenExpiredError) return null;
+      throw e;
+    }
+  }
+
+  private async activatePendingUser(user: User): Promise<boolean> {
+    if (!user.isPending()) return false;
+
+    user.status = 'active';
+    await this.repository.saveUser(user);
+
+    return true;
+  }
+
+  public async notifyUserActivation(userId: string): Promise<void> {
+    const user = await this.repository.getUserById(userId);
+
+    if (!user) throw new UserNotFoundError();
+
+    const token = this.tokenManager.encode(userId);
+    const activateUserUrl = `${this.frontendURL}/activate/${token}`;
+
+    const email = new Email({
+      type: EmailType.USER_ACTIVATION,
+      recipient: user.email,
+      variables: {
+        FULL_NAME: user.name,
+        ACTIVATE_USER_URL: activateUserUrl,
+      },
+    });
+
+    this.emailProvider.send(email);
   }
 }
 
@@ -81,11 +157,16 @@ export interface AuthenticationRepository {
   saveUser(user: User): Promise<void>;
 }
 
+export interface EmailProvider {
+  send(email: Email): Promise<void>;
+}
+
 export interface AuthenticateResponse {
   token: string;
 }
 
 export interface RegisterUserRequest {
+  name: string;
   email: string;
   password: string;
 }
@@ -107,4 +188,11 @@ export interface ErrorResponse {
 
 export function errorResponse(type: string): ErrorResponse {
   return { status: 'error', type };
+}
+
+export class UserNotFoundError extends Error {
+  constructor() {
+    super('User not found');
+    Object.setPrototypeOf(this, UserNotFoundError.prototype);
+  }
 }

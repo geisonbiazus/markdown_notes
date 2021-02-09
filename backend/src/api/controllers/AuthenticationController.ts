@@ -28,22 +28,37 @@ export class AuthenticationController {
   @bind
   public async register(req: Request, res: Response): Promise<void> {
     const request = {
-      email: req.body.email,
-      password: req.body.password,
+      name: req.body.name || '',
+      email: req.body.email || '',
+      password: req.body.password || '',
     };
 
     const response = await this.authenticationInteractor.registerUser(request);
 
     if (response.status == 'success') {
-      const { email, status } = response.user;
+      const { name, email, status } = response.user;
       res.status(201);
-      res.json({ email, status });
+      res.json({ name, email, status });
     } else if (response.status == 'validation_error') {
       res.status(422);
       res.json(response.validationErrors);
     } else {
       res.status(409);
       res.json({ type: response.type });
+    }
+  }
+
+  @bind
+  public async activateUser(req: Request, res: Response): Promise<void> {
+    const token = req.body.token || '';
+    const isActivated = await this.authenticationInteractor.activateUser(token);
+
+    if (isActivated) {
+      res.status(202);
+      res.json();
+    } else {
+      res.status(404);
+      res.json({ type: 'not_found' });
     }
   }
 }

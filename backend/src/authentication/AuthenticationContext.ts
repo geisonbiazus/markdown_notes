@@ -1,26 +1,46 @@
 import { EntityManager, getConnection } from 'typeorm';
 import { IDGenerator, UUIDGenerator } from '../utils/IDGenerator';
+import { Publisher, Subscriber } from '../utils/pub_sub';
+import { FakeEmailProvider, SendGridEmailProvider, TemplateIdsMap } from './adapters';
 import { PasswordManager, TokenManager } from './entities';
 import { EntityFactory } from './EntityFactory';
-import { AuthenticationInteractor, AuthenticationRepository } from './interactors';
+import { UserCreatedEvent } from './events';
+import { AuthenticationInteractor, AuthenticationRepository, EmailProvider } from './interactors';
 import { InMemoryAuthenticationRepository, TypeORMAuthenticationRepository } from './repositories';
 
 export interface Config {
   env: string;
   authenticationTokenSecret: string;
   authenticationPasswordSecret: string;
+  defaultEmailSender: string;
+  sendgridApiKey: string;
+  sendgridUserActivationTemplateId: string;
+  frontendAppURL: string;
 }
 export class AuthenticationContext {
   private authenticationRepo?: AuthenticationRepository;
 
-  constructor(public config: Config) {}
+  constructor(public config: Config, public publisher: Publisher, public subscriber: Subscriber) {}
 
   public get authenticationInteractor(): AuthenticationInteractor {
     return new AuthenticationInteractor(
       this.authenticationRepository,
       this.tokenManager,
       this.passwordManager,
-      this.idGenerator
+      this.idGenerator,
+      this.config.frontendAppURL,
+      this.emailProvider,
+      this.publisher
+    );
+  }
+
+  public async startConsumers(): Promise<void> {
+    await this.subscriber.subscribe<UserCreatedEvent>(
+      'authentication',
+      'user_created',
+      (payload) => {
+        this.authenticationInteractor.notifyUserActivation(payload.id);
+      }
     );
   }
 
@@ -39,6 +59,20 @@ export class AuthenticationContext {
 
   public get passwordManager(): PasswordManager {
     return new PasswordManager(this.config.authenticationPasswordSecret);
+  }
+
+  public get emailProvider(): EmailProvider {
+    const templateIdsMap: TemplateIdsMap = {
+      userActivation: this.config.sendgridUserActivationTemplateId,
+    };
+
+    return this.isTest
+      ? new FakeEmailProvider()
+      : new SendGridEmailProvider(
+          this.config.sendgridApiKey,
+          this.config.defaultEmailSender,
+          templateIdsMap
+        );
   }
 
   public get entityFactory(): EntityFactory {

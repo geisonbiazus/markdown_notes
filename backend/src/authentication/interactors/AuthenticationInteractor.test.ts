@@ -1,10 +1,18 @@
+import { userInfo } from 'os';
 import { uuid } from '../../utils';
-import { FakeIDGenerator, IDGenerator } from '../../utils/IDGenerator';
+import { FakeIDGenerator } from '../../utils/IDGenerator';
+import { FakePublisher } from '../../utils/pub_sub';
 import { ValidationError } from '../../utils/validations';
-import { PasswordManager, TokenManager, User } from '../entities';
+import { FakeEmailProvider } from '../adapters';
+import { Email, EmailType, PasswordManager, TokenManager, User } from '../entities';
 import { EntityFactory } from '../EntityFactory';
+import { UserCreatedEvent } from '../events';
 import { InMemoryAuthenticationRepository } from '../repositories';
-import { AuthenticationInteractor } from './AuthenticationInteractor';
+import {
+  AuthenticationInteractor,
+  RegisterUserSuccessResponse,
+  UserNotFoundError,
+} from './AuthenticationInteractor';
 
 describe('AuthenticationInteractor', () => {
   let interactor: AuthenticationInteractor;
@@ -13,17 +21,25 @@ describe('AuthenticationInteractor', () => {
   let passwordManager: PasswordManager;
   let idGenerator: FakeIDGenerator;
   let factory: EntityFactory;
+  let emailProvider: FakeEmailProvider;
+  let publisher: FakePublisher;
+  const frontendURL = 'http://example.com';
 
   beforeEach(() => {
     passwordManager = new PasswordManager('secret');
     repository = new InMemoryAuthenticationRepository();
     tokenManager = new TokenManager('secret');
     idGenerator = new FakeIDGenerator();
+    emailProvider = new FakeEmailProvider();
+    publisher = new FakePublisher();
     interactor = new AuthenticationInteractor(
       repository,
       tokenManager,
       passwordManager,
-      idGenerator
+      idGenerator,
+      frontendURL,
+      emailProvider,
+      publisher
     );
     factory = new EntityFactory(repository, passwordManager);
   });
@@ -37,7 +53,10 @@ describe('AuthenticationInteractor', () => {
         repository,
         tokenManager,
         passwordManager,
-        idGenerator
+        idGenerator,
+        frontendURL,
+        emailProvider,
+        publisher
       );
     });
 
@@ -112,17 +131,21 @@ describe('AuthenticationInteractor', () => {
         repository,
         tokenManager,
         passwordManager,
-        idGenerator
+        idGenerator,
+        frontendURL,
+        emailProvider,
+        publisher
       );
     });
 
     it('returns validation errors when request is invalid', async () => {
-      const request = { email: '', password: '' };
+      const request = { name: '', email: '', password: '' };
       const response = await interactor.registerUser(request);
 
       expect(response).toEqual({
         status: 'validation_error',
         validationErrors: [
+          new ValidationError('name', 'required'),
           new ValidationError('email', 'required'),
           new ValidationError('password', 'required'),
         ],
@@ -130,7 +153,7 @@ describe('AuthenticationInteractor', () => {
     });
 
     it('returns error when another user with the same email exists', async () => {
-      const request = { email: 'user@example.com', password: 'password123' };
+      const request = { name: 'User Name', email: 'user@example.com', password: 'password123' };
 
       repository.saveUser(new User({ id: uuid(), email: request.email, password: 'any' }));
 
@@ -143,32 +166,135 @@ describe('AuthenticationInteractor', () => {
     });
 
     it('creates and returns the user', async () => {
-      const request = { email: 'user@example.com', password: 'password123' };
+      const request = { name: 'User Name', email: 'user@example.com', password: 'password123' };
       const response = await interactor.registerUser(request);
 
       expect(response.status).toEqual('success');
 
-      if (response.status == 'success') {
-        const { user } = response;
+      const { user } = response as RegisterUserSuccessResponse;
 
-        expect(user.id).toEqual(idGenerator.nextId);
-        expect(user.email).toEqual('user@example.com');
-        expect(user.password).toEqual(
-          await passwordManager.hashPassword(request.password, request.email)
-        );
-        expect(user.status).toEqual('pending');
-      }
+      expect(user.id).toEqual(idGenerator.nextId);
+      expect(user.name).toEqual('User Name');
+      expect(user.email).toEqual('user@example.com');
+      expect(user.password).toEqual(
+        await passwordManager.hashPassword(request.password, request.email)
+      );
+      expect(user.status).toEqual('pending');
     });
 
     it('persists the new user', async () => {
-      const request = { email: 'user@example.com', password: 'password123' };
+      const request = { name: 'User Name', email: 'user@example.com', password: 'password123' };
       const response = await interactor.registerUser(request);
 
       expect(response.status).toEqual('success');
+      const { user } = response as RegisterUserSuccessResponse;
 
       if (response.status == 'success') {
-        expect(await repository.getUserById(response.user.id)).toEqual(response.user);
+        expect(await repository.getUserById(response.user.id)).toEqual(user);
       }
+    });
+
+    it('publishes UserCreatedEvent', async () => {
+      const request = { name: 'User Name', email: 'user@example.com', password: 'password123' };
+      const response = await interactor.registerUser(request);
+
+      const { user } = response as RegisterUserSuccessResponse;
+
+      const event = new UserCreatedEvent({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        status: user.status,
+      });
+
+      expect(publisher.lastPublishedEvent).toEqual(event);
+    });
+  });
+
+  describe('activateUser', () => {
+    it('returns false when token is invalid', async () => {
+      expect(await interactor.activateUser('invalid token')).toBeFalsy();
+    });
+
+    it('activates the user when token is valid', async () => {
+      const user = await factory.createUser({ status: 'pending' });
+      const token = tokenManager.encode(user.id);
+
+      expect(await interactor.activateUser(token)).toBeTruthy();
+
+      const activatedUser = await repository.getUserById(user.id);
+      expect(activatedUser!.status).toEqual('active');
+    });
+
+    it('returns false when user does not exist', async () => {
+      const token = tokenManager.encode(uuid());
+      expect(await interactor.activateUser(token)).toBeFalsy();
+    });
+
+    it('returns false when token is expired', async () => {
+      const user = await factory.createUser({ status: 'pending' });
+      const token = tokenManager.encode(user.id, 0);
+
+      expect(await interactor.activateUser(token)).toBeFalsy();
+    });
+
+    it('returns false when user is already active', async () => {
+      const user = await factory.createUser({ status: 'active' });
+      const token = tokenManager.encode(user.id);
+
+      expect(await interactor.activateUser(token)).toBeFalsy();
+    });
+  });
+
+  describe('notifyUserActivation', () => {
+    let tokenManager: TokenManagerStub;
+
+    beforeEach(() => {
+      tokenManager = new TokenManagerStub();
+      interactor = new AuthenticationInteractor(
+        repository,
+        tokenManager,
+        passwordManager,
+        idGenerator,
+        frontendURL,
+        emailProvider,
+        publisher
+      );
+    });
+
+    it('reises error if user does not exit', async () => {
+      let errorThrown = false;
+
+      try {
+        await interactor.notifyUserActivation(uuid());
+      } catch (e) {
+        if (e instanceof UserNotFoundError) {
+          errorThrown = true;
+        }
+      }
+
+      expect(errorThrown).toBeTruthy();
+    });
+
+    it('sends the activation email to the user', async () => {
+      const user = await factory.createUser({ status: 'pending' });
+      const token = 'activation_token';
+      const activateUserUrl = `${frontendURL}/activate/${token}`;
+
+      tokenManager.token = token;
+
+      await interactor.notifyUserActivation(user.id);
+
+      expect(emailProvider.lastEmail).toEqual(
+        new Email({
+          type: EmailType.USER_ACTIVATION,
+          recipient: user.email,
+          variables: {
+            FULL_NAME: user.name,
+            ACTIVATE_USER_URL: activateUserUrl,
+          },
+        })
+      );
     });
   });
 

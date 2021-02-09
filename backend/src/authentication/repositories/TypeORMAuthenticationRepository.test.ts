@@ -18,6 +18,7 @@ describe('TypeORMAuthenticationRepository', () => {
         const repository = new TypeORMAuthenticationRepository(entityManager);
         const user = new User({
           id: uuid(),
+          name: 'User Name',
           email: 'user@example.com',
           password: 'password',
           status: 'active',
@@ -35,6 +36,7 @@ describe('TypeORMAuthenticationRepository', () => {
         const repository = new TypeORMAuthenticationRepository(entityManager);
         const user = new User({
           id: uuid(),
+          name: 'User Name',
           email: 'user@example.com',
           password: 'password',
           status: 'active',
@@ -65,6 +67,7 @@ describe('TypeORMAuthenticationRepository', () => {
           const repository = new TypeORMAuthenticationRepository(entityManager);
           const user = new User({
             id: uuid(),
+            name: 'User Name',
             email: 'user@example.com',
             password: 'password',
             status: 'active',
@@ -93,6 +96,7 @@ describe('TypeORMAuthenticationRepository', () => {
           const repository = new TypeORMAuthenticationRepository(entityManager);
           const user = new User({
             id: uuid(),
+            name: 'User Name',
             email: 'user@example.com',
             password: 'password',
             status: 'active',

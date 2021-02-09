@@ -42,6 +42,12 @@ services:
       - 5435:5432
     volumes:
       - postgres-test-data:/var/lib/postgresql/data
+  rabbitmq:
+    image: rabbitmq:3.8-management
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
 volumes:
   postgres-data:
   postgres-test-data:

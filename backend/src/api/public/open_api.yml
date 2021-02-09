@@ -17,6 +17,8 @@ components:
     User:
       type: object
       properties:
+        name:
+          type: string
         email:
           type: string
           format: email
@@ -119,7 +121,9 @@ paths:
               required:
                 - email
                 - password
-            example: { 'email': 'user@example.com', 'password': 'password123' }
+            example:
+              email: user@example.com 
+              password: password123
 
       responses:
         200:
@@ -144,6 +148,8 @@ paths:
           'application/json':
             schema:
               properties:
+                name:
+                  type: string
                 email:
                   type: string
                   format: 'email'
@@ -151,9 +157,13 @@ paths:
                   type: string
                   minLength: 8
               required:
+                - name
                 - email
                 - password
-            example: { 'email': 'user@example.com', 'password': 'password123' }
+            example:
+              name: Example User
+              email: user@example.com 
+              password: password123
       responses:
         201:
           description: 'User registered.'
@@ -173,18 +183,21 @@ paths:
                 conflict:
                   value: { 'type': 'email_not_available' }
                   
-  '/users/{token}/activate':
+  '/users/activate':
     post:
       tags:
         - Authentication
-      description: Activates a newly registered pending user
-      parameters:
-        - name: token
-          description: Activation token sent by email upon registering
-          in: path
-          required: true
-          schema:
-            type: string
+      description: Activates a newly registered pending user with the token sent by email.
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              properties:
+                token:
+                  description: Activation token sent by email upon registering
+                  type: string
+              required:
+                - token
       responses:
         202:
           description: 'User activated.'

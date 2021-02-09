@@ -7,6 +7,9 @@ export class UserDB {
   id?: string;
 
   @Column()
+  name?: string;
+
+  @Column()
   email?: string;
 
   @Column()
