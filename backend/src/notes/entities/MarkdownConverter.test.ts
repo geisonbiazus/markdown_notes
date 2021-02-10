@@ -70,5 +70,6 @@ But now with a line break in the middle.</p>
 </ol>
 <p><a href="http://example.com">Link</a></p>
 <p><img alt="Image" src="http://example.com/image.png"></p>
-<pre><code>Code Block</code></pre>
+<pre><code>Code Block
+</code></pre>
 `;
