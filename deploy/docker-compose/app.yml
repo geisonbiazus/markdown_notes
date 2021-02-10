@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   backend:
-    image: geisonbiazus/markdown-notes-backend:51
+    image: geisonbiazus/markdown-notes-backend:56
     restart: always
     env_file: .env
     environment:
