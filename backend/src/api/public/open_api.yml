@@ -137,6 +137,15 @@ paths:
                     description: 'Token to be used in subsequent requests'
         404:
           $ref:  "#/components/responses/not_found"
+        403:
+          description: 'Please confirm your email before authenticating'
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/Error'
+              examples:
+                conflict:
+                  value: { 'type': 'pending_user' }
 
   '/users/register':
     post:
