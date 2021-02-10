@@ -11,6 +11,9 @@ services:
       LETSENCRYPT_HOST: api.notes.geisonbiazus.com
       DB_USERNAME: main
       DB_NAME: markdown_notes
+      DEFAULT_EMAIL_SENDER: noreply@geisonbiazus.com
+      FRONTEND_APP_URL: https://notes.geisonbiazus.com
+      SENDGRID_USER_ACTIVATION_TEMPLATE_ID: d-fcf78bb3f0814e59a4bfd6dbb64804ab
     ports:
       - 4000:4000
   frontend:
@@ -43,3 +46,15 @@ services:
       - 5432:5432
     volumes:
       - ./volumes/postgres-data:/var/lib/postgresql/data
+  rabbitmq:
+    image: rabbitmq:3.8-management
+    hostname: rabbitmq
+    restart: always
+    env_file: .env
+    environment:
+      RABBITMQ_NODENAME: rabbit
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - "./volumes/rabbitmq-data:/var/lib/rabbitmq/mnesia"
