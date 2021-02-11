@@ -9,6 +9,7 @@ import { EntityFactory } from '../EntityFactory';
 import { UserCreatedEvent } from '../events';
 import { InMemoryAuthenticationRepository } from '../repositories';
 import {
+  AuthenticateSuccessResponse,
   AuthenticationInteractor,
   RegisterUserSuccessResponse,
   UserNotFoundError,
@@ -60,22 +61,28 @@ describe('AuthenticationInteractor', () => {
       );
     });
 
-    it('returns null when no user exits', async () => {
+    it('returns not_found error when no user exits', async () => {
       const email = 'user@example.com';
       const password = 'password';
 
-      expect(await interactor.authenticate(email, password)).toBeNull();
+      expect(await interactor.authenticate(email, password)).toEqual({
+        status: 'error',
+        type: 'not_found',
+      });
     });
 
-    it('returns null when user exists but the wrong password is provided', async () => {
+    it('returns not_found when user exists but the wrong password is provided', async () => {
       const email = 'user@example.com';
       const password = 'password';
       await factory.createUser({ email, password });
 
-      expect(await interactor.authenticate(email, 'wrong password')).toBeNull();
+      expect(await interactor.authenticate(email, 'wrong password')).toEqual({
+        status: 'error',
+        type: 'not_found',
+      });
     });
 
-    it('returns the token when sucessful', async () => {
+    it('returns the token when successful', async () => {
       const email = 'user@example.com';
       const password = 'password';
       await factory.createUser({ email, password });
@@ -84,7 +91,7 @@ describe('AuthenticationInteractor', () => {
 
       const response = await interactor.authenticate(email, password);
 
-      expect(response).toEqual({ token: tokenManager.token });
+      expect(response).toEqual({ status: 'success', token: tokenManager.token });
     });
   });
 
@@ -304,9 +311,12 @@ describe('AuthenticationInteractor', () => {
       const password = 'password';
       const user = await factory.createUser({ email, password });
 
-      const tokenResponse = await interactor.authenticate(email, password);
+      const tokenResponse = (await interactor.authenticate(
+        email,
+        password
+      )) as AuthenticateSuccessResponse;
 
-      expect(await interactor.getAuthenticatedUser(tokenResponse!.token)).toEqual(user);
+      expect(await interactor.getAuthenticatedUser(tokenResponse.token)).toEqual(user);
     });
   });
 });

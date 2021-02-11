@@ -1,4 +1,4 @@
-import { use } from 'marked';
+import { errorResponse, ErrorResponse } from '../../utils/ErrorResponse';
 import { IDGenerator } from '../../utils/IDGenerator';
 import { Publisher } from '../../utils/pub_sub';
 import { validationErrorResponse, ValidationErrorResponse } from '../../utils/validations';
@@ -25,13 +25,13 @@ export class AuthenticationInteractor {
     private publisher: Publisher
   ) {}
 
-  public async authenticate(email: string, password: string): Promise<AuthenticateResponse | null> {
+  public async authenticate(email: string, password: string): Promise<AuthenticateResponse> {
     const user = await this.repository.getUserByEmail(email);
 
-    if (!user) return null;
-    if (!(await this.verifyPassword(user, password))) return null;
+    if (!user) return errorResponse('not_found');
+    if (!(await this.verifyPassword(user, password))) return errorResponse('not_found');
 
-    return { token: this.tokenManager.encode(user.id) };
+    return { status: 'success', token: this.tokenManager.encode(user.id) };
   }
 
   private async verifyPassword(user: User, password: string): Promise<boolean> {
@@ -161,7 +161,10 @@ export interface EmailProvider {
   send(email: Email): Promise<void>;
 }
 
-export interface AuthenticateResponse {
+export type AuthenticateResponse = AuthenticateSuccessResponse | ErrorResponse;
+
+export interface AuthenticateSuccessResponse {
+  status: 'success';
   token: string;
 }
 
@@ -179,15 +182,6 @@ export type RegisterUserResponse =
 export interface RegisterUserSuccessResponse {
   status: 'success';
   user: User;
-}
-
-export interface ErrorResponse {
-  status: 'error';
-  type: string;
-}
-
-export function errorResponse(type: string): ErrorResponse {
-  return { status: 'error', type };
 }
 
 export class UserNotFoundError extends Error {

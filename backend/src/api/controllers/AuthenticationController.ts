@@ -16,7 +16,7 @@ export class AuthenticationController {
       req.body.password
     );
 
-    if (response) {
+    if (response.status == 'success') {
       res.status(200);
       res.json(response);
     } else {
