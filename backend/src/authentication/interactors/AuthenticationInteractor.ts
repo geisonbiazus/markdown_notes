@@ -28,8 +28,17 @@ export class AuthenticationInteractor {
   public async authenticate(email: string, password: string): Promise<AuthenticateResponse> {
     const user = await this.repository.getUserByEmail(email);
 
-    if (!user) return errorResponse('not_found');
-    if (!(await this.verifyPassword(user, password))) return errorResponse('not_found');
+    if (!user) {
+      return errorResponse('not_found');
+    }
+
+    if (!(await this.verifyPassword(user, password))) {
+      return errorResponse('not_found');
+    }
+
+    if (user.isPending) {
+      return errorResponse('pending_user');
+    }
 
     return { status: 'success', token: this.tokenManager.encode(user.id) };
   }
@@ -122,7 +131,7 @@ export class AuthenticationInteractor {
   }
 
   private async activatePendingUser(user: User): Promise<boolean> {
-    if (!user.isPending()) return false;
+    if (!user.isPending) return false;
 
     user.status = 'active';
     await this.repository.saveUser(user);

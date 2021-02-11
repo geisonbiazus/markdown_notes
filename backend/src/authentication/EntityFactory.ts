@@ -14,6 +14,7 @@ export class EntityFactory {
       name: 'User Name',
       email: 'user@exmaple.com',
       password: 'password',
+      status: 'active',
       ...params,
     };
 

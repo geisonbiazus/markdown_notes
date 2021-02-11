@@ -21,10 +21,22 @@ describe('AuthenticationController', () => {
         .expect(404, { type: 'not_found' }, done);
     });
 
+    it('returns error when user is pending', async () => {
+      const email = 'user@example.com';
+      const password = 'password';
+      await context.authentication.entityFactory.createUser({ email, password, status: 'pending' });
+
+      await request(server)
+        .post('/users/sign_in')
+        .send({ email: email, password: password })
+        .expect('Content-Type', /json/)
+        .expect(403, { type: 'pending_user' });
+    });
+
     it('returns token when successful', async () => {
       const email = 'user@example.com';
       const password = 'password';
-      await context.authentication.entityFactory.createUser({ email, password });
+      await context.authentication.entityFactory.createUser({ email, password, status: 'active' });
 
       const response = await request(server)
         .post('/users/sign_in')

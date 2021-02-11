@@ -82,10 +82,22 @@ describe('AuthenticationInteractor', () => {
       });
     });
 
+    it('returns pending_user error when user is pending', async () => {
+      const email = 'user@example.com';
+      const password = 'password';
+      await factory.createUser({ email, password, status: 'pending' });
+
+      tokenManager.token = uuid();
+
+      const response = await interactor.authenticate(email, password);
+
+      expect(response).toEqual({ status: 'error', type: 'pending_user' });
+    });
+
     it('returns the token when successful', async () => {
       const email = 'user@example.com';
       const password = 'password';
-      await factory.createUser({ email, password });
+      await factory.createUser({ email, password, status: 'active' });
 
       tokenManager.token = uuid();
 
