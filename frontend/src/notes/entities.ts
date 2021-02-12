@@ -1,3 +1,5 @@
+import { ErrorResponse, ValidationErrorResponse } from '../shared/entitites';
+
 export interface Note {
   id: string;
   title: string;
@@ -20,21 +22,6 @@ export interface NoteClient {
   getNote(id: string): Promise<Note | null>;
   getNotes(): Promise<Note[]>;
   removeNote(id: string): Promise<void>;
-}
-
-export interface ValidationError {
-  field: string;
-  type: string;
-}
-
-export interface ValidationErrorResponse {
-  status: 'validation_error';
-  errors: ValidationError[];
-}
-
-export interface ErrorResponse {
-  status: 'error';
-  type: string;
 }
 
 export interface SuccessSaveNoteResponse {

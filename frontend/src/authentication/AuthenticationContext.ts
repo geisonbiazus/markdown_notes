@@ -39,7 +39,7 @@ export class AuthenticationContext {
 
   private initializeInMemoryAuthenticationClient(): InMemoryAuthenticationClient {
     const client = new InMemoryAuthenticationClient();
-    client.addUser('user@example.com', 'password123', 'token');
+    client.addActiveUser('user@example.com', 'password123', 'token');
     return client;
   }
 }

@@ -1,18 +1,18 @@
 import bind from 'bind-decorator';
+import { ValidationErrorResponse } from '../../shared/entitites';
 import {
   Errors,
-  ErrorType,
   isEmpty,
   Publisher,
   StateObservableInteractor,
   validateRequired,
 } from '../../utils';
-import { newNote, Note, NoteClient, ValidationErrorResponse } from '../entities';
+import { newNote, Note, NoteClient } from '../entities';
 import { NoteSavedPayload, NOTE_LOADED_FOR_EDITING_EVENT, NOTE_SAVED_EVENT } from '../events';
 
 export interface EditNoteState {
   note: Note;
-  errors: Record<string, ErrorType>;
+  errors: Errors;
   isDirty: boolean;
   getNotePending: boolean;
   saveNotePending: boolean;
@@ -94,7 +94,7 @@ export class EditNoteInteractor extends StateObservableInteractor<EditNoteState>
     let errors: Errors = {};
 
     response.errors?.forEach((error) => {
-      errors = { ...errors, [error.field]: error.type as ErrorType };
+      errors = { ...errors, [error.field]: error.type };
     });
 
     this.updateState({ errors });

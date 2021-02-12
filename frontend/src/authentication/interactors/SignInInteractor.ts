@@ -58,17 +58,13 @@ export class SignInInteractor extends StateObservableInteractor<SignInState> {
   }
 
   private async performSignIn() {
-    const token = await this.authenticationClient.signIn(this.state.email, this.state.password);
+    const response = await this.authenticationClient.signIn(this.state.email, this.state.password);
 
-    if (!token) {
-      this.updateStateToNotFound();
+    if (response.status === 'success') {
+      this.processSucessSignIn(response.token);
     } else {
-      this.processSucessSignIn(token);
+      this.updateState({ errors: { base: response.type } });
     }
-  }
-
-  private updateStateToNotFound(): void {
-    this.updateState({ errors: { base: 'not_found' } });
   }
 
   private processSucessSignIn(token: string): void {
