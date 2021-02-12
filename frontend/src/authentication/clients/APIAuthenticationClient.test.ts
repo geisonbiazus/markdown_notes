@@ -27,17 +27,27 @@ describe('APIAuthenticationClient', () => {
       nockScope.post(`/users/sign_in`, { email, password }).reply(200, { token });
 
       const response = await client.signIn(email, password);
-      expect(response).toEqual(token);
+      expect(response).toEqual({ status: 'success', token });
     });
 
-    it('returns null when authentication fails', async () => {
+    it('returns error when authentication fails', async () => {
       const email = 'user@example.com';
       const password = 'password';
 
       nockScope.post(`/users/sign_in`, { email, password }).reply(404, { type: 'not_found' });
 
       const response = await client.signIn(email, password);
-      expect(response).toBeNull();
+      expect(response).toEqual({ status: 'error', type: 'not_found' });
+    });
+
+    it('returns error when user is pending', async () => {
+      const email = 'user@example.com';
+      const password = 'password';
+
+      nockScope.post(`/users/sign_in`, { email, password }).reply(403, { type: 'pending_user' });
+
+      const response = await client.signIn(email, password);
+      expect(response).toEqual({ status: 'error', type: 'pending_user' });
     });
 
     it('throws if an unexpected response returns', async () => {

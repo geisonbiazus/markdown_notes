@@ -12,13 +12,16 @@ export class AuthenticationController {
   @bind
   public async signIn(req: Request, res: Response): Promise<void> {
     const response = await this.authenticationInteractor.authenticate(
-      req.body.email,
-      req.body.password
+      req.body.email || '',
+      req.body.password || ''
     );
 
-    if (response) {
+    if (response.status == 'success') {
       res.status(200);
       res.json(response);
+    } else if (response.type == 'pending_user') {
+      res.status(403);
+      res.json({ type: 'pending_user' });
     } else {
       res.status(404);
       res.json({ type: 'not_found' });

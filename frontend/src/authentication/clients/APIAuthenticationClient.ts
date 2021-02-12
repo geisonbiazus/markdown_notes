@@ -1,21 +1,22 @@
 import { handleError, HTTPClient } from '../../utils';
-import { AuthenticationClient } from '../entities';
+import { AuthenticationClient, SignInResponse } from '../entities';
 
 export class APIAuthenticationClient implements AuthenticationClient {
   constructor(private httpClient: HTTPClient) {}
 
-  public signIn = async (email: string, password: string): Promise<string | null> => {
-    const response = await this.httpClient.post<SignInResponse>('/users/sign_in', {
+  public async signIn(email: string, password: string): Promise<SignInResponse> {
+    const response = await this.httpClient.post<SignInAPIResponse>('/users/sign_in', {
       email,
       password,
     });
-    if (response.status === 200) return response.data.token!;
-    if (response.status === 404) return null;
+    if (response.status === 200) return { status: 'success', token: response.data.token! };
+    if (response.status === 404) return { status: 'error', type: 'not_found' };
+    if (response.status === 403) return { status: 'error', type: 'pending_user' };
     throw handleError(response);
-  };
+  }
 }
 
-interface SignInResponse {
+interface SignInAPIResponse {
   status: 'success' | 'error';
   token?: string;
   type?: string;

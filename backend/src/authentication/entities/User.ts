@@ -23,7 +23,7 @@ export class User {
     this.status = params?.status || 'pending';
   }
 
-  public isPending(): boolean {
+  public get isPending(): boolean {
     return this.status == 'pending';
   }
 }

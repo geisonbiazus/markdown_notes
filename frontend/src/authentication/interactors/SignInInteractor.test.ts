@@ -43,11 +43,25 @@ describe('SignInInteractor', () => {
       expect(interactor.state.errors).toEqual({ base: 'not_found' });
     });
 
+    it('returns error when user is pending', async () => {
+      const email = 'user@example.com';
+      const password = 'password';
+      const token = 'token';
+      authenticationClient.addPendingUser(email, password, token);
+
+      interactor.setEmail(email);
+      interactor.setPassword(password);
+
+      await interactor.signIn();
+
+      expect(interactor.state.errors).toEqual({ base: 'pending_user' });
+    });
+
     it('saves the session data and sets success when authentication succeds', async () => {
       const email = 'user@example.com';
       const password = 'password';
       const token = 'token';
-      authenticationClient.addUser(email, password, token);
+      authenticationClient.addActiveUser(email, password, token);
 
       interactor.setEmail(email);
       interactor.setPassword(password);
@@ -63,7 +77,7 @@ describe('SignInInteractor', () => {
       const email = 'user@example.com';
       const password = 'password';
       const token = 'token';
-      authenticationClient.addUser(email, password, token);
+      authenticationClient.addActiveUser(email, password, token);
 
       interactor.setEmail(email);
       interactor.setPassword(password);
@@ -106,7 +120,7 @@ describe('SignInInteractor', () => {
     beforeEach(async () => {
       const email = 'user@example.com';
       const password = 'password';
-      authenticationClient.addUser(email, password, 'token');
+      authenticationClient.addActiveUser(email, password, 'token');
 
       interactor.setEmail(email);
       interactor.setPassword(password);
