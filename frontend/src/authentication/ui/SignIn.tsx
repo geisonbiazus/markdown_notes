@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import {
   CenteredContainer,
   FormErrorMessage,
@@ -8,6 +8,7 @@ import {
   FormRow,
   NarrowContainer,
   TextField,
+  Button,
 } from '../../shared/components';
 import { useAuthenticationContext } from '../AuthenticationReactContext';
 
@@ -43,6 +44,9 @@ export const SignIn: React.FC = () => {
             {t('Sign in')}
           </Button>
         </Form>
+        <div className="margin-top-1">
+          {t("Don't have an account?")} <Link to="/sign_up">{t('Sign up')}</Link>
+        </div>
       </NarrowContainer>
     </CenteredContainer>
   );
