@@ -17,7 +17,7 @@ describe('SignInInteractor', () => {
   });
 
   describe('constructor', () => {
-    it('initializes with and empy state', () => {
+    it('initializes with an empy state', () => {
       expect(interactor.state).toEqual({
         email: '',
         password: '',
