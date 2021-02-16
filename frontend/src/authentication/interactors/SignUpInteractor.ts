@@ -1,4 +1,10 @@
-import { Errors, StateObservableInteractor, validateRequired } from '../../utils';
+import {
+  Errors,
+  StateObservableInteractor,
+  validateConfirmation,
+  validateEmail,
+  validateRequired,
+} from '../../utils';
 
 export interface SignUpState {
   name: string;
@@ -19,6 +25,22 @@ export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
     });
   }
 
+  public setName(name: string): void {
+    this.updateState({ name });
+  }
+
+  public setEmail(email: string): void {
+    this.updateState({ email });
+  }
+
+  public setPassword(password: string): void {
+    this.updateState({ password });
+  }
+
+  public setPasswordConfirmation(passwordConfirmation: string): void {
+    this.updateState({ passwordConfirmation });
+  }
+
   public async signUp(): Promise<void> {
     let errors: Errors = {};
 
@@ -26,6 +48,8 @@ export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
     errors = validateRequired(errors, this.state, 'email');
     errors = validateRequired(errors, this.state, 'password');
     errors = validateRequired(errors, this.state, 'passwordConfirmation');
+    errors = validateEmail(errors, this.state, 'email');
+    errors = validateConfirmation(errors, this.state, 'password', 'passwordConfirmation');
 
     this.updateState({ errors });
   }

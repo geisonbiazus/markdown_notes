@@ -6,3 +6,27 @@ export function validateRequired<T>(errors: Errors, state: T, field: keyof T): E
   }
   return errors;
 }
+
+export function validateEmail<T>(errors: Errors, state: T, field: keyof T): Errors {
+  const value = `${state[field]}`.trim();
+
+  if (value && !value.includes('@')) {
+    return { ...errors, [field]: 'invalid_email' };
+  }
+  return errors;
+}
+
+export function validateConfirmation<T>(
+  errors: Errors,
+  state: T,
+  field: keyof T,
+  confirmationField: keyof T
+): Errors {
+  const value = `${state[field]}`.trim();
+  const confirmation = `${state[confirmationField]}`.trim();
+
+  if (value && confirmation && value != confirmation) {
+    return { ...errors, [field]: 'does_not_mach_confirmation' };
+  }
+  return errors;
+}

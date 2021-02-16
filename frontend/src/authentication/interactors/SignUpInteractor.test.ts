@@ -29,5 +29,30 @@ describe('SignUpinteractor', () => {
         passwordConfirmation: 'required',
       });
     });
+
+    it('does not return errors with all fields valid', async () => {
+      interactor.setName('Name');
+      interactor.setEmail('user@example.com');
+      interactor.setPassword('password');
+      interactor.setPasswordConfirmation('password');
+
+      await interactor.signUp();
+      expect(interactor.state.errors).toEqual({});
+    });
+
+    it('validates email format', async () => {
+      interactor.setEmail('invalid');
+      await interactor.signUp();
+
+      expect(interactor.state.errors.email).toEqual('invalid_email');
+    });
+
+    it('validates password matching confirmation', async () => {
+      interactor.setPassword('password');
+      interactor.setPasswordConfirmation('invalid_password');
+      await interactor.signUp();
+
+      expect(interactor.state.errors.password).toEqual('does_not_mach_confirmation');
+    });
   });
 });
