@@ -12,7 +12,7 @@ describe('AppContext', () => {
     describe('user_authenticated', () => {
       it('sets token to authenticatedHTTPClient', () => {
         const token = 'token';
-        appContext.pubSub.pusblish('user_authenticated', { token });
+        appContext.pubSub.publish('user_authenticated', { token });
         expect(appContext.authenticatedHTTPClient.token).toEqual(token);
       });
     });

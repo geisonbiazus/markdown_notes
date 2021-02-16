@@ -47,7 +47,7 @@ describe('SignInInteractor', () => {
       const email = 'user@example.com';
       const password = 'password';
       const token = 'token';
-      authenticationClient.addPendingUser(email, password, token);
+      authenticationClient.addPendingUser('Name', email, password, token);
 
       interactor.setEmail(email);
       interactor.setPassword(password);
@@ -61,7 +61,7 @@ describe('SignInInteractor', () => {
       const email = 'user@example.com';
       const password = 'password';
       const token = 'token';
-      authenticationClient.addActiveUser(email, password, token);
+      authenticationClient.addActiveUser('Name', email, password, token);
 
       interactor.setEmail(email);
       interactor.setPassword(password);
@@ -77,7 +77,7 @@ describe('SignInInteractor', () => {
       const email = 'user@example.com';
       const password = 'password';
       const token = 'token';
-      authenticationClient.addActiveUser(email, password, token);
+      authenticationClient.addActiveUser('Name', email, password, token);
 
       interactor.setEmail(email);
       interactor.setPassword(password);
@@ -120,7 +120,7 @@ describe('SignInInteractor', () => {
     beforeEach(async () => {
       const email = 'user@example.com';
       const password = 'password';
-      authenticationClient.addActiveUser(email, password, 'token');
+      authenticationClient.addActiveUser('Name', email, password, 'token');
 
       interactor.setEmail(email);
       interactor.setPassword(password);

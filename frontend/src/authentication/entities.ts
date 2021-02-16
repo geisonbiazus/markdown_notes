@@ -4,6 +4,7 @@ export type Token = string;
 
 export interface AuthenticationClient {
   signIn(email: string, password: string): Promise<SignInResponse>;
+  signUp(request: SignUpRequest): Promise<SignUpResponse>;
 }
 
 export type SignInResponse = SignInSuccessResponse | ErrorResponse;
@@ -18,3 +19,11 @@ export interface SessionRepository {
   getToken(): string | null;
   removeToken(): void;
 }
+
+export interface SignUpRequest {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface SignUpResponse {}

@@ -6,7 +6,7 @@ export type DisposeFn = () => void;
 export class PubSub implements Publisher {
   private subscribers: Record<string, SubscriberCallback<unknown>[]> = {};
 
-  public pusblish<T>(event: string, payload?: T): void {
+  public publish<T>(event: string, payload?: T): void {
     this.subscribersFor<T | undefined>(event).forEach((callback) => callback(payload));
   }
 

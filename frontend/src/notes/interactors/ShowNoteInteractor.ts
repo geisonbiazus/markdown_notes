@@ -27,7 +27,7 @@ export class ShowNoteInteractor extends StateObservableInteractor<ShowNoteState>
       const note = await this.noteClient.getNote(id);
       if (note) {
         this.updateState({ note, isFound: true });
-        this.publisher.pusblish(NOTE_LOADED_FOR_SHOWING_EVENT, note);
+        this.publisher.publish(NOTE_LOADED_FOR_SHOWING_EVENT, note);
       } else {
         this.updateState({ note: undefined, isFound: false });
       }

@@ -1,8 +1,11 @@
 import { handleError, HTTPClient } from '../../utils';
-import { AuthenticationClient, SignInResponse } from '../entities';
+import { AuthenticationClient, SignInResponse, SignUpRequest, SignUpResponse } from '../entities';
 
 export class APIAuthenticationClient implements AuthenticationClient {
   constructor(private httpClient: HTTPClient) {}
+  signUp(request: SignUpRequest): Promise<SignUpResponse> {
+    throw new Error('Method not implemented.');
+  }
 
   public async signIn(email: string, password: string): Promise<SignInResponse> {
     const response = await this.httpClient.post<SignInAPIResponse>('/users/sign_in', {

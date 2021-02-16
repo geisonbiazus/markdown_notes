@@ -80,7 +80,7 @@ export class SignInInteractor extends StateObservableInteractor<SignInState> {
   }
 
   private publishUserAuthenticatedEvent(token: string): void {
-    this.publisher.pusblish(USER_AUTHENTICATED_EVENT, { token });
+    this.publisher.publish(USER_AUTHENTICATED_EVENT, { token });
   }
 
   @bind

@@ -1,10 +1,17 @@
+import { FakePublisher } from '../../utils';
+import { InMemoryAuthenticationClient } from '../clients';
+import { USER_SIGNED_UP_EVENT } from '../events';
 import { SignUpInteractor } from './SignUpInteractor';
 
 describe('SignUpinteractor', () => {
+  let client: InMemoryAuthenticationClient;
+  let publisher: FakePublisher;
   let interactor: SignUpInteractor;
 
   beforeEach(() => {
-    interactor = new SignUpInteractor();
+    client = new InMemoryAuthenticationClient();
+    publisher = new FakePublisher();
+    interactor = new SignUpInteractor(client, publisher);
   });
 
   describe('constructor', () => {
@@ -20,39 +27,63 @@ describe('SignUpinteractor', () => {
   });
 
   describe('signUp', () => {
-    it('validates required fields', async () => {
-      await interactor.signUp();
-      expect(interactor.state.errors).toEqual({
-        name: 'required',
-        email: 'required',
-        password: 'required',
-        passwordConfirmation: 'required',
+    describe('with invalid input', () => {
+      it('validates required fields', async () => {
+        await interactor.signUp();
+        expect(interactor.state.errors).toEqual({
+          name: 'required',
+          email: 'required',
+          password: 'required',
+          passwordConfirmation: 'required',
+        });
+      });
+
+      it('validates email format', async () => {
+        interactor.setEmail('invalid');
+        await interactor.signUp();
+
+        expect(interactor.state.errors.email).toEqual('invalid_email');
+      });
+
+      it('validates password matching confirmation', async () => {
+        interactor.setPassword('password');
+        interactor.setPasswordConfirmation('invalid_password');
+        await interactor.signUp();
+
+        expect(interactor.state.errors.password).toEqual('does_not_mach_confirmation');
       });
     });
 
-    it('does not return errors with all fields valid', async () => {
-      interactor.setName('Name');
-      interactor.setEmail('user@example.com');
-      interactor.setPassword('password');
-      interactor.setPasswordConfirmation('password');
+    describe('with valid input', () => {
+      beforeEach(() => {
+        interactor.setName('Name');
+        interactor.setEmail('user@example.com');
+        interactor.setPassword('password');
+        interactor.setPasswordConfirmation('password');
+      });
 
-      await interactor.signUp();
-      expect(interactor.state.errors).toEqual({});
-    });
+      it('does not return errors with all fields valid', async () => {
+        await interactor.signUp();
+        expect(interactor.state.errors).toEqual({});
+      });
 
-    it('validates email format', async () => {
-      interactor.setEmail('invalid');
-      await interactor.signUp();
+      it('requests to sign the user up in the client', async () => {
+        await interactor.signUp();
 
-      expect(interactor.state.errors.email).toEqual('invalid_email');
-    });
+        expect(client.lastUser).not.toBeUndefined();
+        expect(client.lastUser.name).toEqual('Name');
+        expect(client.lastUser.email).toEqual('user@example.com');
+        expect(client.lastUser.password).toEqual('password');
+      });
 
-    it('validates password matching confirmation', async () => {
-      interactor.setPassword('password');
-      interactor.setPasswordConfirmation('invalid_password');
-      await interactor.signUp();
+      it('publishes user_signed_up event', async () => {
+        await interactor.signUp();
 
-      expect(interactor.state.errors.password).toEqual('does_not_mach_confirmation');
+        expect(publisher.lastEvent).toEqual({
+          name: USER_SIGNED_UP_EVENT,
+          payload: { name: 'Name', email: 'user@example.com' },
+        });
+      });
     });
   });
 });

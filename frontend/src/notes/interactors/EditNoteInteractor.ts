@@ -41,7 +41,7 @@ export class EditNoteInteractor extends StateObservableInteractor<EditNoteState>
 
       if (note) {
         this.updateState({ note });
-        this.publiser.pusblish(NOTE_LOADED_FOR_EDITING_EVENT, note);
+        this.publiser.publish(NOTE_LOADED_FOR_EDITING_EVENT, note);
       } else {
         this.updateState({ note: newNote({ id }) });
       }
@@ -65,7 +65,7 @@ export class EditNoteInteractor extends StateObservableInteractor<EditNoteState>
     return await this.withPendingState('saveNotePending', async () => {
       if (!this.validateNote()) return false;
       await this.maybeSaveNoteInTheClient();
-      this.publiser.pusblish<NoteSavedPayload>(NOTE_SAVED_EVENT, this.state.note);
+      this.publiser.publish<NoteSavedPayload>(NOTE_SAVED_EVENT, this.state.note);
       return true;
     });
   }
