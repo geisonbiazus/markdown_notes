@@ -1,4 +1,4 @@
-import { ErrorResponse } from '../shared/entitites';
+import { ErrorResponse, SuccessResponse } from '../shared/entitites';
 
 export type Token = string;
 
@@ -26,4 +26,4 @@ export interface SignUpRequest {
   password: string;
 }
 
-export interface SignUpResponse {}
+export type SignUpResponse = SuccessResponse | ErrorResponse;

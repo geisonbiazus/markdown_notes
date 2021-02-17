@@ -1,4 +1,5 @@
 import bind from 'bind-decorator';
+import { ErrorResponse } from '../../shared/entitites';
 import {
   Errors,
   isEmpty,
@@ -8,7 +9,7 @@ import {
   validateEmail,
   validateRequired,
 } from '../../utils';
-import { AuthenticationClient } from '../entities';
+import { AuthenticationClient, SignUpResponse } from '../entities';
 import { UserSignedUpPayload, USER_SIGNED_UP_EVENT } from '../events';
 
 export interface SignUpState {
@@ -53,17 +54,7 @@ export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
   @bind
   public async signUp(): Promise<void> {
     if (!this.validateState()) return;
-
-    this.client.signUp({
-      name: this.state.name,
-      email: this.state.email,
-      password: this.state.password,
-    });
-
-    this.publisher.publish<UserSignedUpPayload>(USER_SIGNED_UP_EVENT, {
-      name: this.state.name,
-      email: this.state.email,
-    });
+    await this.performSignUp();
   }
 
   private validateState(): boolean {
@@ -79,5 +70,39 @@ export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
     this.updateState({ errors });
 
     return isEmpty(errors);
+  }
+
+  private async performSignUp(): Promise<void> {
+    const response = await this.performSignUpRequest();
+
+    if (response.status == 'success') {
+      this.publishUserSignedUpEvent();
+    } else {
+      this.processErrorResponse(response);
+    }
+  }
+
+  private async performSignUpRequest(): Promise<SignUpResponse> {
+    return this.client.signUp({
+      name: this.state.name,
+      email: this.state.email,
+      password: this.state.password,
+    });
+  }
+
+  private publishUserSignedUpEvent(): void {
+    this.publisher.publish<UserSignedUpPayload>(USER_SIGNED_UP_EVENT, {
+      name: this.state.name,
+      email: this.state.email,
+    });
+  }
+
+  private processErrorResponse(response: ErrorResponse) {
+    if (response.type === 'email_not_available') {
+      this.updateState({ errors: { email: 'not_available' } });
+    } else {
+      console.log(response);
+      throw new Error('Something went wrong');
+    }
   }
 }

@@ -26,8 +26,12 @@ export class InMemoryAuthenticationClient implements AuthenticationClient {
   }
 
   public async signUp(request: SignUpRequest): Promise<SignUpResponse> {
+    const user = this.users.find((user) => user.email === request.email);
+
+    if (user) return { status: 'error', type: 'email_not_available' };
+
     this.users.push({ ...request, token: 'token', status: 'pending' });
-    return {};
+    return { status: 'success' };
   }
 
   public addActiveUser(name: string, email: string, password: string, token: string): void {

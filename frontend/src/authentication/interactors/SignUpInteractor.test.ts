@@ -27,7 +27,7 @@ describe('SignUpinteractor', () => {
   });
 
   describe('signUp', () => {
-    describe('with invalid input', () => {
+    describe('with an invalid input', () => {
       it('validates required fields', async () => {
         await interactor.signUp();
         expect(interactor.state.errors).toEqual({
@@ -52,9 +52,14 @@ describe('SignUpinteractor', () => {
 
         expect(interactor.state.errors.password).toEqual('does_not_mach_confirmation');
       });
+
+      it('does not publish any event', async () => {
+        await interactor.signUp();
+        expect(publisher.lastEvent).toBeUndefined();
+      });
     });
 
-    describe('with valid input', () => {
+    describe('with a valid input', () => {
       beforeEach(() => {
         interactor.setName('Name');
         interactor.setEmail('user@example.com');
@@ -83,6 +88,15 @@ describe('SignUpinteractor', () => {
           name: USER_SIGNED_UP_EVENT,
           payload: { name: 'Name', email: 'user@example.com' },
         });
+      });
+
+      it('adds error and do not publish the event when email is not available in the client', async () => {
+        client.addActiveUser('User', 'user@example.com', 'anything', 'token');
+
+        await interactor.signUp();
+
+        expect(interactor.state.errors).toEqual({ email: 'not_available' });
+        expect(publisher.lastEvent).toBeUndefined();
       });
     });
   });
