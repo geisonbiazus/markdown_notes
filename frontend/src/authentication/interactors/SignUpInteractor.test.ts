@@ -50,7 +50,7 @@ describe('SignUpinteractor', () => {
         interactor.setPasswordConfirmation('invalid_password');
         await interactor.signUp();
 
-        expect(interactor.state.errors.password).toEqual('does_not_mach_confirmation');
+        expect(interactor.state.errors.password).toEqual('does_not_match_confirmation');
       });
 
       it('does not publish any event', async () => {

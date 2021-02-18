@@ -9,29 +9,55 @@ import {
   NarrowContainer,
   TextField,
 } from '../../shared/components';
+import { useAuthenticationContext } from '../AuthenticationReactContext';
 
 export const SignUp: React.FC = () => {
+  const { signUpState, signUpInteractor } = useAuthenticationContext();
   const { t } = useTranslation();
 
   return (
     <CenteredContainer>
       <NarrowContainer>
         <h3>{t('Create a new account')}</h3>
-        <Form onSubmit={() => {}}>
+        <Form onSubmit={signUpInteractor.signUp}>
           <FormRow>
-            <TextField label={t('Name')} type="text" errorField="name" />
+            <TextField
+              label={t('Name')}
+              type="text"
+              value={signUpState.name}
+              onChange={signUpInteractor.setName}
+              errorField="name"
+              errorType={signUpState.errors.name}
+            />
           </FormRow>
           <FormRow>
-            <TextField label={t('Email')} type="email" errorField="email" />
+            <TextField
+              label={t('Email')}
+              type="email"
+              value={signUpState.email}
+              onChange={signUpInteractor.setEmail}
+              errorField="email"
+              errorType={signUpState.errors.email}
+            />
           </FormRow>
           <FormRow>
-            <TextField label={t('Password')} type="password" errorField="password" />
+            <TextField
+              label={t('Password')}
+              type="password"
+              value={signUpState.password}
+              onChange={signUpInteractor.setPassword}
+              errorField="password"
+              errorType={signUpState.errors.password}
+            />
           </FormRow>
           <FormRow>
             <TextField
               label={t('Confirm password')}
               type="password"
-              errorField="password_confirmation"
+              value={signUpState.passwordConfirmation}
+              onChange={signUpInteractor.setPasswordConfirmation}
+              errorField="passwordConfirmation"
+              errorType={signUpState.errors.passwordConfirmation}
             />
           </FormRow>
           <Button variant="primary" type="submit">

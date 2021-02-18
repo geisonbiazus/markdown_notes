@@ -3,10 +3,12 @@ import { HTTPClient, PubSub } from '../utils';
 import { APIAuthenticationClient, InMemoryAuthenticationClient } from './clients';
 import { AuthenticationClient, SessionRepository } from './entities';
 import { SignInInteractor } from './interactors';
+import { SignUpInteractor } from './interactors/SignUpInteractor';
 import { LocalStorageSessionRepository } from './repositories';
 
 export class AuthenticationContext {
   private signInInteractorInstance?: SignInInteractor;
+  private signUpInteractorInstance?: SignUpInteractor;
   private authenticationClientInstance?: AuthenticationClient;
 
   constructor(private httpClient: HTTPClient, private pubSub: PubSub, private config: AppConfig) {}
@@ -22,6 +24,13 @@ export class AuthenticationContext {
       this.signInInteractorInstance.checkAuthentication();
     }
     return this.signInInteractorInstance;
+  }
+
+  public get signUpInteractor(): SignUpInteractor {
+    if (!this.signUpInteractorInstance) {
+      this.signUpInteractorInstance = new SignUpInteractor(this.authenticationClient, this.pubSub);
+    }
+    return this.signUpInteractorInstance;
   }
 
   public get sessionRepository(): SessionRepository {

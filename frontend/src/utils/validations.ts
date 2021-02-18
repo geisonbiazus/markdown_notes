@@ -26,7 +26,7 @@ export function validateConfirmation<T>(
   const confirmation = `${state[confirmationField]}`.trim();
 
   if (value && confirmation && value !== confirmation) {
-    return { ...errors, [field]: 'does_not_mach_confirmation' };
+    return { ...errors, [field]: 'does_not_match_confirmation' };
   }
   return errors;
 }
