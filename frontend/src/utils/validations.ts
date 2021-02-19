@@ -16,6 +16,20 @@ export function validateEmail<T>(errors: Errors, state: T, field: keyof T): Erro
   return errors;
 }
 
+export function validateMinimumLength<T>(
+  errors: Errors,
+  state: T,
+  field: keyof T,
+  minimum: number
+): Errors {
+  const value = `${state[field]}`.trim();
+
+  if (value && value.length < minimum) {
+    return { ...errors, [field]: `length_min_${minimum}_chars` };
+  }
+  return errors;
+}
+
 export function validateConfirmation<T>(
   errors: Errors,
   state: T,

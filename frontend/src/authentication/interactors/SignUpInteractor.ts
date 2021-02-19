@@ -7,6 +7,7 @@ import {
   StateObservableInteractor,
   validateConfirmation,
   validateEmail,
+  validateMinimumLength,
   validateRequired,
 } from '../../utils';
 import { AuthenticationClient, SignUpResponse } from '../entities';
@@ -65,6 +66,7 @@ export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
     errors = validateRequired(errors, this.state, 'password');
     errors = validateRequired(errors, this.state, 'passwordConfirmation');
     errors = validateEmail(errors, this.state, 'email');
+    errors = validateMinimumLength(errors, this.state, 'password', 8);
     errors = validateConfirmation(errors, this.state, 'password', 'passwordConfirmation');
 
     this.updateState({ errors });
@@ -75,7 +77,7 @@ export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
   private async performSignUp(): Promise<void> {
     const response = await this.performSignUpRequest();
 
-    if (response.status == 'success') {
+    if (response.status === 'success') {
       this.publishUserSignedUpEvent();
     } else {
       this.processErrorResponse(response);

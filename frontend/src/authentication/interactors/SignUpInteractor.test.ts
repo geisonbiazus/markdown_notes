@@ -53,6 +53,13 @@ describe('SignUpinteractor', () => {
         expect(interactor.state.errors.password).toEqual('does_not_match_confirmation');
       });
 
+      it('validates password minimum length of 8 characters', async () => {
+        interactor.setPassword('1234567');
+        await interactor.signUp();
+
+        expect(interactor.state.errors.password).toEqual('length_min_8_chars');
+      });
+
       it('does not publish any event', async () => {
         await interactor.signUp();
         expect(publisher.lastEvent).toBeUndefined();
