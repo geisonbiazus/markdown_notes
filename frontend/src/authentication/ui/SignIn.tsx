@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
@@ -16,6 +16,10 @@ export const SignIn: React.FC = () => {
   const { t } = useTranslation();
   const { signInState, signInInteractor } = useAuthenticationContext();
 
+  useEffect(() => {
+    return signInInteractor.cleanUp;
+  }, [signInInteractor]);
+
   return (
     <CenteredContainer>
       <NarrowContainer>
@@ -28,6 +32,7 @@ export const SignIn: React.FC = () => {
               type="email"
               onChange={signInInteractor.setEmail}
               errorField="email"
+              value={signInState.email}
               errorType={signInState.errors.email}
             />
           </FormRow>
@@ -37,6 +42,7 @@ export const SignIn: React.FC = () => {
               type="password"
               onChange={signInInteractor.setPassword}
               errorField="password"
+              value={signInState.password}
               errorType={signInState.errors.password}
             />
           </FormRow>

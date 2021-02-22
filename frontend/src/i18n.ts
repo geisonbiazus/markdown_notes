@@ -15,7 +15,7 @@ const resources = {
       'validation.invalid_email': '{{field}} is invalid.',
       'validation.does_not_match_confirmation': '{{field}} does not match confirmation.',
       'validation.not_available': '{{field}} is already taken.',
-      'validation.length_min_8_chars': '{{field}} too small. Minimum 8 characters.',
+      'validation.length_min_8_chars': '{{field}} is too small. Minimum 8 characters.',
       'error.sign_in.not_found': 'Invalid email or password.',
       'error.sign_in.pending_user': 'Please confirm your email before signin in.',
     },

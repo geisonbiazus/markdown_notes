@@ -1,9 +1,18 @@
+import { bind } from 'bind-decorator';
+
 export abstract class StateObservableInteractor<T> {
+  private initialState: T;
   private currentState: T;
   private observers: Observer<T>[] = [];
 
   constructor(initialState: T) {
+    this.initialState = initialState;
     this.currentState = initialState;
+  }
+
+  @bind
+  public cleanUp(): void {
+    this.updateState(this.initialState);
   }
 
   public get state(): T {

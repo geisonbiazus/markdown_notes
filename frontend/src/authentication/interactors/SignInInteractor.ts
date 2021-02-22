@@ -31,6 +31,12 @@ export class SignInInteractor extends StateObservableInteractor<SignInState> {
   }
 
   @bind
+  public cleanUp(): void {
+    const { authenticated, token, ...newState } = newSignInState();
+    this.updateState(newState);
+  }
+
+  @bind
   public setEmail(email: string): void {
     this.updateState({ email });
   }

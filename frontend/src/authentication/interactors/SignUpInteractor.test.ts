@@ -1,12 +1,20 @@
 import { FakePublisher } from '../../utils';
 import { InMemoryAuthenticationClient } from '../clients';
 import { USER_SIGNED_UP_EVENT } from '../events';
-import { SignUpInteractor } from './SignUpInteractor';
+import { SignUpInteractor, SignUpState } from './SignUpInteractor';
 
 describe('SignUpinteractor', () => {
   let client: InMemoryAuthenticationClient;
   let publisher: FakePublisher;
   let interactor: SignUpInteractor;
+
+  const emptyState: SignUpState = {
+    name: '',
+    email: '',
+    password: '',
+    passwordConfirmation: '',
+    errors: {},
+  };
 
   beforeEach(() => {
     client = new InMemoryAuthenticationClient();
@@ -16,13 +24,17 @@ describe('SignUpinteractor', () => {
 
   describe('constructor', () => {
     it('initializes with an empty state', () => {
-      expect(interactor.state).toEqual({
-        name: '',
-        email: '',
-        password: '',
-        passwordConfirmation: '',
-        errors: {},
-      });
+      expect(interactor.state).toEqual(emptyState);
+    });
+  });
+
+  describe('cleanUp', () => {
+    it('resets the state', async () => {
+      interactor.setEmail('invalid');
+      await interactor.signUp();
+      interactor.cleanUp();
+
+      expect(interactor.state).toEqual(emptyState);
     });
   });
 
