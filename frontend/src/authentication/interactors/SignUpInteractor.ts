@@ -19,6 +19,7 @@ export interface SignUpState {
   password: string;
   passwordConfirmation: string;
   errors: Errors;
+  registrationFinished: boolean;
 }
 
 export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
@@ -29,6 +30,7 @@ export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
       password: '',
       passwordConfirmation: '',
       errors: {},
+      registrationFinished: false,
     });
   }
 
@@ -79,6 +81,7 @@ export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
 
     if (response.status === 'success') {
       this.publishUserSignedUpEvent();
+      this.updateState({ registrationFinished: true });
     } else {
       this.processErrorResponse(response);
     }

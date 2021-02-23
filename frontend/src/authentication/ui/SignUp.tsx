@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import {
   Button,
@@ -18,6 +18,10 @@ export const SignUp: React.FC = () => {
   useEffect(() => {
     return signUpInteractor.cleanUp;
   }, [signUpInteractor]);
+
+  if (true) {
+    return <SignUpFinished email={signUpState.email || 'geisonbiazus@gmail.com'} />;
+  }
 
   return (
     <CenteredContainer>
@@ -72,6 +76,31 @@ export const SignUp: React.FC = () => {
           {t('Already have an account?')} <Link to="/sign_in">{t('Sign in')}</Link>
         </div>
       </NarrowContainer>
+    </CenteredContainer>
+  );
+};
+
+interface SignUpFinishedProps {
+  email: string;
+}
+
+const SignUpFinished: React.FC<SignUpFinishedProps> = ({ email }) => {
+  const { t } = useTranslation();
+
+  return (
+    <CenteredContainer>
+      <div className="margin-top-5">
+        <Trans i18nKey="signupConfirmation">
+          <h1>Thanks for signing up</h1>
+          <p className="margin-top-2">
+            A confimation link has been sent to <strong>{email}</strong>.<br />
+            Please confirm your account to be able to authenticate.
+          </p>
+          <p>
+            Already confirmed? Please <Link to="/sign_in">sign in</Link>.
+          </p>
+        </Trans>
+      </div>
     </CenteredContainer>
   );
 };
