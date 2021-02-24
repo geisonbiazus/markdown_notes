@@ -11,7 +11,6 @@ import {
   validateRequired,
 } from '../../utils';
 import { AuthenticationClient, SignUpResponse } from '../entities';
-import { UserSignedUpPayload, USER_SIGNED_UP_EVENT } from '../events';
 
 export interface SignUpState {
   name: string;
@@ -80,7 +79,6 @@ export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
     const response = await this.performSignUpRequest();
 
     if (response.status === 'success') {
-      this.publishUserSignedUpEvent();
       this.updateState({ finished: true });
     } else {
       this.processErrorResponse(response);
@@ -92,13 +90,6 @@ export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
       name: this.state.name,
       email: this.state.email,
       password: this.state.password,
-    });
-  }
-
-  private publishUserSignedUpEvent(): void {
-    this.publisher.publish<UserSignedUpPayload>(USER_SIGNED_UP_EVENT, {
-      name: this.state.name,
-      email: this.state.email,
     });
   }
 

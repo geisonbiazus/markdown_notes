@@ -1,6 +1,5 @@
 import { FakePublisher } from '../../utils';
 import { InMemoryAuthenticationClient } from '../clients';
-import { USER_SIGNED_UP_EVENT } from '../events';
 import { SignUpInteractor, SignUpState } from './SignUpInteractor';
 
 describe('SignUpinteractor', () => {
@@ -99,15 +98,6 @@ describe('SignUpinteractor', () => {
         expect(client.lastUser.name).toEqual('Name');
         expect(client.lastUser.email).toEqual('user@example.com');
         expect(client.lastUser.password).toEqual('password');
-      });
-
-      it('publishes user_signed_up event', async () => {
-        await interactor.signUp();
-
-        expect(publisher.lastEvent).toEqual({
-          name: USER_SIGNED_UP_EVENT,
-          payload: { name: 'Name', email: 'user@example.com' },
-        });
       });
 
       it('sets registrationFinished to true', async () => {
