@@ -19,7 +19,7 @@ export const SignUp: React.FC = () => {
     return signUpInteractor.cleanUp;
   }, [signUpInteractor]);
 
-  if (true) {
+  if (signUpState.finished) {
     return <SignUpFinished email={signUpState.email || 'geisonbiazus@gmail.com'} />;
   }
 
@@ -90,16 +90,18 @@ const SignUpFinished: React.FC<SignUpFinishedProps> = ({ email }) => {
   return (
     <CenteredContainer>
       <div className="margin-top-5">
-        <Trans i18nKey="signupConfirmation">
-          <h1>Thanks for signing up</h1>
-          <p className="margin-top-2">
-            A confimation link has been sent to <strong>{email}</strong>.<br />
+        <h1>{t('Thanks for signing up')}</h1>
+        <p className="margin-top-2">
+          <Trans i18nKey="signUpFinishedMessage">
+            A confimation link has been sent to <strong>{{ email }}</strong>.<br />
             Please confirm your account to be able to authenticate.
-          </p>
-          <p>
+          </Trans>
+        </p>
+        <p>
+          <Trans i18nKey="signUpFinishedSignInLink">
             Already confirmed? Please <Link to="/sign_in">sign in</Link>.
-          </p>
-        </Trans>
+          </Trans>
+        </p>
       </div>
     </CenteredContainer>
   );

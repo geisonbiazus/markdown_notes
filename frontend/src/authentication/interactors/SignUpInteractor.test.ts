@@ -14,7 +14,7 @@ describe('SignUpinteractor', () => {
     password: '',
     passwordConfirmation: '',
     errors: {},
-    registrationFinished: false,
+    finished: false,
   };
 
   beforeEach(() => {
@@ -112,7 +112,7 @@ describe('SignUpinteractor', () => {
 
       it('sets registrationFinished to true', async () => {
         await interactor.signUp();
-        expect(interactor.state.registrationFinished).toEqual(true);
+        expect(interactor.state.finished).toEqual(true);
       });
 
       it('adds error and do not publish the event when email is not available in the client', async () => {

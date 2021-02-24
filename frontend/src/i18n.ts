@@ -18,15 +18,6 @@ const resources = {
       'validation.length_min_8_chars': '{{field}} is too small. Minimum 8 characters.',
       'error.sign_in.not_found': 'Invalid email or password.',
       'error.sign_in.pending_user': 'Please confirm your email before signin in.',
-      // signupConfirmation:
-      //   '<1>Thanks for signing up</1>' +
-      //   '<2> ' +
-      //   'A confimation link has been sent to <3>{{email}}</3>.<4/>' +
-      //   'Please confirm your account to be able to authenticate.' +
-      //   '</2>' +
-      //   '<5>' +
-      //   'Already confirmed? Please <6>sign in</6>.' +
-      //   '</5>',
     },
   },
 };
