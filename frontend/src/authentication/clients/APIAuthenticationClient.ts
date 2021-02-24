@@ -3,8 +3,13 @@ import { AuthenticationClient, SignInResponse, SignUpRequest, SignUpResponse } f
 
 export class APIAuthenticationClient implements AuthenticationClient {
   constructor(private httpClient: HTTPClient) {}
-  signUp(request: SignUpRequest): Promise<SignUpResponse> {
-    throw new Error('Method not implemented.');
+
+  public async signUp(request: SignUpRequest): Promise<SignUpResponse> {
+    const response = await this.httpClient.post<SignUpAPIResponse>('/users/register', request);
+
+    if (response.status === 201) return { status: 'success' };
+    if (response.status === 409) return { status: 'error', type: 'email_not_available' };
+    throw handleError(response);
   }
 
   public async signIn(email: string, password: string): Promise<SignInResponse> {
@@ -19,8 +24,14 @@ export class APIAuthenticationClient implements AuthenticationClient {
   }
 }
 
+interface SignUpAPIResponse {
+  name?: string;
+  email?: string;
+  status?: string;
+  type?: string;
+}
+
 interface SignInAPIResponse {
-  status: 'success' | 'error';
   token?: string;
   type?: string;
 }
