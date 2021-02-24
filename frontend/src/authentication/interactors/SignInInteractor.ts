@@ -15,10 +15,11 @@ export interface SignInState {
   errors: Errors;
   token: string;
   authenticated: boolean;
+  pending: boolean;
 }
 
 function newSignInState(): SignInState {
-  return { email: '', password: '', errors: {}, token: '', authenticated: false };
+  return { email: '', password: '', errors: {}, token: '', authenticated: false, pending: false };
 }
 
 export class SignInInteractor extends StateObservableInteractor<SignInState> {
@@ -28,6 +29,12 @@ export class SignInInteractor extends StateObservableInteractor<SignInState> {
     private publisher: Publisher
   ) {
     super(newSignInState());
+  }
+
+  @bind
+  public cleanUp(): void {
+    const { authenticated, token, ...newState } = newSignInState();
+    this.updateState(newState);
   }
 
   @bind
@@ -42,8 +49,10 @@ export class SignInInteractor extends StateObservableInteractor<SignInState> {
 
   @bind
   public async signIn(): Promise<void> {
-    if (!this.validateState()) return;
-    await this.performSignIn();
+    await this.withPendingState('pending', async () => {
+      if (!this.validateState()) return;
+      await this.performSignIn();
+    });
   }
 
   private validateState(): boolean {
@@ -80,7 +89,7 @@ export class SignInInteractor extends StateObservableInteractor<SignInState> {
   }
 
   private publishUserAuthenticatedEvent(token: string): void {
-    this.publisher.pusblish(USER_AUTHENTICATED_EVENT, { token });
+    this.publisher.publish(USER_AUTHENTICATED_EVENT, { token });
   }
 
   @bind

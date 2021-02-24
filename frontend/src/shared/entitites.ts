@@ -8,6 +8,10 @@ export interface ValidationErrorResponse {
   errors: ValidationError[];
 }
 
+export interface SuccessResponse {
+  status: 'success';
+}
+
 export interface ErrorResponse {
   status: 'error';
   type: string;

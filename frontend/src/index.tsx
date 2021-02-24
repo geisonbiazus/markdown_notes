@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { App, AppContext, AppProvider } from './app';
 import { AuthenticationProvider } from './authentication';
 import './i18n';
-import './index.css';
+import './shared/components/helpers.css';
 import * as serviceWorker from './serviceWorker';
 
 const appContext = new AppContext();

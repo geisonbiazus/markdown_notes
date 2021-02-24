@@ -69,4 +69,54 @@ describe('APIAuthenticationClient', () => {
       );
     });
   });
+
+  describe('signUp', () => {
+    it('requests to register the user and returns success', async () => {
+      const name = 'Name';
+      const email = 'user@example.com';
+      const password = 'password';
+
+      nockScope
+        .post(`/users/register`, { name, email, password })
+        .reply(201, { name, email, status: 'pending' });
+
+      const response = await client.signUp({ name, email, password });
+      expect(response).toEqual({ status: 'success' });
+    });
+
+    it('returns email_not_available error when email is already registered', async () => {
+      const name = 'Name';
+      const email = 'user@example.com';
+      const password = 'password';
+
+      nockScope
+        .post(`/users/register`, { name, email, password })
+        .reply(409, { type: 'email_not_available' });
+
+      const response = await client.signUp({ name, email, password });
+      expect(response).toEqual({ status: 'error', type: 'email_not_available' });
+    });
+
+    it('throws error if any other response is returned', async () => {
+      const name = 'Name';
+      const email = 'user@example.com';
+      const password = 'password';
+
+      nockScope
+        .post(`/users/register`, { name, email, password })
+        .reply(500, { type: 'unexpected' });
+
+      let error: Error | null = null;
+
+      try {
+        await client.signUp({ name, email, password });
+      } catch (e) {
+        error = e;
+      }
+
+      expect(error).toEqual(
+        new Error('Something went wrong. Status: 500. Body: {"type":"unexpected"}')
+      );
+    });
+  });
 });

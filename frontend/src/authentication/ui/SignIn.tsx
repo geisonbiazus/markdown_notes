@@ -1,6 +1,6 @@
-import React from 'react';
-import { Button } from 'react-bootstrap';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import {
   CenteredContainer,
   FormErrorMessage,
@@ -8,12 +8,17 @@ import {
   FormRow,
   NarrowContainer,
   TextField,
+  Button,
 } from '../../shared/components';
 import { useAuthenticationContext } from '../AuthenticationReactContext';
 
 export const SignIn: React.FC = () => {
   const { t } = useTranslation();
   const { signInState, signInInteractor } = useAuthenticationContext();
+
+  useEffect(() => {
+    return signInInteractor.cleanUp;
+  }, [signInInteractor]);
 
   return (
     <CenteredContainer>
@@ -27,7 +32,9 @@ export const SignIn: React.FC = () => {
               type="email"
               onChange={signInInteractor.setEmail}
               errorField="email"
+              value={signInState.email}
               errorType={signInState.errors.email}
+              disabled={signInState.pending}
             />
           </FormRow>
           <FormRow>
@@ -36,13 +43,18 @@ export const SignIn: React.FC = () => {
               type="password"
               onChange={signInInteractor.setPassword}
               errorField="password"
+              value={signInState.password}
               errorType={signInState.errors.password}
+              disabled={signInState.pending}
             />
           </FormRow>
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" loading={signInState.pending}>
             {t('Sign in')}
           </Button>
         </Form>
+        <div className="margin-top-1">
+          {t("Don't have an account?")} <Link to="/sign_up">{t('Sign up')}</Link>
+        </div>
       </NarrowContainer>
     </CenteredContainer>
   );

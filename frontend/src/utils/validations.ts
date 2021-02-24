@@ -6,3 +6,41 @@ export function validateRequired<T>(errors: Errors, state: T, field: keyof T): E
   }
   return errors;
 }
+
+export function validateEmail<T>(errors: Errors, state: T, field: keyof T): Errors {
+  const value = `${state[field]}`.trim();
+
+  if (value && !value.includes('@')) {
+    return { ...errors, [field]: 'invalid_email' };
+  }
+  return errors;
+}
+
+export function validateMinimumLength<T>(
+  errors: Errors,
+  state: T,
+  field: keyof T,
+  minimum: number
+): Errors {
+  const value = `${state[field]}`.trim();
+
+  if (value && value.length < minimum) {
+    return { ...errors, [field]: `length_min_${minimum}_chars` };
+  }
+  return errors;
+}
+
+export function validateConfirmation<T>(
+  errors: Errors,
+  state: T,
+  field: keyof T,
+  confirmationField: keyof T
+): Errors {
+  const value = `${state[field]}`.trim();
+  const confirmation = `${state[confirmationField]}`.trim();
+
+  if (value && confirmation && value !== confirmation) {
+    return { ...errors, [field]: 'does_not_match_confirmation' };
+  }
+  return errors;
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import { SignIn } from '../../authentication';
+import { SignIn, SignUp } from '../../authentication';
 import { Row, Col, AppBar, AppContainer } from '../../shared/components';
 
 export const UnauthenticatedApp: React.FC = () => (
@@ -11,6 +11,7 @@ export const UnauthenticatedApp: React.FC = () => (
         <Col>
           <Switch>
             <Route exact path="/sign_in" component={SignIn} />
+            <Route exact path="/sign_up" component={SignUp} />
             <Route path="/">
               <Redirect to="/sign_in" />
             </Route>

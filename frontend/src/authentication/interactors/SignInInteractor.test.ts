@@ -1,13 +1,22 @@
 import { FakePublisher } from '../../utils';
 import { InMemoryAuthenticationClient } from '../clients';
 import { InMemorySessionRepository } from '../repositories';
-import { SignInInteractor } from './SignInInteractor';
+import { SignInInteractor, SignInState } from './SignInInteractor';
 
 describe('SignInInteractor', () => {
   let interactor: SignInInteractor;
   let authenticationClient: InMemoryAuthenticationClient;
   let sessionRepository: InMemorySessionRepository;
   let publisher: FakePublisher;
+
+  let emptyState: SignInState = {
+    email: '',
+    password: '',
+    errors: {},
+    token: '',
+    authenticated: false,
+    pending: false,
+  };
 
   beforeEach(() => {
     authenticationClient = new InMemoryAuthenticationClient();
@@ -17,14 +26,34 @@ describe('SignInInteractor', () => {
   });
 
   describe('constructor', () => {
-    it('initializes with and empy state', () => {
-      expect(interactor.state).toEqual({
-        email: '',
-        password: '',
-        errors: {},
-        token: '',
-        authenticated: false,
-      });
+    it('initializes with an empy state', () => {
+      expect(interactor.state).toEqual(emptyState);
+    });
+  });
+
+  describe('cleanUp', () => {
+    it('resets the state but keep', async () => {
+      interactor.setEmail('invalid');
+      await interactor.signIn();
+      interactor.cleanUp();
+
+      expect(interactor.state).toEqual(emptyState);
+    });
+
+    it('keeps token and authenticated state', async () => {
+      const email = 'user@example.com';
+      const password = 'password';
+      const token = 'token';
+      authenticationClient.addActiveUser('Name', email, password, token);
+
+      interactor.setEmail(email);
+      interactor.setPassword(password);
+
+      await interactor.signIn();
+      interactor.cleanUp();
+
+      expect(interactor.state.token).toEqual(token);
+      expect(interactor.state.authenticated).toBeTruthy();
     });
   });
 
@@ -47,7 +76,7 @@ describe('SignInInteractor', () => {
       const email = 'user@example.com';
       const password = 'password';
       const token = 'token';
-      authenticationClient.addPendingUser(email, password, token);
+      authenticationClient.addPendingUser('Name', email, password, token);
 
       interactor.setEmail(email);
       interactor.setPassword(password);
@@ -61,7 +90,7 @@ describe('SignInInteractor', () => {
       const email = 'user@example.com';
       const password = 'password';
       const token = 'token';
-      authenticationClient.addActiveUser(email, password, token);
+      authenticationClient.addActiveUser('Name', email, password, token);
 
       interactor.setEmail(email);
       interactor.setPassword(password);
@@ -77,7 +106,7 @@ describe('SignInInteractor', () => {
       const email = 'user@example.com';
       const password = 'password';
       const token = 'token';
-      authenticationClient.addActiveUser(email, password, token);
+      authenticationClient.addActiveUser('Name', email, password, token);
 
       interactor.setEmail(email);
       interactor.setPassword(password);
@@ -120,7 +149,7 @@ describe('SignInInteractor', () => {
     beforeEach(async () => {
       const email = 'user@example.com';
       const password = 'password';
-      authenticationClient.addActiveUser(email, password, 'token');
+      authenticationClient.addActiveUser('Name', email, password, 'token');
 
       interactor.setEmail(email);
       interactor.setPassword(password);

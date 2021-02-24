@@ -1,6 +1,7 @@
-import { AuthenticationClient, SignInResponse, Token } from '../entities';
+import { AuthenticationClient, SignInResponse, SignUpRequest, SignUpResponse } from '../entities';
 
 interface User {
+  name: string;
   email: string;
   password: string;
   token: string;
@@ -24,11 +25,24 @@ export class InMemoryAuthenticationClient implements AuthenticationClient {
     return { status: 'success', token: user.token };
   }
 
-  public addActiveUser(email: string, password: string, token: string): void {
-    this.users.push({ email, password, token, status: 'active' });
+  public async signUp(request: SignUpRequest): Promise<SignUpResponse> {
+    const user = this.users.find((user) => user.email === request.email);
+
+    if (user) return { status: 'error', type: 'email_not_available' };
+
+    this.users.push({ ...request, token: 'token', status: 'pending' });
+    return { status: 'success' };
   }
 
-  public addPendingUser(email: string, password: string, token: string): void {
-    this.users.push({ email, password, token, status: 'pending' });
+  public addActiveUser(name: string, email: string, password: string, token: string): void {
+    this.users.push({ name, email, password, token, status: 'active' });
+  }
+
+  public addPendingUser(name: string, email: string, password: string, token: string): void {
+    this.users.push({ name, email, password, token, status: 'pending' });
+  }
+
+  public get lastUser(): User {
+    return this.users[this.users.length - 1];
   }
 }

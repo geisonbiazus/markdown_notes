@@ -8,7 +8,7 @@ describe('PubSub', () => {
 
     pubSub.subscribe('event_name', () => (receivedEvent = 'event_name'));
 
-    pubSub.pusblish('event_name');
+    pubSub.publish('event_name');
 
     expect(receivedEvent).toEqual('event_name');
   });
@@ -21,7 +21,7 @@ describe('PubSub', () => {
     pubSub.subscribe('event_name', () => (subscriber1Event = 'event_name'));
     pubSub.subscribe('event_name', () => (subscriber2Event = 'event_name'));
 
-    pubSub.pusblish('event_name');
+    pubSub.publish('event_name');
 
     expect(subscriber1Event).toEqual('event_name');
     expect(subscriber2Event).toEqual('event_name');
@@ -37,9 +37,9 @@ describe('PubSub', () => {
     pubSub.subscribe('event_2', () => (subscriber2Event = 'event_2'));
     pubSub.subscribe('event_1', () => (subscriber3Event = 'event_1'));
 
-    pubSub.pusblish('event_1');
-    pubSub.pusblish('event_2');
-    pubSub.pusblish('event_3');
+    pubSub.publish('event_1');
+    pubSub.publish('event_2');
+    pubSub.publish('event_3');
 
     expect(subscriber1Event).toEqual('event_2');
     expect(subscriber2Event).toEqual('event_2');
@@ -56,7 +56,7 @@ describe('PubSub', () => {
 
     const sentPayload: EventPayload = { key1: 'val1', key2: 'val2' };
 
-    pubSub.pusblish('event_name', sentPayload);
+    pubSub.publish('event_name', sentPayload);
 
     expect(receivedPayload!).toEqual(sentPayload);
   });
@@ -72,7 +72,7 @@ describe('PubSub', () => {
       callbackFinished = true;
     });
 
-    pubSub.pusblish('event_name');
+    pubSub.publish('event_name');
 
     expect(receivedEvent).toEqual('event_name');
     expect(callbackFinished).toBeFalsy();
@@ -92,16 +92,16 @@ describe('PubSub', () => {
     const dispose4 = pubSub.subscribe('event', () => events4.push('event'));
     const dispose5 = pubSub.subscribe('event', () => events5.push('event'));
 
-    pubSub.pusblish('event');
+    pubSub.publish('event');
 
     dispose2();
 
-    pubSub.pusblish('event');
+    pubSub.publish('event');
 
     dispose4();
     dispose5();
 
-    pubSub.pusblish('event');
+    pubSub.publish('event');
 
     expect(events1.length).toEqual(3);
     expect(events2.length).toEqual(1);
@@ -118,12 +118,12 @@ describe('PubSub', () => {
     const dispose = pubSub.subscribe('event', () => events1.push('event'));
     pubSub.subscribe('event', () => events2.push('event'));
 
-    pubSub.pusblish('event');
+    pubSub.publish('event');
 
     dispose();
     dispose();
 
-    pubSub.pusblish('event');
+    pubSub.publish('event');
 
     expect(events1.length).toEqual(1);
     expect(events2.length).toEqual(2);

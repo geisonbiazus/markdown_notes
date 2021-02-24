@@ -31,7 +31,7 @@ export class RemoveNoteInteractor extends StateObservableInteractor<RemoveNoteSt
 
       await this.client.removeNote(this.state.note.id);
 
-      this.publisher.pusblish<NoteRemovedPayload>(NOTE_REMOVED_EVENT, this.state.note);
+      this.publisher.publish<NoteRemovedPayload>(NOTE_REMOVED_EVENT, this.state.note);
 
       this.updateState({ note: undefined, promptConfirmation: false });
     });

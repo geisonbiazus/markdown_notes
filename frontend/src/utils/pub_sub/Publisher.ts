@@ -1,3 +1,3 @@
 export interface Publisher {
-  pusblish<T>(event: string, payload?: T): void;
+  publish<T>(event: string, payload?: T): void;
 }
