@@ -15,10 +15,11 @@ export interface SignInState {
   errors: Errors;
   token: string;
   authenticated: boolean;
+  pending: boolean;
 }
 
 function newSignInState(): SignInState {
-  return { email: '', password: '', errors: {}, token: '', authenticated: false };
+  return { email: '', password: '', errors: {}, token: '', authenticated: false, pending: false };
 }
 
 export class SignInInteractor extends StateObservableInteractor<SignInState> {
@@ -48,8 +49,10 @@ export class SignInInteractor extends StateObservableInteractor<SignInState> {
 
   @bind
   public async signIn(): Promise<void> {
-    if (!this.validateState()) return;
-    await this.performSignIn();
+    await this.withPendingState('pending', async () => {
+      if (!this.validateState()) return;
+      await this.performSignIn();
+    });
   }
 
   private validateState(): boolean {

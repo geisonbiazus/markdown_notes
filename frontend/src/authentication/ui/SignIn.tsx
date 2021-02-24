@@ -34,6 +34,7 @@ export const SignIn: React.FC = () => {
               errorField="email"
               value={signInState.email}
               errorType={signInState.errors.email}
+              disabled={signInState.pending}
             />
           </FormRow>
           <FormRow>
@@ -44,9 +45,10 @@ export const SignIn: React.FC = () => {
               errorField="password"
               value={signInState.password}
               errorType={signInState.errors.password}
+              disabled={signInState.pending}
             />
           </FormRow>
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" loading={signInState.pending}>
             {t('Sign in')}
           </Button>
         </Form>

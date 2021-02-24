@@ -36,6 +36,7 @@ export const SignUp: React.FC = () => {
               onChange={signUpInteractor.setName}
               errorField="name"
               errorType={signUpState.errors.name}
+              disabled={signUpState.pending}
             />
           </FormRow>
           <FormRow>
@@ -46,6 +47,7 @@ export const SignUp: React.FC = () => {
               onChange={signUpInteractor.setEmail}
               errorField="email"
               errorType={signUpState.errors.email}
+              disabled={signUpState.pending}
             />
           </FormRow>
           <FormRow>
@@ -56,6 +58,7 @@ export const SignUp: React.FC = () => {
               onChange={signUpInteractor.setPassword}
               errorField="password"
               errorType={signUpState.errors.password}
+              disabled={signUpState.pending}
             />
           </FormRow>
           <FormRow>
@@ -66,9 +69,10 @@ export const SignUp: React.FC = () => {
               onChange={signUpInteractor.setPasswordConfirmation}
               errorField="passwordConfirmation"
               errorType={signUpState.errors.passwordConfirmation}
+              disabled={signUpState.pending}
             />
           </FormRow>
-          <Button variant="primary" type="submit">
+          <Button variant="primary" type="submit" loading={signUpState.pending}>
             {t('Sign up')}
           </Button>
         </Form>

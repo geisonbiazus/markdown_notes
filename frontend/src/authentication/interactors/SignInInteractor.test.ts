@@ -15,6 +15,7 @@ describe('SignInInteractor', () => {
     errors: {},
     token: '',
     authenticated: false,
+    pending: false,
   };
 
   beforeEach(() => {

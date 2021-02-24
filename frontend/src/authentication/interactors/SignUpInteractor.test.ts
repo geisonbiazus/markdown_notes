@@ -14,6 +14,7 @@ describe('SignUpinteractor', () => {
     passwordConfirmation: '',
     errors: {},
     finished: false,
+    pending: false,
   };
 
   beforeEach(() => {

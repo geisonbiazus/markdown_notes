@@ -19,6 +19,7 @@ export interface SignUpState {
   passwordConfirmation: string;
   errors: Errors;
   finished: boolean;
+  pending: boolean;
 }
 
 export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
@@ -30,6 +31,7 @@ export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
       passwordConfirmation: '',
       errors: {},
       finished: false,
+      pending: false,
     });
   }
 
@@ -55,8 +57,10 @@ export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
 
   @bind
   public async signUp(): Promise<void> {
-    if (!this.validateState()) return;
-    await this.performSignUp();
+    await this.withPendingState('pending', async () => {
+      if (!this.validateState()) return;
+      await this.performSignUp();
+    });
   }
 
   private validateState(): boolean {
