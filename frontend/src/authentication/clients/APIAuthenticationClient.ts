@@ -1,5 +1,11 @@
 import { handleError, HTTPClient } from '../../utils';
-import { AuthenticationClient, SignInResponse, SignUpRequest, SignUpResponse } from '../entities';
+import {
+  ActivateUserResponse,
+  AuthenticationClient,
+  SignInResponse,
+  SignUpRequest,
+  SignUpResponse,
+} from '../entities';
 
 export class APIAuthenticationClient implements AuthenticationClient {
   constructor(private httpClient: HTTPClient) {}
@@ -21,6 +27,10 @@ export class APIAuthenticationClient implements AuthenticationClient {
     if (response.status === 404) return { status: 'error', type: 'not_found' };
     if (response.status === 403) return { status: 'error', type: 'pending_user' };
     throw handleError(response);
+  }
+
+  public async activateUser(token: String): Promise<ActivateUserResponse> {
+    throw new Error('Method not implemented.');
   }
 }
 
