@@ -4,7 +4,6 @@ import { SignUpInteractor, SignUpState } from './SignUpInteractor';
 
 describe('SignUpinteractor', () => {
   let client: InMemoryAuthenticationClient;
-  let publisher: FakePublisher;
   let interactor: SignUpInteractor;
 
   const emptyState: SignUpState = {
@@ -19,8 +18,7 @@ describe('SignUpinteractor', () => {
 
   beforeEach(() => {
     client = new InMemoryAuthenticationClient();
-    publisher = new FakePublisher();
-    interactor = new SignUpInteractor(client, publisher);
+    interactor = new SignUpInteractor(client);
   });
 
   describe('constructor', () => {
@@ -72,11 +70,6 @@ describe('SignUpinteractor', () => {
 
         expect(interactor.state.errors.password).toEqual('length_min_8_chars');
       });
-
-      it('does not publish any event', async () => {
-        await interactor.signUp();
-        expect(publisher.lastEvent).toBeUndefined();
-      });
     });
 
     describe('with a valid input', () => {
@@ -106,13 +99,12 @@ describe('SignUpinteractor', () => {
         expect(interactor.state.finished).toEqual(true);
       });
 
-      it('adds error and do not publish the event when email is not available in the client', async () => {
+      it('adds error when email is not available in the client', async () => {
         client.addActiveUser('User', 'user@example.com', 'anything', 'token');
 
         await interactor.signUp();
 
         expect(interactor.state.errors).toEqual({ email: 'not_available' });
-        expect(publisher.lastEvent).toBeUndefined();
       });
     });
   });

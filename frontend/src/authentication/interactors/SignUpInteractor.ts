@@ -23,7 +23,7 @@ export interface SignUpState {
 }
 
 export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
-  constructor(private client: AuthenticationClient, private publisher: Publisher) {
+  constructor(private client: AuthenticationClient) {
     super({
       name: '',
       email: '',

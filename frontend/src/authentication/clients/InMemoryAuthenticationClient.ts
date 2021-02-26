@@ -41,7 +41,7 @@ export class InMemoryAuthenticationClient implements AuthenticationClient {
   }
 
   public async activateUser(token: String): Promise<ActivateUserResponse> {
-    const user = this.users.find((user) => user.token == token);
+    const user = this.users.find((user) => user.token === token);
 
     if (!user) return { status: 'error', type: 'not_found' };
 
