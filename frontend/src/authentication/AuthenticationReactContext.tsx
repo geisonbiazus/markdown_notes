@@ -13,6 +13,8 @@ export interface AuthenticationContextValue {
   signInInteractor: SignInInteractor;
   signUpState: SignUpState;
   signUpInteractor: SignUpInteractor;
+  activateUserState: ActivateUserState;
+  activateUserInteractor: ActivateUserInteractor;
 }
 
 const AuthenticationReactContext = React.createContext<AuthenticationContextValue>(null!);
@@ -60,7 +62,7 @@ function useActivateUserInteractor(): [ActivateUserState, ActivateUserInteractor
 export const AuthenticationProvider: React.FC = ({ children }) => {
   const [signInState, signInInteractor] = useSigninInteractor();
   const [signUpState, signUpInteractor] = useSignUpInteractor();
-  const [activateUserState, activateUserinteractor] = useActivateUserInteractor();
+  const [activateUserState, activateUserInteractor] = useActivateUserInteractor();
 
   const value = {
     signInState,
@@ -68,7 +70,7 @@ export const AuthenticationProvider: React.FC = ({ children }) => {
     signUpState,
     signUpInteractor,
     activateUserState,
-    activateUserinteractor,
+    activateUserInteractor,
   };
 
   return (
