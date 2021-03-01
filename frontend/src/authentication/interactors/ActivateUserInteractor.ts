@@ -15,7 +15,7 @@ export class ActivateUserInteractor extends StateObservableInteractor<ActivateUs
 
     const response = await this.client.activateUser(token);
 
-    if (response.status == 'success') {
+    if (response.status === 'success') {
       this.updateState({ status: 'activated' });
     } else {
       this.updateState({ status: 'not_found' });

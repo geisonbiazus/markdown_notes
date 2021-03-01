@@ -30,7 +30,11 @@ export class APIAuthenticationClient implements AuthenticationClient {
   }
 
   public async activateUser(token: String): Promise<ActivateUserResponse> {
-    throw new Error('Method not implemented.');
+    const response = await this.httpClient.post('/users/activate', { token });
+
+    if (response.status === 202) return { status: 'success' };
+    if (response.status === 404) return { status: 'error', type: 'not_found' };
+    throw handleError(response);
   }
 }
 

@@ -119,4 +119,42 @@ describe('APIAuthenticationClient', () => {
       );
     });
   });
+
+  describe('activateUser', () => {
+    it('returns success when user is activated', async () => {
+      const token = 'token';
+
+      nockScope.post('/users/activate', { token }).reply(202);
+
+      const response = await client.activateUser(token);
+      expect(response).toEqual({ status: 'success' });
+    });
+
+    it('returns error when token is not found', async () => {
+      const token = 'token';
+
+      nockScope.post('/users/activate', { token }).reply(404);
+
+      const response = await client.activateUser(token);
+      expect(response).toEqual({ status: 'error', type: 'not_found' });
+    });
+
+    it('throws error if any other response is returned', async () => {
+      const token = 'token';
+
+      nockScope.post('/users/activate', { token }).reply(500, { type: 'unexpected' });
+
+      let error: Error | null = null;
+
+      try {
+        await client.activateUser(token);
+      } catch (e) {
+        error = e;
+      }
+
+      expect(error).toEqual(
+        new Error('Something went wrong. Status: 500. Body: {"type":"unexpected"}')
+      );
+    });
+  });
 });
