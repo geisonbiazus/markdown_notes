@@ -1,4 +1,10 @@
-import { AuthenticationClient, SignInResponse, SignUpRequest, SignUpResponse } from '../entities';
+import {
+  ActivateUserResponse,
+  AuthenticationClient,
+  SignInResponse,
+  SignUpRequest,
+  SignUpResponse,
+} from '../entities';
 
 interface User {
   name: string;
@@ -31,6 +37,15 @@ export class InMemoryAuthenticationClient implements AuthenticationClient {
     if (user) return { status: 'error', type: 'email_not_available' };
 
     this.users.push({ ...request, token: 'token', status: 'pending' });
+    return { status: 'success' };
+  }
+
+  public async activateUser(token: String): Promise<ActivateUserResponse> {
+    const user = this.users.find((user) => user.token === token);
+
+    if (!user) return { status: 'error', type: 'not_found' };
+
+    user.status = 'active';
     return { status: 'success' };
   }
 

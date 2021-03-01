@@ -2,13 +2,13 @@ import { AppConfig } from '../app';
 import { HTTPClient, PubSub } from '../utils';
 import { APIAuthenticationClient, InMemoryAuthenticationClient } from './clients';
 import { AuthenticationClient, SessionRepository } from './entities';
-import { SignInInteractor } from './interactors';
-import { SignUpInteractor } from './interactors/SignUpInteractor';
+import { ActivateUserInteractor, SignInInteractor, SignUpInteractor } from './interactors';
 import { LocalStorageSessionRepository } from './repositories';
 
 export class AuthenticationContext {
   private signInInteractorInstance?: SignInInteractor;
   private signUpInteractorInstance?: SignUpInteractor;
+  private activateUserInteractorInstance?: ActivateUserInteractor;
   private authenticationClientInstance?: AuthenticationClient;
 
   constructor(private httpClient: HTTPClient, private pubSub: PubSub, private config: AppConfig) {}
@@ -28,9 +28,16 @@ export class AuthenticationContext {
 
   public get signUpInteractor(): SignUpInteractor {
     if (!this.signUpInteractorInstance) {
-      this.signUpInteractorInstance = new SignUpInteractor(this.authenticationClient, this.pubSub);
+      this.signUpInteractorInstance = new SignUpInteractor(this.authenticationClient);
     }
     return this.signUpInteractorInstance;
+  }
+
+  public get activateUserInteractor(): ActivateUserInteractor {
+    if (!this.activateUserInteractorInstance) {
+      this.activateUserInteractorInstance = new ActivateUserInteractor(this.authenticationClient);
+    }
+    return this.activateUserInteractorInstance;
   }
 
   public get sessionRepository(): SessionRepository {

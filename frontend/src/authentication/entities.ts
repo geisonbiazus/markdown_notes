@@ -3,6 +3,7 @@ import { ErrorResponse, SuccessResponse } from '../shared/entitites';
 export type Token = string;
 
 export interface AuthenticationClient {
+  activateUser(token: String): Promise<ActivateUserResponse>;
   signIn(email: string, password: string): Promise<SignInResponse>;
   signUp(request: SignUpRequest): Promise<SignUpResponse>;
 }
@@ -27,3 +28,4 @@ export interface SignUpRequest {
 }
 
 export type SignUpResponse = SuccessResponse | ErrorResponse;
+export type ActivateUserResponse = SuccessResponse | ErrorResponse;
