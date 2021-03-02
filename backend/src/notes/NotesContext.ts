@@ -1,6 +1,7 @@
 import { EntityManager, getConnection } from 'typeorm';
 import { MarkdownConverter } from './entities';
-import { NoteInteractor, NoteRepository } from './interactors';
+import { NoteInteractor } from './interactors';
+import { NoteRepository } from './ports/NoteRepository';
 import { InMemoryNoteRepository, TypeORMNoteRepository } from './repositories';
 
 export interface Config {

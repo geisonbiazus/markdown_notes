@@ -1,64 +1,26 @@
-import { validationErrorResponse, ValidationErrorResponse } from '../../utils/validations';
 import { MarkdownConverter, Note } from '../entities';
-import { SaveNoteValidator } from '../validators';
-
-export interface NoteRepository {
-  getNoteById(id: string): Promise<Note | null>;
-  saveNote(note: Note): Promise<void>;
-  getUserNotesSortedByTitle(userId: string): Promise<Note[]>;
-  removeNote(note: Note): Promise<void>;
-}
-
-export interface SaveNoteRequest {
-  id?: string;
-  title?: string;
-  body?: string;
-  userId: string;
-}
+import { NoteRepository } from '../ports/NoteRepository';
+import { GetNotesUseCase } from '../useCases/GetNotesUseCase';
+import { GetNoteUseCase } from '../useCases/GetNoteUseCase';
+import { RemoveNoteUseCase } from '../useCases/RemoveNoteUseCase';
+import { SaveNoteRequest, SaveNoteResponse, SaveNoteUseCase } from '../useCases/SaveNoteUseCase';
 
 export class NoteInteractor {
   constructor(private repo: NoteRepository, private markdownConverter: MarkdownConverter) {}
 
   public async saveNote(request: SaveNoteRequest): Promise<SaveNoteResponse> {
-    const validator = new SaveNoteValidator(request);
-
-    if (!validator.isValid()) return validationErrorResponse(validator.errors);
-
-    const note = new Note(request);
-    note.html = this.markdownConverter.convertToHTML(note.body);
-
-    await this.repo.saveNote(note);
-
-    return { status: 'success', note };
+    return new SaveNoteUseCase(this.repo, this.markdownConverter).saveNote(request);
   }
 
   public async getNote(userId: string, noteId: string): Promise<Note | null> {
-    const note = await this.repo.getNoteById(noteId);
-
-    if (!note) return null;
-    if (note.userId !== userId) return null;
-
-    return note;
+    return new GetNoteUseCase(this.repo).getNote(userId, noteId);
   }
 
   public async getNotes(userId: string): Promise<Note[]> {
-    return await this.repo.getUserNotesSortedByTitle(userId);
+    return new GetNotesUseCase(this.repo).getNotes(userId);
   }
 
   public async removeNote(id: string): Promise<boolean> {
-    const note = await this.repo.getNoteById(id);
-
-    if (!note) return false;
-
-    await this.repo.removeNote(note);
-
-    return true;
+    return new RemoveNoteUseCase(this.repo).removeNote(id);
   }
-}
-
-export type SaveNoteResponse = SaveNoteSuccessResponse | ValidationErrorResponse;
-
-export interface SaveNoteSuccessResponse {
-  status: 'success';
-  note: Note;
 }
