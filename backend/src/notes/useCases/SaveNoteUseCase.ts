@@ -7,7 +7,7 @@ import { SaveNoteValidator } from '../validators/SaveNoteValidator';
 export class SaveNoteUseCase {
   constructor(private repo: NoteRepository, private markdownConverter: MarkdownConverter) {}
 
-  public async saveNote(request: SaveNoteRequest): Promise<SaveNoteResponse> {
+  public async run(request: SaveNoteRequest): Promise<SaveNoteResponse> {
     const validator = new SaveNoteValidator(request);
 
     if (!validator.isValid()) return validationErrorResponse(validator.errors);

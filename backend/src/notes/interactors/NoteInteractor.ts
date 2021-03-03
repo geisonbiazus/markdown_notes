@@ -9,18 +9,18 @@ export class NoteInteractor {
   constructor(private repo: NoteRepository, private markdownConverter: MarkdownConverter) {}
 
   public async saveNote(request: SaveNoteRequest): Promise<SaveNoteResponse> {
-    return new SaveNoteUseCase(this.repo, this.markdownConverter).saveNote(request);
+    return new SaveNoteUseCase(this.repo, this.markdownConverter).run(request);
   }
 
   public async getNote(userId: string, noteId: string): Promise<Note | null> {
-    return new GetNoteUseCase(this.repo).getNote(userId, noteId);
+    return new GetNoteUseCase(this.repo).run(userId, noteId);
   }
 
   public async getNotes(userId: string): Promise<Note[]> {
-    return new GetNotesUseCase(this.repo).getNotes(userId);
+    return new GetNotesUseCase(this.repo).run(userId);
   }
 
   public async removeNote(id: string): Promise<boolean> {
-    return new RemoveNoteUseCase(this.repo).removeNote(id);
+    return new RemoveNoteUseCase(this.repo).run(id);
   }
 }
