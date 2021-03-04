@@ -1,7 +1,7 @@
-import { Note } from '../entities';
 import { EntityManager } from 'typeorm';
-import { NoteDB } from './typeORM/entities/NoteDB';
+import { Note } from '../entities/Note';
 import { NoteRepository } from '../ports/NoteRepository';
+import { NoteDB } from './typeORM/entities/NoteDB';
 
 export class TypeORMNoteRepository implements NoteRepository {
   constructor(private entityManager: EntityManager) {}

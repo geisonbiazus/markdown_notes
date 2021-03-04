@@ -1,5 +1,4 @@
 import { uuid } from '../../utils/uuid';
-import { ValidationError } from '../../utils/validations';
 import { Note } from '../entities/Note';
 import { InMemoryNoteRepository } from '../repositories/InMemoryNoteRepository';
 import { GetNotesUseCase } from './GetNotesUseCase';

@@ -1,6 +1,6 @@
+import { connect, dbTest, disconnect, uuid } from '../../utils';
+import { Note } from '../entities/Note';
 import { TypeORMNoteRepository } from './TypeORMNoteRepository';
-import { Note } from '../entities';
-import { uuid, connect, disconnect, dbTest } from '../../utils';
 
 describe('TypeORMNoteRespository', () => {
   beforeAll(async () => {
