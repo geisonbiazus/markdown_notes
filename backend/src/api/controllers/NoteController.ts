@@ -1,7 +1,9 @@
 import bind from 'bind-decorator';
 import { Request, Response } from 'express';
 import { User } from '../../authentication';
-import { Note, NoteInteractor, SaveNoteRequest, SaveNoteResponse } from '../../notes';
+import { Note } from '../../notes/entities/Note';
+import { NotesFacade } from '../../notes/NotesFacade';
+import { SaveNoteRequest, SaveNoteResponse } from '../../notes/useCases/SaveNoteUseCase';
 
 interface NoteJSON {
   id: string;
@@ -11,16 +13,16 @@ interface NoteJSON {
 }
 
 export class NoteController {
-  private noteInteractor: NoteInteractor;
+  private notesFacade: NotesFacade;
 
-  constructor(noteInteractor: NoteInteractor) {
-    this.noteInteractor = noteInteractor;
+  constructor(notesFacade: NotesFacade) {
+    this.notesFacade = notesFacade;
   }
 
   @bind
   public async saveNote(req: Request, res: Response, user: User): Promise<void> {
     const request = this.buildSaveNoteRequest(req, user);
-    const response = await this.noteInteractor.saveNote(request);
+    const response = await this.notesFacade.saveNote(request);
     this.sendSaveNoteResponse(res, response);
   }
 
@@ -48,7 +50,7 @@ export class NoteController {
 
   @bind
   public async getNote(req: Request, res: Response, user: User): Promise<void> {
-    const note = await this.noteInteractor.getNote(user.id, req.params.id);
+    const note = await this.notesFacade.getNote(user.id, req.params.id);
 
     if (note) {
       res.status(200);
@@ -61,7 +63,7 @@ export class NoteController {
 
   @bind
   public async getNotes(_req: Request, res: Response, user: User): Promise<void> {
-    const notes = await this.noteInteractor.getNotes(user.id);
+    const notes = await this.notesFacade.getNotes(user.id);
 
     res.status(200);
     res.json(notes.map(this.noteJson));
@@ -69,7 +71,7 @@ export class NoteController {
 
   @bind
   public async removeNote(req: Request, res: Response): Promise<void> {
-    if (await this.noteInteractor.removeNote(req.params.id)) {
+    if (await this.notesFacade.removeNote(req.params.id)) {
       res.status(200);
       res.json();
     } else {

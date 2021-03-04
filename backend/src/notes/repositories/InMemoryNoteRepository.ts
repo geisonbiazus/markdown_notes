@@ -1,5 +1,5 @@
-import { NoteRepository } from '../interactors/NoteInteractor';
 import { Note } from '../entities/Note';
+import { NoteRepository } from '../ports/NoteRepository';
 
 export class InMemoryNoteRepository implements NoteRepository {
   private notes: Record<string, Note> = {};
@@ -20,5 +20,14 @@ export class InMemoryNoteRepository implements NoteRepository {
 
   async removeNote(note: Note): Promise<void> {
     delete this.notes[note.id];
+  }
+
+  private static singletonInstance?: InMemoryNoteRepository;
+
+  public static get instance(): InMemoryNoteRepository {
+    if (!this.singletonInstance) {
+      this.singletonInstance = new InMemoryNoteRepository();
+    }
+    return this.singletonInstance;
   }
 }
