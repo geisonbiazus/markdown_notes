@@ -1,6 +1,6 @@
 import { Email, EmailType } from '../entities';
-import { EmailProvider } from '../interactors';
 import sgMail from '@sendgrid/mail';
+import { EmailProvider } from '../ports/EmailProvider';
 
 export interface TemplateIdsMap {
   userActivation: string;

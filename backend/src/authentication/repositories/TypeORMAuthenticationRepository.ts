@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 import { User } from '../entities';
-import { AuthenticationRepository } from '../interactors';
+import { AuthenticationRepository } from '../ports/AuthenticationRepository';
 import { UserDB } from './typeORM/entities/UserDB';
 
 export class TypeORMAuthenticationRepository implements AuthenticationRepository {

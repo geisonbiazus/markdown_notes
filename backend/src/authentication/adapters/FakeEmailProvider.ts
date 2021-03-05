@@ -1,5 +1,5 @@
 import { Email } from '../entities';
-import { EmailProvider } from '../interactors';
+import { EmailProvider } from '../ports/EmailProvider';
 
 export class FakeEmailProvider implements EmailProvider {
   public lastEmail?: Email;

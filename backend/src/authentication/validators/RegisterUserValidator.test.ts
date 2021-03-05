@@ -1,5 +1,5 @@
 import { ValidationError } from '../../utils/validations';
-import { RegisterUserRequest } from '../interactors';
+import { RegisterUserRequest } from '../useCases/RegisterUserUseCase';
 import { RegisterUserValidator } from './RegisterUserValidator';
 
 const validRequest: RegisterUserRequest = {
