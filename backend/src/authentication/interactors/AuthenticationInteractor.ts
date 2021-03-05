@@ -1,18 +1,17 @@
-import { errorResponse, ErrorResponse } from '../../utils/ErrorResponse';
 import { IDGenerator } from '../../utils/IDGenerator';
 import { Publisher } from '../../utils/pub_sub';
-import { validationErrorResponse, ValidationErrorResponse } from '../../utils/validations';
+import { PasswordManager, TokenManager, User } from '../entities';
+import { AuthenticationRepository } from '../ports/AuthenticationRepository';
+import { EmailProvider } from '../ports/EmailProvider';
+import { ActivateUserUseCase } from '../useCases/ActivateUserUseCase';
+import { AuthenticateResponse, AuthenticateUseCase } from '../useCases/AuthenticateUseCase';
+import { GetAuthenticatedUserUseCase } from '../useCases/GetAuthenticatedUserUseCase';
+import { NotifyUserActivationUseCase } from '../useCases/NotifyUserActivationUseCase';
 import {
-  Email,
-  EmailType,
-  InvalidTokenError,
-  PasswordManager,
-  TokenExpiredError,
-  TokenManager,
-  User,
-} from '../entities';
-import { UserCreatedEvent } from '../events';
-import { RegisterUserValidator } from '../validators/RegisterUserValidator';
+  RegisterUserRequest,
+  RegisterUserResponse,
+  RegisterUserUseCase,
+} from '../useCases/RegisterUserUseCase';
 
 export class AuthenticationInteractor {
   constructor(
@@ -25,177 +24,36 @@ export class AuthenticationInteractor {
     private publisher: Publisher
   ) {}
 
-  public async authenticate(email: string, password: string): Promise<AuthenticateResponse> {
-    const user = await this.repository.getUserByEmail(email);
-
-    if (!user) {
-      return errorResponse('not_found');
-    }
-
-    if (!(await this.verifyPassword(user, password))) {
-      return errorResponse('not_found');
-    }
-
-    if (user.isPending) {
-      return errorResponse('pending_user');
-    }
-
-    return { status: 'success', token: this.tokenManager.encode(user.id) };
-  }
-
-  private async verifyPassword(user: User, password: string): Promise<boolean> {
-    return await this.passwordManager.verifyPassword(user.password, password, user.email);
-  }
-
-  public async getAuthenticatedUser(token: string): Promise<User | null> {
-    try {
-      const userId = this.tokenManager.decode(token);
-      return await this.repository.getUserById(userId);
-    } catch (e) {
-      if (e instanceof InvalidTokenError) return null;
-      if (e instanceof TokenExpiredError) return null;
-      throw e;
-    }
-  }
-
-  public async registerUser(request: RegisterUserRequest): Promise<RegisterUserResponse> {
-    const validator = new RegisterUserValidator(request);
-
-    if (!validator.isValid()) {
-      return validationErrorResponse(validator.errors);
-    }
-
-    if (!(await this.isEmailAvailable(request.email))) {
-      return errorResponse('email_not_available');
-    }
-
-    const user = await this.createNewUser(request);
-    await this.publishUserCreatedEvent(user);
-
-    return { status: 'success', user };
-  }
-
-  private async isEmailAvailable(email: string): Promise<boolean> {
-    return (await this.repository.getUserByEmail(email)) === null;
-  }
-
-  private async createNewUser(request: RegisterUserRequest): Promise<User> {
-    const user = new User({
-      id: this.idGenerator.generate(),
-      name: request.name,
-      email: request.email,
-      password: await this.passwordManager.hashPassword(request.password, request.email),
-      status: 'pending',
-    });
-
-    await this.repository.saveUser(user);
-
-    return user;
-  }
-
-  private async publishUserCreatedEvent(user: User): Promise<void> {
-    await this.publisher.publish(
-      new UserCreatedEvent({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        status: user.status,
-      })
+  public authenticate(email: string, password: string): Promise<AuthenticateResponse> {
+    return new AuthenticateUseCase(this.repository, this.tokenManager, this.passwordManager).run(
+      email,
+      password
     );
   }
 
-  public async activateUser(token: string): Promise<boolean> {
-    const user = await this.getUserFromToken(token);
-
-    if (!user) return false;
-
-    return await this.activatePendingUser(user);
+  public getAuthenticatedUser(token: string): Promise<User | null> {
+    return new GetAuthenticatedUserUseCase(this.repository, this.tokenManager).run(token);
   }
 
-  private async getUserFromToken(token: string): Promise<User | null> {
-    const userId = this.getUserIdFromToken(token);
-
-    if (!userId) return null;
-
-    return await this.repository.getUserById(userId);
+  public registerUser(request: RegisterUserRequest): Promise<RegisterUserResponse> {
+    return new RegisterUserUseCase(
+      this.repository,
+      this.passwordManager,
+      this.idGenerator,
+      this.publisher
+    ).run(request);
   }
 
-  private getUserIdFromToken(token: string): string | null {
-    try {
-      return this.tokenManager.decode(token);
-    } catch (e) {
-      if (e instanceof InvalidTokenError) return null;
-      if (e instanceof TokenExpiredError) return null;
-      throw e;
-    }
+  public activateUser(token: string): Promise<boolean> {
+    return new ActivateUserUseCase(this.repository, this.tokenManager).run(token);
   }
 
-  private async activatePendingUser(user: User): Promise<boolean> {
-    if (!user.isPending) return false;
-
-    user.status = 'active';
-    await this.repository.saveUser(user);
-
-    return true;
-  }
-
-  public async notifyUserActivation(userId: string): Promise<void> {
-    const user = await this.repository.getUserById(userId);
-
-    if (!user) throw new UserNotFoundError();
-
-    const token = this.tokenManager.encode(userId);
-    const activateUserUrl = `${this.frontendURL}/activate/${token}`;
-
-    const email = new Email({
-      type: EmailType.USER_ACTIVATION,
-      recipient: user.email,
-      variables: {
-        FULL_NAME: user.name,
-        ACTIVATE_USER_URL: activateUserUrl,
-      },
-    });
-
-    this.emailProvider.send(email);
-  }
-}
-
-export interface AuthenticationRepository {
-  getUserByEmail(email: string): Promise<User | null>;
-  getUserById(id: string): Promise<User | null>;
-  saveUser(user: User): Promise<void>;
-}
-
-export interface EmailProvider {
-  send(email: Email): Promise<void>;
-}
-
-export type AuthenticateResponse = AuthenticateSuccessResponse | ErrorResponse;
-
-export interface AuthenticateSuccessResponse {
-  status: 'success';
-  token: string;
-}
-
-export interface RegisterUserRequest {
-  name: string;
-  email: string;
-  password: string;
-}
-
-export type RegisterUserResponse =
-  | RegisterUserSuccessResponse
-  | ValidationErrorResponse
-  | ErrorResponse;
-
-export interface RegisterUserSuccessResponse {
-  status: 'success';
-  user: User;
-}
-
-export class UserNotFoundError extends Error {
-  constructor() {
-    super('User not found');
-    Object.setPrototypeOf(this, UserNotFoundError.prototype);
+  public notifyUserActivation(userId: string): Promise<void> {
+    return new NotifyUserActivationUseCase(
+      this.repository,
+      this.tokenManager,
+      this.frontendURL,
+      this.emailProvider
+    ).run(userId);
   }
 }

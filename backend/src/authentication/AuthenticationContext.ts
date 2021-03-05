@@ -5,7 +5,9 @@ import { FakeEmailProvider, SendGridEmailProvider, TemplateIdsMap } from './adap
 import { PasswordManager, TokenManager } from './entities';
 import { EntityFactory } from './EntityFactory';
 import { UserCreatedEvent } from './events';
-import { AuthenticationInteractor, AuthenticationRepository, EmailProvider } from './interactors';
+import { AuthenticationInteractor } from './interactors';
+import { AuthenticationRepository } from './ports/AuthenticationRepository';
+import { EmailProvider } from './ports/EmailProvider';
 import { InMemoryAuthenticationRepository, TypeORMAuthenticationRepository } from './repositories';
 
 export interface Config {

@@ -1,4 +1,3 @@
-import { userInfo } from 'os';
 import { uuid } from '../../utils';
 import { FakeIDGenerator } from '../../utils/IDGenerator';
 import { FakePublisher } from '../../utils/pub_sub';
@@ -6,14 +5,12 @@ import { ValidationError } from '../../utils/validations';
 import { FakeEmailProvider } from '../adapters';
 import { Email, EmailType, PasswordManager, TokenManager, User } from '../entities';
 import { EntityFactory } from '../EntityFactory';
+import { UserNotFoundError } from '../errors';
 import { UserCreatedEvent } from '../events';
 import { InMemoryAuthenticationRepository } from '../repositories';
-import {
-  AuthenticateSuccessResponse,
-  AuthenticationInteractor,
-  RegisterUserSuccessResponse,
-  UserNotFoundError,
-} from './AuthenticationInteractor';
+import { AuthenticateSuccessResponse } from '../useCases/AuthenticateUseCase';
+import { RegisterUserSuccessResponse } from '../useCases/RegisterUserUseCase';
+import { AuthenticationInteractor } from './AuthenticationInteractor';
 
 describe('AuthenticationInteractor', () => {
   let interactor: AuthenticationInteractor;

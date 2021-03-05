@@ -1,6 +1,6 @@
 import { uuid } from '../utils';
 import { PasswordManager, User, UserParams } from './entities';
-import { AuthenticationRepository } from './interactors';
+import { AuthenticationRepository } from './ports/AuthenticationRepository';
 
 export class EntityFactory {
   constructor(
