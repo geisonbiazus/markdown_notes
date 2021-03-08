@@ -1,14 +1,17 @@
-import { EntityManager, getConnection } from 'typeorm';
+import { getConnection } from 'typeorm';
 import { IDGenerator, UUIDGenerator } from '../utils/IDGenerator';
 import { Publisher, Subscriber } from '../utils/pub_sub';
-import { FakeEmailProvider, SendGridEmailProvider, TemplateIdsMap } from './adapters';
-import { PasswordManager, TokenManager } from './entities';
+import { FakeEmailProvider } from './adapters/FakeEmailProvider';
+import { SendGridEmailProvider, TemplateIdsMap } from './adapters/SendGridEmailProvider';
+import { AuthenticationFacade } from './AuthenticationFacade';
+import { PasswordManager } from './entities/PasswordManager';
+import { TokenManager } from './entities/TokenManager';
 import { EntityFactory } from './EntityFactory';
-import { UserCreatedEvent } from './events';
-import { AuthenticationInteractor } from './interactors';
 import { AuthenticationRepository } from './ports/AuthenticationRepository';
 import { EmailProvider } from './ports/EmailProvider';
-import { InMemoryAuthenticationRepository, TypeORMAuthenticationRepository } from './repositories';
+import { InMemoryAuthenticationRepository } from './repositories/InMemoryAuthenticationRepository';
+import { TypeORMAuthenticationRepository } from './repositories/TypeORMAuthenticationRepository';
+import { startSubscribers } from './subscribers';
 
 export interface Config {
   env: string;
@@ -19,40 +22,24 @@ export interface Config {
   sendgridUserActivationTemplateId: string;
   frontendAppURL: string;
 }
-export class AuthenticationContext {
-  private authenticationRepo?: AuthenticationRepository;
 
+export class AuthenticationContext {
   constructor(public config: Config, public publisher: Publisher, public subscriber: Subscriber) {}
 
-  public get authenticationInteractor(): AuthenticationInteractor {
-    return new AuthenticationInteractor(
-      this.authenticationRepository,
-      this.tokenManager,
-      this.passwordManager,
-      this.idGenerator,
-      this.config.frontendAppURL,
-      this.emailProvider,
-      this.publisher
-    );
+  public async startSubscribers(): Promise<void> {
+    await startSubscribers(this.subscriber, this.facade);
   }
 
-  public async startConsumers(): Promise<void> {
-    await this.subscriber.subscribe<UserCreatedEvent>(
-      'authentication',
-      'user_created',
-      (payload) => {
-        this.authenticationInteractor.notifyUserActivation(payload.id);
-      }
-    );
+  public get facade(): AuthenticationFacade {
+    return new AuthenticationFacade(this);
   }
 
-  public get authenticationRepository(): AuthenticationRepository {
-    if (!this.authenticationRepo) {
-      this.authenticationRepo = this.isTest
-        ? new InMemoryAuthenticationRepository()
-        : new TypeORMAuthenticationRepository(this.entityManager);
-    }
-    return this.authenticationRepo;
+  private repositoryInstance?: InMemoryAuthenticationRepository;
+
+  public get repository(): AuthenticationRepository {
+    if (!this.isTest) return new TypeORMAuthenticationRepository(getConnection().manager);
+    if (!this.repositoryInstance) this.repositoryInstance = new InMemoryAuthenticationRepository();
+    return this.repositoryInstance;
   }
 
   public get tokenManager(): TokenManager {
@@ -78,7 +65,7 @@ export class AuthenticationContext {
   }
 
   public get entityFactory(): EntityFactory {
-    return new EntityFactory(this.authenticationRepository, this.passwordManager);
+    return new EntityFactory(this.repository, this.passwordManager);
   }
 
   public get idGenerator(): IDGenerator {
@@ -87,9 +74,5 @@ export class AuthenticationContext {
 
   private get isTest(): boolean {
     return this.config.env == 'test';
-  }
-
-  private get entityManager(): EntityManager {
-    return getConnection().manager;
   }
 }

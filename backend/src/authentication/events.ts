@@ -1,5 +1,5 @@
 import { Event } from '../utils/pub_sub';
-import { UserStatus } from './entities';
+import { UserStatus } from './entities/User';
 
 export interface UserCreatedEventPayload {
   id: string;

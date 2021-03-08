@@ -4,9 +4,9 @@ import request from 'supertest';
 import { Server } from '../server';
 import { AppContext } from '../../AppContext';
 import { AuthenticationMiddleware } from './AuthenticationMiddleware';
-import { User } from '../../authentication';
 import { json, uuid } from '../../utils';
 import { authenticate, createUser } from '../helpers';
+import { User } from '../../authentication/entities/User';
 
 describe('authentication', () => {
   let context: AppContext;
@@ -16,7 +16,7 @@ describe('authentication', () => {
   beforeEach(() => {
     context = new AppContext();
     server = new Server(context).server;
-    middleware = new AuthenticationMiddleware(context.authentication.authenticationInteractor);
+    middleware = new AuthenticationMiddleware(context.authentication.facade);
 
     server.get(
       '/protected',

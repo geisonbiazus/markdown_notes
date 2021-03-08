@@ -1,4 +1,4 @@
-import { User } from '../entities';
+import { User } from '../entities/User';
 import { AuthenticationRepository } from '../ports/AuthenticationRepository';
 
 export class InMemoryAuthenticationRepository implements AuthenticationRepository {

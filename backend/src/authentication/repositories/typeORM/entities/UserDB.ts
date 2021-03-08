@@ -1,5 +1,5 @@
 import { Entity, PrimaryColumn, Column } from 'typeorm';
-import { UserStatus } from '../../../entities';
+import { UserStatus } from '../../../entities/User';
 
 @Entity({ name: 'users' })
 export class UserDB {

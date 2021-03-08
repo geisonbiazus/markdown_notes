@@ -1,6 +1,6 @@
 import bind from 'bind-decorator';
 import { Request, Response } from 'express';
-import { User } from '../../authentication';
+import { User } from '../../authentication/entities/User';
 import { Note } from '../../notes/entities/Note';
 import { NotesFacade } from '../../notes/NotesFacade';
 import { SaveNoteRequest, SaveNoteResponse } from '../../notes/useCases/SaveNoteUseCase';

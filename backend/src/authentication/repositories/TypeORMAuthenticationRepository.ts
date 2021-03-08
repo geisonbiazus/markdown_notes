@@ -1,5 +1,5 @@
 import { EntityManager } from 'typeorm';
-import { User } from '../entities';
+import { User } from '../entities/User';
 import { AuthenticationRepository } from '../ports/AuthenticationRepository';
 import { UserDB } from './typeORM/entities/UserDB';
 

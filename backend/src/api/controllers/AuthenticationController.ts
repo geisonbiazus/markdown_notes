@@ -1,17 +1,17 @@
 import bind from 'bind-decorator';
 import { Request, response, Response } from 'express';
-import { AuthenticationInteractor } from '../../authentication';
+import { AuthenticationFacade } from '../../authentication/AuthenticationFacade';
 
 export class AuthenticationController {
-  private authenticationInteractor: AuthenticationInteractor;
+  private authenticationFacade: AuthenticationFacade;
 
-  constructor(authenticationInteractor: AuthenticationInteractor) {
-    this.authenticationInteractor = authenticationInteractor;
+  constructor(authenticationInteractor: AuthenticationFacade) {
+    this.authenticationFacade = authenticationInteractor;
   }
 
   @bind
   public async signIn(req: Request, res: Response): Promise<void> {
-    const response = await this.authenticationInteractor.authenticate(
+    const response = await this.authenticationFacade.authenticate(
       req.body.email || '',
       req.body.password || ''
     );
@@ -36,7 +36,7 @@ export class AuthenticationController {
       password: req.body.password || '',
     };
 
-    const response = await this.authenticationInteractor.registerUser(request);
+    const response = await this.authenticationFacade.registerUser(request);
 
     if (response.status == 'success') {
       const { name, email, status } = response.user;
@@ -54,7 +54,7 @@ export class AuthenticationController {
   @bind
   public async activateUser(req: Request, res: Response): Promise<void> {
     const token = req.body.token || '';
-    const isActivated = await this.authenticationInteractor.activateUser(token);
+    const isActivated = await this.authenticationFacade.activateUser(token);
 
     if (isActivated) {
       res.status(202);

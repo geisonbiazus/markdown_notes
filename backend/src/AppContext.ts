@@ -1,15 +1,11 @@
 import { createConnection } from 'typeorm';
-import { AuthenticationContext } from './authentication';
+import { AuthenticationContext } from './authentication/AuthenticationContext';
 import { Config } from './Config';
 import { NotesFacade } from './notes/NotesFacade';
 import { FakePublisher, Publisher, RabbitMQPubSub, Subscriber } from './utils/pub_sub';
 
 export class AppContext {
   public config: Config;
-
-  private authenticationContext?: AuthenticationContext;
-
-  private pubSubInstance?: RabbitMQPubSub;
 
   constructor() {
     this.config = new Config();
@@ -21,8 +17,10 @@ export class AppContext {
   }
 
   public async startConsumers(): Promise<void> {
-    await this.authentication.startConsumers();
+    await this.authentication.startSubscribers();
   }
+
+  private authenticationContext?: AuthenticationContext;
 
   public get authentication(): AuthenticationContext {
     if (!this.authenticationContext) {
@@ -43,6 +41,8 @@ export class AppContext {
     }
     return this.notesFacade;
   }
+
+  private pubSubInstance?: RabbitMQPubSub;
 
   public get pubSub(): RabbitMQPubSub {
     if (!this.pubSubInstance) {

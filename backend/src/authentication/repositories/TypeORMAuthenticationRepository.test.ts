@@ -1,5 +1,5 @@
 import { connect, dbTest, disconnect, uuid } from '../../utils';
-import { User } from '../entities';
+import { User } from '../entities/User';
 import { TypeORMAuthenticationRepository } from './TypeORMAuthenticationRepository';
 
 describe('TypeORMAuthenticationRepository', () => {

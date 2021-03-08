@@ -1,13 +1,14 @@
 import { Request, RequestHandler, Response } from 'express';
-import { AuthenticationInteractor, User } from '../../authentication';
+import { AuthenticationFacade } from '../../authentication/AuthenticationFacade';
+import { User } from '../../authentication/entities/User';
 
 export type AuthenticatedAction = (req: Request, res: Response, user: User) => Promise<void> | void;
 
 export class AuthenticationMiddleware {
-  constructor(private authenticationInteractor: AuthenticationInteractor) {}
+  constructor(private authenticationFacade: AuthenticationFacade) {}
 
   public authenticate = (action: AuthenticatedAction): RequestHandler => {
-    const authenticationInteractor = this.authenticationInteractor;
+    const authenticationInteractor = this.authenticationFacade;
 
     return async (req: Request, res: Response) => {
       const token = this.getToken(req);

@@ -1,4 +1,4 @@
-import { Email } from '../entities';
+import { Email } from '../entities/Email';
 import { EmailProvider } from '../ports/EmailProvider';
 
 export class FakeEmailProvider implements EmailProvider {
