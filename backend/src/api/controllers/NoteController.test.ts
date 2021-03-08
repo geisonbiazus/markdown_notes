@@ -17,7 +17,7 @@ describe('NoteController', () => {
 
   beforeEach(async () => {
     context = new AppContext();
-    repo = context.notes.noteRepository;
+    repo = context.notes.repository;
     server = new Server(context).server;
 
     user = await createUser(context);

@@ -1,7 +1,7 @@
 import { createConnection } from 'typeorm';
 import { AuthenticationContext } from './authentication/AuthenticationContext';
 import { Config } from './Config';
-import { NotesFacade } from './notes/NotesFacade';
+import { NotesContext } from './notes/NotesContext';
 import { FakePublisher, Publisher, RabbitMQPubSub, Subscriber } from './utils/pub_sub';
 
 export class AppContext {
@@ -33,11 +33,11 @@ export class AppContext {
     return this.authenticationContext;
   }
 
-  private notesFacade?: NotesFacade;
+  private notesFacade?: NotesContext;
 
-  public get notes(): NotesFacade {
+  public get notes(): NotesContext {
     if (!this.notesFacade) {
-      this.notesFacade = new NotesFacade(this.config);
+      this.notesFacade = new NotesContext(this.config);
     }
     return this.notesFacade;
   }
