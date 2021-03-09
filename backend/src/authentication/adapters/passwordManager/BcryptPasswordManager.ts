@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
+import { PasswordManager } from '../../ports/PasswordManager';
 
-export class PasswordManager {
+export class BcryptPasswordManager implements PasswordManager {
   constructor(public secret: string) {}
 
   public async hashPassword(password: string, salt: string): Promise<string> {

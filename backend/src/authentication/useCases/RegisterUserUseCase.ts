@@ -2,10 +2,10 @@ import { errorResponse, ErrorResponse } from '../../utils/ErrorResponse';
 import { IDGenerator } from '../../utils/IDGenerator';
 import { Publisher } from '../../utils/pub_sub/PubSub';
 import { validationErrorResponse, ValidationErrorResponse } from '../../utils/validations';
-import { PasswordManager } from '../entities/PasswordManager';
 import { User } from '../entities/User';
 import { UserCreatedEvent } from '../events';
 import { AuthenticationRepository } from '../ports/AuthenticationRepository';
+import { PasswordManager } from '../ports/PasswordManager';
 import { RegisterUserValidator } from './validators/RegisterUserValidator';
 
 export class RegisterUserUseCase {

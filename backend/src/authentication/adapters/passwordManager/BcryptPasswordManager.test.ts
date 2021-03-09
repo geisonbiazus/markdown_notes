@@ -1,9 +1,9 @@
-import { uuid } from '../../utils';
-import { PasswordManager } from './PasswordManager';
+import { uuid } from '../../../utils';
+import { BcryptPasswordManager } from './BcryptPasswordManager';
 
-describe('PasswordManager', () => {
+describe('BcryptPasswordManager', () => {
   const secret = uuid();
-  const passwordManager = new PasswordManager(secret);
+  const passwordManager = new BcryptPasswordManager(secret);
 
   it('hashes and verifies a password', async () => {
     const hashedPassword = await passwordManager.hashPassword('password', 'salt');
@@ -30,7 +30,7 @@ describe('PasswordManager', () => {
   it('fails on verifyng correct password with correct salt but a different secret', async () => {
     const hashedPassword = await passwordManager.hashPassword('password', 'salt');
 
-    const anotherPasswordManager = new PasswordManager('another secret');
+    const anotherPasswordManager = new BcryptPasswordManager('another secret');
 
     expect(await anotherPasswordManager.verifyPassword(hashedPassword, 'password', 'salt')).toEqual(
       false

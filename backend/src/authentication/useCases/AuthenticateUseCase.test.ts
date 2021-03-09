@@ -1,21 +1,21 @@
 import { uuid } from '../../utils/uuid';
-import { PasswordManager } from '../entities/PasswordManager';
-import { TokenManager } from '../entities/TokenManager';
-import { EntityFactory } from '../EntityFactory';
+import { BcryptPasswordManager } from '../adapters/passwordManager/BcryptPasswordManager';
 import { InMemoryAuthenticationRepository } from '../adapters/repositories/InMemoryAuthenticationRepository';
+import { EntityFactory } from '../EntityFactory';
 import { AuthenticateUseCase } from './AuthenticateUseCase';
+import { TokenManagerStub } from './testDoubles';
 
 describe('AuthenticateUseCase', () => {
   let repository: InMemoryAuthenticationRepository;
   let tokenManager: TokenManagerStub;
-  let passwordManager: PasswordManager;
+  let passwordManager: BcryptPasswordManager;
   let factory: EntityFactory;
   let useCase: AuthenticateUseCase;
 
   beforeEach(() => {
     repository = new InMemoryAuthenticationRepository();
     tokenManager = new TokenManagerStub();
-    passwordManager = new PasswordManager('secret');
+    passwordManager = new BcryptPasswordManager('secret');
     factory = new EntityFactory(repository, passwordManager);
     useCase = new AuthenticateUseCase(repository, tokenManager, passwordManager);
   });
@@ -67,15 +67,3 @@ describe('AuthenticateUseCase', () => {
     });
   });
 });
-
-export class TokenManagerStub extends TokenManager {
-  public token = 'token';
-
-  constructor() {
-    super('no_secret');
-  }
-
-  public encode(_userId: string): string {
-    return this.token;
-  }
-}

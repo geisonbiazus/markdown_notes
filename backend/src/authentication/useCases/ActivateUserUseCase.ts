@@ -1,6 +1,7 @@
-import { InvalidTokenError, TokenExpiredError, TokenManager } from '../entities/TokenManager';
+import { InvalidTokenError, TokenExpiredError } from '../adapters/tokenManager/JWTTokenManager';
 import { User } from '../entities/User';
 import { AuthenticationRepository } from '../ports/AuthenticationRepository';
+import { TokenManager } from '../ports/TokenManager';
 
 export class ActivateUserUseCase {
   constructor(private repository: AuthenticationRepository, private tokenManager: TokenManager) {}

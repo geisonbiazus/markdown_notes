@@ -2,10 +2,11 @@ import { FakeIDGenerator } from '../../utils/IDGenerator';
 import { FakePublisher } from '../../utils/pub_sub/FakePublisher';
 import { uuid } from '../../utils/uuid';
 import { ValidationError } from '../../utils/validations';
-import { PasswordManager } from '../entities/PasswordManager';
+import { FakePasswordManager } from '../adapters/passwordManager/FakePasswordManager';
+import { InMemoryAuthenticationRepository } from '../adapters/repositories/InMemoryAuthenticationRepository';
 import { User } from '../entities/User';
 import { UserCreatedEvent } from '../events';
-import { InMemoryAuthenticationRepository } from '../adapters/repositories/InMemoryAuthenticationRepository';
+import { PasswordManager } from '../ports/PasswordManager';
 import { RegisterUserSuccessResponse, RegisterUserUseCase } from './RegisterUserUseCase';
 
 describe('RegisterUserUseCase', () => {
@@ -17,7 +18,7 @@ describe('RegisterUserUseCase', () => {
 
   beforeEach(() => {
     repository = new InMemoryAuthenticationRepository();
-    passwordManager = new FakePasswordManager('nothing');
+    passwordManager = new FakePasswordManager();
     idGenerator = new FakeIDGenerator();
     publisher = new FakePublisher();
     useCase = new RegisterUserUseCase(repository, passwordManager, idGenerator, publisher);
@@ -97,9 +98,3 @@ describe('RegisterUserUseCase', () => {
     });
   });
 });
-
-export class FakePasswordManager extends PasswordManager {
-  public async hashPassword(password: string, salt: string): Promise<string> {
-    return `hashed-${password}-${salt}`;
-  }
-}

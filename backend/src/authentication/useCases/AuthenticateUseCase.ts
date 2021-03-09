@@ -1,8 +1,8 @@
 import { ErrorResponse, errorResponse } from '../../utils/ErrorResponse';
-import { PasswordManager } from '../entities/PasswordManager';
-import { TokenManager } from '../entities/TokenManager';
 import { User } from '../entities/User';
 import { AuthenticationRepository } from '../ports/AuthenticationRepository';
+import { PasswordManager } from '../ports/PasswordManager';
+import { TokenManager } from '../ports/TokenManager';
 
 export class AuthenticateUseCase {
   constructor(

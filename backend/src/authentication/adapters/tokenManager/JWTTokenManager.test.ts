@@ -1,9 +1,9 @@
-import { uuid } from '../../utils';
-import { TokenManager } from './TokenManager';
+import { uuid } from '../../../utils';
+import { JWTTokenManager } from './JWTTokenManager';
 
-describe('TokenManager', () => {
+describe('JWTTokenManager', () => {
   it('generates a token for the given user id', () => {
-    const tokenManager = new TokenManager('secret');
+    const tokenManager = new JWTTokenManager('secret');
     const userId = uuid();
 
     const token = tokenManager.encode(userId);
@@ -16,7 +16,7 @@ describe('TokenManager', () => {
   });
 
   it('fails on decoding expired token', () => {
-    const tokenManager = new TokenManager('secret');
+    const tokenManager = new JWTTokenManager('secret');
     const userId = uuid();
     const expiresIn = 0;
 
@@ -26,11 +26,11 @@ describe('TokenManager', () => {
   });
 
   it('fails on decoding with a different secret', () => {
-    const tokenManager = new TokenManager('secret');
+    const tokenManager = new JWTTokenManager('secret');
     const userId = uuid();
     const token = tokenManager.encode(userId);
 
-    const invalidTokenManager = new TokenManager('invalid_secret');
+    const invalidTokenManager = new JWTTokenManager('invalid_secret');
 
     expect(() => invalidTokenManager.decode(token)).toThrow(Error('Invalid token'));
   });

@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { TokenManager } from '../../ports/TokenManager';
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
@@ -6,7 +7,7 @@ interface DecodedClaims {
   userId?: string;
 }
 
-export class TokenManager {
+export class JWTTokenManager implements TokenManager {
   constructor(private secret: string) {}
 
   public encode(userId: string, expiresIn: number = ONE_DAY_IN_SECONDS): string {

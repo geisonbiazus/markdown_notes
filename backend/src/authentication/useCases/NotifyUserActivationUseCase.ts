@@ -1,8 +1,8 @@
 import { Email, EmailType } from '../entities/Email';
-import { TokenManager } from '../entities/TokenManager';
 import { UserNotFoundError } from '../errors';
 import { AuthenticationRepository } from '../ports/AuthenticationRepository';
 import { EmailProvider } from '../ports/EmailProvider';
+import { TokenManager } from '../ports/TokenManager';
 
 export class NotifyUserActivationUseCase {
   constructor(

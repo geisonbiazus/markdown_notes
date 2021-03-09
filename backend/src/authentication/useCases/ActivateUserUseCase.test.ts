@@ -1,21 +1,21 @@
 import { uuid } from '../../utils/uuid';
-import { PasswordManager } from '../entities/PasswordManager';
-import { TokenManager } from '../entities/TokenManager';
+import { BcryptPasswordManager } from '../adapters/passwordManager/BcryptPasswordManager';
+import { JWTTokenManager } from '../adapters/tokenManager/JWTTokenManager';
 import { EntityFactory } from '../EntityFactory';
 import { InMemoryAuthenticationRepository } from '../adapters/repositories/InMemoryAuthenticationRepository';
 import { ActivateUserUseCase } from './ActivateUserUseCase';
 
 describe('ActivateUserUseCase', () => {
   let repository: InMemoryAuthenticationRepository;
-  let tokenManager: TokenManager;
-  let passwordManager: PasswordManager;
+  let tokenManager: JWTTokenManager;
+  let passwordManager: BcryptPasswordManager;
   let factory: EntityFactory;
   let useCase: ActivateUserUseCase;
 
   beforeEach(() => {
     repository = new InMemoryAuthenticationRepository();
-    tokenManager = new TokenManager('secret');
-    passwordManager = new PasswordManager('secret');
+    tokenManager = new JWTTokenManager('secret');
+    passwordManager = new BcryptPasswordManager('secret');
     factory = new EntityFactory(repository, passwordManager);
     useCase = new ActivateUserUseCase(repository, tokenManager);
   });

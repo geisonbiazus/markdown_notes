@@ -7,8 +7,8 @@ import {
   TemplateIdsMap,
 } from './adapters/emailProviders/SendGridEmailProvider';
 import { AuthenticationFacade } from './AuthenticationFacade';
-import { PasswordManager } from './entities/PasswordManager';
-import { TokenManager } from './entities/TokenManager';
+import { BcryptPasswordManager } from './adapters/passwordManager/BcryptPasswordManager';
+import { JWTTokenManager } from './adapters/tokenManager/JWTTokenManager';
 import { EntityFactory } from './EntityFactory';
 import { AuthenticationRepository } from './ports/AuthenticationRepository';
 import { EmailProvider } from './ports/EmailProvider';
@@ -45,12 +45,12 @@ export class AuthenticationContext {
     return this.repositoryInstance;
   }
 
-  public get tokenManager(): TokenManager {
-    return new TokenManager(this.config.authenticationTokenSecret);
+  public get tokenManager(): JWTTokenManager {
+    return new JWTTokenManager(this.config.authenticationTokenSecret);
   }
 
-  public get passwordManager(): PasswordManager {
-    return new PasswordManager(this.config.authenticationPasswordSecret);
+  public get passwordManager(): BcryptPasswordManager {
+    return new BcryptPasswordManager(this.config.authenticationPasswordSecret);
   }
 
   public get emailProvider(): EmailProvider {
