@@ -1,6 +1,6 @@
 import sgMail from '@sendgrid/mail';
-import { Email, EmailType } from '../entities/Email';
-import { EmailProvider } from '../ports/EmailProvider';
+import { Email, EmailType } from '../../entities/Email';
+import { EmailProvider } from '../../ports/EmailProvider';
 
 export interface TemplateIdsMap {
   userActivation: string;

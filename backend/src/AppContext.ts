@@ -16,7 +16,7 @@ export class AppContext {
     await this.pubSub.connect();
   }
 
-  public async startConsumers(): Promise<void> {
+  public async startSubscribers(): Promise<void> {
     await this.authentication.startSubscribers();
   }
 

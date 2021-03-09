@@ -1,5 +1,5 @@
 import { uuid } from '../../utils/uuid';
-import { FakeEmailProvider } from '../adapters/FakeEmailProvider';
+import { FakeEmailProvider } from '../adapters/emailProviders/FakeEmailProvider';
 import { Email, EmailType } from '../entities/Email';
 import { PasswordManager } from '../entities/PasswordManager';
 import { TokenManager } from '../entities/TokenManager';

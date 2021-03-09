@@ -1,8 +1,11 @@
 import { getConnection } from 'typeorm';
 import { IDGenerator, UUIDGenerator } from '../utils/IDGenerator';
 import { Publisher, Subscriber } from '../utils/pub_sub';
-import { FakeEmailProvider } from './adapters/FakeEmailProvider';
-import { SendGridEmailProvider, TemplateIdsMap } from './adapters/SendGridEmailProvider';
+import { FakeEmailProvider } from './adapters/emailProviders/FakeEmailProvider';
+import {
+  SendGridEmailProvider,
+  TemplateIdsMap,
+} from './adapters/emailProviders/SendGridEmailProvider';
 import { AuthenticationFacade } from './AuthenticationFacade';
 import { PasswordManager } from './entities/PasswordManager';
 import { TokenManager } from './entities/TokenManager';
