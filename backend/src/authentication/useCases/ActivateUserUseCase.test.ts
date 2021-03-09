@@ -2,7 +2,7 @@ import { uuid } from '../../utils/uuid';
 import { PasswordManager } from '../entities/PasswordManager';
 import { TokenManager } from '../entities/TokenManager';
 import { EntityFactory } from '../EntityFactory';
-import { InMemoryAuthenticationRepository } from '../repositories/InMemoryAuthenticationRepository';
+import { InMemoryAuthenticationRepository } from '../adapters/repositories/InMemoryAuthenticationRepository';
 import { ActivateUserUseCase } from './ActivateUserUseCase';
 
 describe('ActivateUserUseCase', () => {

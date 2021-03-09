@@ -12,8 +12,8 @@ import { TokenManager } from './entities/TokenManager';
 import { EntityFactory } from './EntityFactory';
 import { AuthenticationRepository } from './ports/AuthenticationRepository';
 import { EmailProvider } from './ports/EmailProvider';
-import { InMemoryAuthenticationRepository } from './repositories/InMemoryAuthenticationRepository';
-import { TypeORMAuthenticationRepository } from './repositories/TypeORMAuthenticationRepository';
+import { InMemoryAuthenticationRepository } from './adapters/repositories/InMemoryAuthenticationRepository';
+import { TypeORMAuthenticationRepository } from './adapters/repositories/TypeORMAuthenticationRepository';
 import { startSubscribers } from './subscribers';
 
 export interface Config {

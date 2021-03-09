@@ -5,7 +5,7 @@ import { PasswordManager } from '../entities/PasswordManager';
 import { TokenManager } from '../entities/TokenManager';
 import { EntityFactory } from '../EntityFactory';
 import { UserNotFoundError } from '../errors';
-import { InMemoryAuthenticationRepository } from '../repositories/InMemoryAuthenticationRepository';
+import { InMemoryAuthenticationRepository } from '../adapters/repositories/InMemoryAuthenticationRepository';
 import { NotifyUserActivationUseCase } from './NotifyUserActivationUseCase';
 
 describe('AuthenticationInteractor', () => {

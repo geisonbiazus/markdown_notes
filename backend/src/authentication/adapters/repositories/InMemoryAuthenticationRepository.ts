@@ -1,5 +1,5 @@
-import { User } from '../entities/User';
-import { AuthenticationRepository } from '../ports/AuthenticationRepository';
+import { User } from '../../entities/User';
+import { AuthenticationRepository } from '../../ports/AuthenticationRepository';
 
 export class InMemoryAuthenticationRepository implements AuthenticationRepository {
   private users: Record<string, User> = {};

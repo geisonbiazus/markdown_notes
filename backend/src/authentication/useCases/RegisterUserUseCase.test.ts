@@ -5,7 +5,7 @@ import { ValidationError } from '../../utils/validations';
 import { PasswordManager } from '../entities/PasswordManager';
 import { User } from '../entities/User';
 import { UserCreatedEvent } from '../events';
-import { InMemoryAuthenticationRepository } from '../repositories/InMemoryAuthenticationRepository';
+import { InMemoryAuthenticationRepository } from '../adapters/repositories/InMemoryAuthenticationRepository';
 import { RegisterUserSuccessResponse, RegisterUserUseCase } from './RegisterUserUseCase';
 
 describe('RegisterUserUseCase', () => {
