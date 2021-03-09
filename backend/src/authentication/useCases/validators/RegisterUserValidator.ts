@@ -1,5 +1,5 @@
-import { BaseValidator } from '../../utils/validations';
-import { RegisterUserRequest } from '../useCases/RegisterUserUseCase';
+import { BaseValidator } from '../../../utils/validations';
+import { RegisterUserRequest } from '../RegisterUserUseCase';
 
 export class RegisterUserValidator extends BaseValidator<RegisterUserRequest> {
   public validate(): void {

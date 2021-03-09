@@ -1,5 +1,5 @@
-import { ValidationError } from '../../utils/validations';
-import { RegisterUserRequest } from '../useCases/RegisterUserUseCase';
+import { ValidationError } from '../../../utils/validations';
+import { RegisterUserRequest } from '../RegisterUserUseCase';
 import { RegisterUserValidator } from './RegisterUserValidator';
 
 const validRequest: RegisterUserRequest = {

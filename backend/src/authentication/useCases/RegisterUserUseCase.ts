@@ -6,7 +6,7 @@ import { PasswordManager } from '../entities/PasswordManager';
 import { User } from '../entities/User';
 import { UserCreatedEvent } from '../events';
 import { AuthenticationRepository } from '../ports/AuthenticationRepository';
-import { RegisterUserValidator } from '../validators/RegisterUserValidator';
+import { RegisterUserValidator } from './validators/RegisterUserValidator';
 
 export class RegisterUserUseCase {
   constructor(
