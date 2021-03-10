@@ -1,5 +1,5 @@
-import { connect, dbTest, disconnect } from '../../../utils/dbTest';
-import { uuid } from '../../../utils/uuid';
+import { connect, dbTest, disconnect } from '../../../shared/utils/dbTest';
+import { uuid } from '../../../shared/utils/uuid';
 import { User } from '../../entities/User';
 import { TypeORMAuthenticationRepository } from './TypeORMAuthenticationRepository';
 

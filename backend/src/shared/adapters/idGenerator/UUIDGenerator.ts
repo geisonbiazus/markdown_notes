@@ -1,4 +1,4 @@
-import { uuid } from '../../../utils/uuid';
+import { uuid } from '../../utils/uuid';
 import { IDGenerator } from '../../ports/IDGenerator';
 
 export class UUIDGenerator implements IDGenerator {

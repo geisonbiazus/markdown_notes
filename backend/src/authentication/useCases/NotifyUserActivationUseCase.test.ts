@@ -1,4 +1,4 @@
-import { uuid } from '../../utils/uuid';
+import { uuid } from '../../shared/utils/uuid';
 import { FakeEmailProvider } from '../adapters/emailProviders/FakeEmailProvider';
 import { BcryptPasswordManager } from '../adapters/passwordManager/BcryptPasswordManager';
 import { InMemoryAuthenticationRepository } from '../adapters/repositories/InMemoryAuthenticationRepository';

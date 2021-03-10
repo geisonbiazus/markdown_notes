@@ -1,5 +1,5 @@
 import { ValidationError } from '../../shared/entities/ValidationError';
-import { uuid } from '../../utils/uuid';
+import { uuid } from '../../shared/utils/uuid';
 import { MarkdownConverter } from '../entities/MarkdownConverter';
 import { Note } from '../entities/Note';
 import { InMemoryNoteRepository } from '../repositories/InMemoryNoteRepository';

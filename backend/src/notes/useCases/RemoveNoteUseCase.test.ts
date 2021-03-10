@@ -1,4 +1,4 @@
-import { uuid } from '../../utils/uuid';
+import { uuid } from '../../shared/utils/uuid';
 import { Note } from '../entities/Note';
 import { InMemoryNoteRepository } from '../repositories/InMemoryNoteRepository';
 import { RemoveNoteUseCase } from './RemoveNoteUseCase';

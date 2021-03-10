@@ -1,4 +1,4 @@
-import { sleep } from '../../../utils/sleep';
+import { sleep } from '../../utils/sleep';
 import { AnyEvent, Name, Payload } from '../../ports/PubSub';
 import { Event } from '../../entities/Event';
 import { RabbitMQPubSub } from './RabbitMQPubSub';

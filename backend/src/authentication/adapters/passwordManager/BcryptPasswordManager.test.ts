@@ -1,4 +1,4 @@
-import { uuid } from '../../../utils/uuid';
+import { uuid } from '../../../shared/utils/uuid';
 import { BcryptPasswordManager } from './BcryptPasswordManager';
 
 describe('BcryptPasswordManager', () => {
