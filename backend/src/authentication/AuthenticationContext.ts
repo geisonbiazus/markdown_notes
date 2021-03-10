@@ -34,7 +34,15 @@ export class AuthenticationContext {
   }
 
   public get facade(): AuthenticationFacade {
-    return new AuthenticationFacade(this);
+    return new AuthenticationFacade(
+      this.repository,
+      this.tokenManager,
+      this.passwordManager,
+      this.idGenerator,
+      this.publisher,
+      this.config.frontendAppURL,
+      this.emailProvider
+    );
   }
 
   private repositoryInstance?: InMemoryAuthenticationRepository;

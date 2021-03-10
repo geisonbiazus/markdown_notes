@@ -5,7 +5,7 @@ import { ValidationError } from '../../utils/validations';
 import { FakePasswordManager } from '../adapters/passwordManager/FakePasswordManager';
 import { InMemoryAuthenticationRepository } from '../adapters/repositories/InMemoryAuthenticationRepository';
 import { User } from '../entities/User';
-import { UserCreatedEvent } from '../events';
+import { UserCreatedEvent } from '../events/UserCreatedEvent';
 import { PasswordManager } from '../ports/PasswordManager';
 import { RegisterUserSuccessResponse, RegisterUserUseCase } from './RegisterUserUseCase';
 

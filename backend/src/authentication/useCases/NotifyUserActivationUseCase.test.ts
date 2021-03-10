@@ -4,8 +4,7 @@ import { BcryptPasswordManager } from '../adapters/passwordManager/BcryptPasswor
 import { InMemoryAuthenticationRepository } from '../adapters/repositories/InMemoryAuthenticationRepository';
 import { Email, EmailType } from '../entities/Email';
 import { EntityFactory } from '../EntityFactory';
-import { UserNotFoundError } from '../errors';
-import { NotifyUserActivationUseCase } from './NotifyUserActivationUseCase';
+import { NotifyUserActivationUseCase, UserNotFoundError } from './NotifyUserActivationUseCase';
 import { TokenManagerStub } from './testDoubles';
 
 describe('NotifyUserActivationUseCase', () => {

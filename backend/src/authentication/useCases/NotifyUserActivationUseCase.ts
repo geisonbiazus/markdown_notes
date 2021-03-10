@@ -1,5 +1,4 @@
 import { Email, EmailType } from '../entities/Email';
-import { UserNotFoundError } from '../errors';
 import { AuthenticationRepository } from '../ports/AuthenticationRepository';
 import { EmailProvider } from '../ports/EmailProvider';
 import { TokenManager } from '../ports/TokenManager';
@@ -30,5 +29,12 @@ export class NotifyUserActivationUseCase {
     });
 
     this.emailProvider.send(email);
+  }
+}
+
+export class UserNotFoundError extends Error {
+  constructor() {
+    super('User not found');
+    Object.setPrototypeOf(this, UserNotFoundError.prototype);
   }
 }

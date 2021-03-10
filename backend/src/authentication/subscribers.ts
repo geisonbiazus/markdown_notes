@@ -1,6 +1,6 @@
 import { Subscriber } from '../utils/pub_sub';
 import { AuthenticationFacade } from './AuthenticationFacade';
-import { UserCreatedEvent } from './events';
+import { UserCreatedEvent } from './events/UserCreatedEvent';
 
 export async function startSubscribers(
   subscriber: Subscriber,
