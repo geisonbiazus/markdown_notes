@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { TokenManager } from '../../ports/TokenManager';
+import { InvalidTokenError, TokenExpiredError, TokenManager } from '../../ports/TokenManager';
 
 const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
 
@@ -29,19 +29,5 @@ export class JWTTokenManager implements TokenManager {
       }
       throw e;
     }
-  }
-}
-
-export class TokenExpiredError extends Error {
-  constructor(public cause: Error) {
-    super('Token expired');
-    Object.setPrototypeOf(this, TokenExpiredError.prototype);
-  }
-}
-
-export class InvalidTokenError extends Error {
-  constructor(public cause: Error) {
-    super('Invalid token');
-    Object.setPrototypeOf(this, InvalidTokenError.prototype);
   }
 }
