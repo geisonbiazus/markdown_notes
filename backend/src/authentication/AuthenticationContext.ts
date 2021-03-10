@@ -6,15 +6,19 @@ import {
   SendGridEmailProvider,
   TemplateIdsMap,
 } from './adapters/emailProviders/SendGridEmailProvider';
-import { AuthenticationFacade } from './AuthenticationFacade';
 import { BcryptPasswordManager } from './adapters/passwordManager/BcryptPasswordManager';
+import { InMemoryAuthenticationRepository } from './adapters/repositories/InMemoryAuthenticationRepository';
+import { TypeORMAuthenticationRepository } from './adapters/repositories/TypeORMAuthenticationRepository';
 import { JWTTokenManager } from './adapters/tokenManager/JWTTokenManager';
 import { EntityFactory } from './EntityFactory';
 import { AuthenticationRepository } from './ports/AuthenticationRepository';
 import { EmailProvider } from './ports/EmailProvider';
-import { InMemoryAuthenticationRepository } from './adapters/repositories/InMemoryAuthenticationRepository';
-import { TypeORMAuthenticationRepository } from './adapters/repositories/TypeORMAuthenticationRepository';
 import { startSubscribers } from './subscribers';
+import { ActivateUserUseCase } from './useCases/ActivateUserUseCase';
+import { AuthenticateUseCase } from './useCases/AuthenticateUseCase';
+import { GetAuthenticatedUserUseCase } from './useCases/GetAuthenticatedUserUseCase';
+import { NotifyUserActivationUseCase } from './useCases/NotifyUserActivationUseCase';
+import { RegisterUserUseCase } from './useCases/RegisterUserUseCase';
 
 export interface Config {
   env: string;
@@ -30,16 +34,34 @@ export class AuthenticationContext {
   constructor(public config: Config, public publisher: Publisher, public subscriber: Subscriber) {}
 
   public async startSubscribers(): Promise<void> {
-    await startSubscribers(this.subscriber, this.facade);
+    await startSubscribers(this);
   }
 
-  public get facade(): AuthenticationFacade {
-    return new AuthenticationFacade(
+  public get authenticateUseCase(): AuthenticateUseCase {
+    return new AuthenticateUseCase(this.repository, this.tokenManager, this.passwordManager);
+  }
+
+  public get getAuthenticatedUserUseCase(): GetAuthenticatedUserUseCase {
+    return new GetAuthenticatedUserUseCase(this.repository, this.tokenManager);
+  }
+
+  public get registerUserUseCase(): RegisterUserUseCase {
+    return new RegisterUserUseCase(
       this.repository,
-      this.tokenManager,
       this.passwordManager,
       this.idGenerator,
-      this.publisher,
+      this.publisher
+    );
+  }
+
+  public get activateUserUseCase(): ActivateUserUseCase {
+    return new ActivateUserUseCase(this.repository, this.tokenManager);
+  }
+
+  public get notifyUserActivationUseCase(): NotifyUserActivationUseCase {
+    return new NotifyUserActivationUseCase(
+      this.repository,
+      this.tokenManager,
       this.config.frontendAppURL,
       this.emailProvider
     );

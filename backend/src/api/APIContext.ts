@@ -6,11 +6,11 @@ export class APIContext {
   constructor(private appContext: AppContext) {}
 
   public get authenticationMidleware(): AuthenticationMiddleware {
-    return new AuthenticationMiddleware(this.appContext.authentication.facade);
+    return new AuthenticationMiddleware(this.appContext.authentication);
   }
 
   public get authenticationController(): AuthenticationController {
-    return new AuthenticationController(this.appContext.authentication.facade);
+    return new AuthenticationController(this.appContext.authentication);
   }
 
   public get noteController(): NoteController {

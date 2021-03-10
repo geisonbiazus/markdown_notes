@@ -27,19 +27,19 @@ export class AppContext {
       this.authenticationContext = new AuthenticationContext(
         this.config,
         this.publisher,
-        this.pubSub
+        this.subscriber
       );
     }
     return this.authenticationContext;
   }
 
-  private notesFacade?: NotesContext;
+  private notesContext?: NotesContext;
 
   public get notes(): NotesContext {
-    if (!this.notesFacade) {
-      this.notesFacade = new NotesContext(this.config);
+    if (!this.notesContext) {
+      this.notesContext = new NotesContext(this.config);
     }
-    return this.notesFacade;
+    return this.notesContext;
   }
 
   private pubSubInstance?: RabbitMQPubSub;
@@ -56,6 +56,10 @@ export class AppContext {
 
   public get publisher(): Publisher {
     return this.isTest ? new FakePublisher() : this.pubSub;
+  }
+
+  public get subscriber(): Subscriber {
+    return this.pubSub;
   }
 
   private get isTest(): boolean {

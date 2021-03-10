@@ -1,12 +1,12 @@
-import { Subscriber } from '../utils/pub_sub';
-import { AuthenticationFacade } from './AuthenticationFacade';
+import { AuthenticationContext } from './AuthenticationContext';
 import { UserCreatedEvent } from './events/UserCreatedEvent';
 
-export async function startSubscribers(
-  subscriber: Subscriber,
-  facade: AuthenticationFacade
-): Promise<void> {
-  await subscriber.subscribe<UserCreatedEvent>('authentication', 'user_created', (payload) => {
-    facade.notifyUserActivation(payload.id);
-  });
+export async function startSubscribers(context: AuthenticationContext): Promise<void> {
+  await context.subscriber.subscribe<UserCreatedEvent>(
+    'authentication',
+    'user_created',
+    (payload) => {
+      context.notifyUserActivationUseCase.run(payload.id);
+    }
+  );
 }
