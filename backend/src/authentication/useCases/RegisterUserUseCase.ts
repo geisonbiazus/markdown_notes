@@ -1,5 +1,5 @@
-import { errorResponse, ErrorResponse } from '../../utils/ErrorResponse';
-import { IDGenerator } from '../../utils/IDGenerator';
+import { errorResponse, ErrorResponse } from '../../shared/entities/ErrorResponse';
+import { IDGenerator } from '../../shared/ports/IDGenerator';
 import { Publisher } from '../../utils/pubSub/PubSub';
 import { validationErrorResponse, ValidationErrorResponse } from '../../utils/validations';
 import { User } from '../entities/User';

@@ -1,5 +1,6 @@
 import { getConnection } from 'typeorm';
-import { IDGenerator, UUIDGenerator } from '../utils/IDGenerator';
+import { UUIDGenerator } from '../shared/adapters/idGenerator/UUIDGenerator';
+import { IDGenerator } from '../shared/ports/IDGenerator';
 import { Publisher, Subscriber } from '../utils/pubSub/PubSub';
 import { FakeEmailProvider } from './adapters/emailProviders/FakeEmailProvider';
 import {

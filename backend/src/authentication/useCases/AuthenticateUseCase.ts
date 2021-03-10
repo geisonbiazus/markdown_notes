@@ -1,4 +1,4 @@
-import { ErrorResponse, errorResponse } from '../../utils/ErrorResponse';
+import { ErrorResponse, errorResponse } from '../../shared/entities/ErrorResponse';
 import { User } from '../entities/User';
 import { AuthenticationRepository } from '../ports/AuthenticationRepository';
 import { PasswordManager } from '../ports/PasswordManager';

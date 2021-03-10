@@ -1,4 +1,4 @@
-import { FakeIDGenerator } from '../../utils/IDGenerator';
+import { FakeIDGenerator } from '../../shared/adapters/idGenerator/FakeIDGenerator';
 import { FakePublisher } from '../../utils/pubSub/FakePublisher';
 import { uuid } from '../../utils/uuid';
 import { ValidationError } from '../../utils/validations';
