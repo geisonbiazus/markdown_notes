@@ -1,6 +1,7 @@
 import { AppContext } from '../AppContext';
-import { AuthenticationController, NoteController } from './controllers';
-import { AuthenticationMiddleware } from './middleware';
+import { AuthenticationController } from './controllers/AuthenticationController';
+import { NoteController } from './controllers/NoteController';
+import { AuthenticationMiddleware } from './middleware/AuthenticationMiddleware';
 
 export class APIContext {
   constructor(private appContext: AppContext) {}

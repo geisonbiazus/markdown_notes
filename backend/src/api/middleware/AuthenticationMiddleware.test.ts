@@ -2,9 +2,10 @@ import { Express, Request, Response } from 'express';
 import request from 'supertest';
 import { AppContext } from '../../AppContext';
 import { User } from '../../authentication/entities/User';
-import { json, uuid } from '../../utils';
-import { authenticate, createUser } from '../helpers';
-import { Server } from '../server';
+import { json } from '../../utils/json';
+import { uuid } from '../../utils/uuid';
+import { authenticate, createUser } from '../helpers/testHelpers';
+import { Server } from '../Server';
 import { AuthenticationMiddleware } from './AuthenticationMiddleware';
 
 describe('authentication', () => {

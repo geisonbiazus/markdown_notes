@@ -1,4 +1,4 @@
-import { uuid } from '../utils';
+import { uuid } from '../utils/uuid';
 import { User, UserParams } from './entities/User';
 import { AuthenticationRepository } from './ports/AuthenticationRepository';
 import { PasswordManager } from './ports/PasswordManager';

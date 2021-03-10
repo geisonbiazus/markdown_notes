@@ -1,6 +1,6 @@
 import { getConnection } from 'typeorm';
 import { IDGenerator, UUIDGenerator } from '../utils/IDGenerator';
-import { Publisher, Subscriber } from '../utils/pub_sub';
+import { Publisher, Subscriber } from '../utils/pubSub/PubSub';
 import { FakeEmailProvider } from './adapters/emailProviders/FakeEmailProvider';
 import {
   SendGridEmailProvider,

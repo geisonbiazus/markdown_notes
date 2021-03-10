@@ -1,6 +1,6 @@
 import { errorResponse, ErrorResponse } from '../../utils/ErrorResponse';
 import { IDGenerator } from '../../utils/IDGenerator';
-import { Publisher } from '../../utils/pub_sub/PubSub';
+import { Publisher } from '../../utils/pubSub/PubSub';
 import { validationErrorResponse, ValidationErrorResponse } from '../../utils/validations';
 import { User } from '../entities/User';
 import { UserCreatedEvent } from '../events/UserCreatedEvent';

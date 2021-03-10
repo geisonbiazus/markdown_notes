@@ -2,7 +2,9 @@ import { createConnection } from 'typeorm';
 import { AuthenticationContext } from './authentication/AuthenticationContext';
 import { Config } from './Config';
 import { NotesContext } from './notes/NotesContext';
-import { FakePublisher, Publisher, RabbitMQPubSub, Subscriber } from './utils/pub_sub';
+import { FakePublisher } from './utils/pubSub/FakePublisher';
+import { Publisher, Subscriber } from './utils/pubSub/PubSub';
+import { RabbitMQPubSub } from './utils/pubSub/RabbitMQPubSub';
 
 export class AppContext {
   public config: Config;

@@ -1,5 +1,5 @@
 import { FakeIDGenerator } from '../../utils/IDGenerator';
-import { FakePublisher } from '../../utils/pub_sub/FakePublisher';
+import { FakePublisher } from '../../utils/pubSub/FakePublisher';
 import { uuid } from '../../utils/uuid';
 import { ValidationError } from '../../utils/validations';
 import { FakePasswordManager } from '../adapters/passwordManager/FakePasswordManager';

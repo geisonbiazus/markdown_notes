@@ -1,4 +1,5 @@
-import { connect, dbTest, disconnect, uuid } from '../../utils';
+import { connect, dbTest, disconnect } from '../../utils/dbTest';
+import { uuid } from '../../utils/uuid';
 import { Note } from '../entities/Note';
 import { TypeORMNoteRepository } from './TypeORMNoteRepository';
 

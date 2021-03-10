@@ -2,7 +2,7 @@ import cors from 'cors';
 import express, { Express } from 'express';
 import { AppContext } from '../AppContext';
 import { APIContext } from './APIContext';
-import { Router } from './router';
+import { Router } from './Router';
 
 export class Server {
   public server: Express;
