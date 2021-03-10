@@ -1,21 +1,4 @@
-export class ValidationError {
-  constructor(
-    public field: string,
-    public type: string,
-    public constraints?: Record<string, number | string | undefined>
-  ) {}
-}
-
-export interface ValidationErrorResponse {
-  status: 'validation_error';
-  validationErrors: ValidationError[];
-}
-
-export function validationErrorResponse(
-  validationErrors: ValidationError[]
-): ValidationErrorResponse {
-  return { status: 'validation_error', validationErrors };
-}
+import { ValidationError } from './ValidationError';
 
 export abstract class BaseValidator<TRequest> {
   public errors: ValidationError[] = [];

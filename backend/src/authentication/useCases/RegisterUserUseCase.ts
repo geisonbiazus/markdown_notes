@@ -1,7 +1,10 @@
 import { errorResponse, ErrorResponse } from '../../shared/entities/ErrorResponse';
+import {
+  ValidationErrorResponse,
+  validationErrorResponse,
+} from '../../shared/entities/ValidationErrorResponse';
 import { IDGenerator } from '../../shared/ports/IDGenerator';
 import { Publisher } from '../../utils/pubSub/PubSub';
-import { validationErrorResponse, ValidationErrorResponse } from '../../utils/validations';
 import { User } from '../entities/User';
 import { UserCreatedEvent } from '../events/UserCreatedEvent';
 import { AuthenticationRepository } from '../ports/AuthenticationRepository';

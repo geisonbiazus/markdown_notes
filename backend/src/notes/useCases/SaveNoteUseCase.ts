@@ -1,4 +1,7 @@
-import { ValidationErrorResponse, validationErrorResponse } from '../../utils/validations';
+import {
+  ValidationErrorResponse,
+  validationErrorResponse,
+} from '../../shared/entities/ValidationErrorResponse';
 import { MarkdownConverter } from '../entities/MarkdownConverter';
 import { Note } from '../entities/Note';
 import { NoteRepository } from '../ports/NoteRepository';

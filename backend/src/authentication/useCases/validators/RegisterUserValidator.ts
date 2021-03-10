@@ -1,4 +1,4 @@
-import { BaseValidator } from '../../../utils/validations';
+import { BaseValidator } from '../../../shared/entities/BaseValidator';
 import { RegisterUserRequest } from '../RegisterUserUseCase';
 
 export class RegisterUserValidator extends BaseValidator<RegisterUserRequest> {

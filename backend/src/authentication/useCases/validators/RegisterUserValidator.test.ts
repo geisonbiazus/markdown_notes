@@ -1,4 +1,4 @@
-import { ValidationError } from '../../../utils/validations';
+import { ValidationError } from '../../../shared/entities/ValidationError';
 import { RegisterUserRequest } from '../RegisterUserUseCase';
 import { RegisterUserValidator } from './RegisterUserValidator';
 
