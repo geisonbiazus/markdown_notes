@@ -14,6 +14,6 @@ export class APIContext {
   }
 
   public get noteController(): NoteController {
-    return new NoteController(this.appContext.notes.facade);
+    return new NoteController(this.appContext.notes);
   }
 }

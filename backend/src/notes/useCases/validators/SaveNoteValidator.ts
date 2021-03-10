@@ -1,5 +1,5 @@
-import { BaseValidator } from '../../utils/validations';
-import { SaveNoteRequest } from '../useCases/SaveNoteUseCase';
+import { BaseValidator } from '../../../utils/validations';
+import { SaveNoteRequest } from '../SaveNoteUseCase';
 
 export class SaveNoteValidator extends BaseValidator<SaveNoteRequest> {
   protected validate(): void {

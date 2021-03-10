@@ -2,7 +2,7 @@ import { ValidationErrorResponse, validationErrorResponse } from '../../utils/va
 import { MarkdownConverter } from '../entities/MarkdownConverter';
 import { Note } from '../entities/Note';
 import { NoteRepository } from '../ports/NoteRepository';
-import { SaveNoteValidator } from '../validators/SaveNoteValidator';
+import { SaveNoteValidator } from './validators/SaveNoteValidator';
 
 export class SaveNoteUseCase {
   constructor(private repo: NoteRepository, private markdownConverter: MarkdownConverter) {}

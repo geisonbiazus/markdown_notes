@@ -2,7 +2,7 @@ import bind from 'bind-decorator';
 import { Request, Response } from 'express';
 import { User } from '../../authentication/entities/User';
 import { Note } from '../../notes/entities/Note';
-import { NotesFacade } from '../../notes/NotesFacade';
+import { NotesContext } from '../../notes/NotesContext';
 import { SaveNoteRequest, SaveNoteResponse } from '../../notes/useCases/SaveNoteUseCase';
 
 interface NoteJSON {
@@ -13,16 +13,16 @@ interface NoteJSON {
 }
 
 export class NoteController {
-  private notesFacade: NotesFacade;
+  private context: NotesContext;
 
-  constructor(notesFacade: NotesFacade) {
-    this.notesFacade = notesFacade;
+  constructor(context: NotesContext) {
+    this.context = context;
   }
 
   @bind
   public async saveNote(req: Request, res: Response, user: User): Promise<void> {
     const request = this.buildSaveNoteRequest(req, user);
-    const response = await this.notesFacade.saveNote(request);
+    const response = await this.context.saveNoteUseCase.run(request);
     this.sendSaveNoteResponse(res, response);
   }
 
@@ -50,7 +50,7 @@ export class NoteController {
 
   @bind
   public async getNote(req: Request, res: Response, user: User): Promise<void> {
-    const note = await this.notesFacade.getNote(user.id, req.params.id);
+    const note = await this.context.getNoteUseCase.run(user.id, req.params.id);
 
     if (note) {
       res.status(200);
@@ -63,7 +63,7 @@ export class NoteController {
 
   @bind
   public async getNotes(_req: Request, res: Response, user: User): Promise<void> {
-    const notes = await this.notesFacade.getNotes(user.id);
+    const notes = await this.context.getNotesUseCase.run(user.id);
 
     res.status(200);
     res.json(notes.map(this.noteJson));
@@ -71,7 +71,7 @@ export class NoteController {
 
   @bind
   public async removeNote(req: Request, res: Response): Promise<void> {
-    if (await this.notesFacade.removeNote(req.params.id)) {
+    if (await this.context.removeNoteUseCase.run(req.params.id)) {
       res.status(200);
       res.json();
     } else {
