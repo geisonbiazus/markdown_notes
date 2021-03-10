@@ -1,6 +1,4 @@
-export abstract class Event<TName, TPayload> {
-  constructor(public name: TName, public payload: TPayload) {}
-}
+import { Event } from '../entities/Event';
 
 export type AnyEvent = Event<string, any>;
 export type Name<TEvent extends Event<string, any>> = TEvent['name'];

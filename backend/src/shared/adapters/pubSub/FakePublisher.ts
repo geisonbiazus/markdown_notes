@@ -1,4 +1,4 @@
-import { AnyEvent, Publisher } from './PubSub';
+import { AnyEvent, Publisher } from '../../ports/PubSub';
 
 export class FakePublisher implements Publisher {
   public events: AnyEvent[] = [];

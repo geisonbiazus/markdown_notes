@@ -1,6 +1,6 @@
 import { FakeIDGenerator } from '../../shared/adapters/idGenerator/FakeIDGenerator';
 import { ValidationError } from '../../shared/entities/ValidationError';
-import { FakePublisher } from '../../utils/pubSub/FakePublisher';
+import { FakePublisher } from '../../shared/adapters/pubSub/FakePublisher';
 import { uuid } from '../../utils/uuid';
 import { FakePasswordManager } from '../adapters/passwordManager/FakePasswordManager';
 import { InMemoryAuthenticationRepository } from '../adapters/repositories/InMemoryAuthenticationRepository';

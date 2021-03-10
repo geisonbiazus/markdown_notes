@@ -1,4 +1,4 @@
-import { Event } from '../../utils/pubSub/PubSub';
+import { Event } from '../../shared/entities/Event';
 import { UserStatus } from '../entities/User';
 
 export interface UserCreatedEventPayload {

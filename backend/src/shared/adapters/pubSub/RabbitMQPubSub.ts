@@ -1,4 +1,5 @@
-import { AnyEvent, Event, Name, Publisher, Subscriber, SubscriberCallback } from './PubSub';
+import { AnyEvent, Name, Publisher, Subscriber, SubscriberCallback } from '../../ports/PubSub';
+import { Event } from '../../entities/Event';
 import amqp from 'amqplib';
 
 interface ConsumerInfo {

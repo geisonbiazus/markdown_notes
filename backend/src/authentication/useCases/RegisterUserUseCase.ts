@@ -4,7 +4,7 @@ import {
   validationErrorResponse,
 } from '../../shared/entities/ValidationErrorResponse';
 import { IDGenerator } from '../../shared/ports/IDGenerator';
-import { Publisher } from '../../utils/pubSub/PubSub';
+import { Publisher } from '../../shared/ports/PubSub';
 import { User } from '../entities/User';
 import { UserCreatedEvent } from '../events/UserCreatedEvent';
 import { AuthenticationRepository } from '../ports/AuthenticationRepository';
