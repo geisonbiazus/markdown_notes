@@ -1,5 +1,5 @@
-import { Note } from '../entities/Note';
-import { NoteRepository } from '../ports/NoteRepository';
+import { Note } from '../../entities/Note';
+import { NoteRepository } from '../../ports/NoteRepository';
 
 export class InMemoryNoteRepository implements NoteRepository {
   private notes: Record<string, Note> = {};

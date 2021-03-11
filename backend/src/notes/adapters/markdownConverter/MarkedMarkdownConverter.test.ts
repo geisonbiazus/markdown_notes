@@ -1,7 +1,7 @@
-import { MarkdownConverter } from './MarkdownConverter';
+import { MarkedMarkdownConverter } from './MarkedMarkdownConverter';
 
-describe('MarkdownConverter', () => {
-  const converter = new MarkdownConverter();
+describe('MarkedMarkdownConverter', () => {
+  const converter = new MarkedMarkdownConverter();
 
   it('converts the given test from markdown to HTML', () => {
     expect(converter.convertToHTML(sampleMarkdown)).toEqual(sampleHTML);

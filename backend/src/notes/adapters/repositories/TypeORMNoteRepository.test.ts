@@ -1,6 +1,6 @@
-import { connect, dbTest, disconnect } from '../../shared/utils/dbTest';
-import { uuid } from '../../shared/utils/uuid';
-import { Note } from '../entities/Note';
+import { connect, dbTest, disconnect } from '../../../shared/utils/dbTest';
+import { uuid } from '../../../shared/utils/uuid';
+import { Note } from '../../entities/Note';
 import { TypeORMNoteRepository } from './TypeORMNoteRepository';
 
 describe('TypeORMNoteRespository', () => {

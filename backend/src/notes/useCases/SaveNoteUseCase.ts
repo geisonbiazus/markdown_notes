@@ -2,8 +2,8 @@ import {
   ValidationErrorResponse,
   validationErrorResponse,
 } from '../../shared/entities/ValidationErrorResponse';
-import { MarkdownConverter } from '../entities/MarkdownConverter';
 import { Note } from '../entities/Note';
+import { MarkdownConverter } from '../ports/MarkdownConverter';
 import { NoteRepository } from '../ports/NoteRepository';
 import { SaveNoteValidator } from './validators/SaveNoteValidator';
 

@@ -1,18 +1,18 @@
 import { ValidationError } from '../../shared/entities/ValidationError';
 import { uuid } from '../../shared/utils/uuid';
-import { MarkdownConverter } from '../entities/MarkdownConverter';
+import { MarkedMarkdownConverter } from '../adapters/markdownConverter/MarkedMarkdownConverter';
 import { Note } from '../entities/Note';
-import { InMemoryNoteRepository } from '../repositories/InMemoryNoteRepository';
+import { InMemoryNoteRepository } from '../adapters/repositories/InMemoryNoteRepository';
 import { SaveNoteUseCase } from './SaveNoteUseCase';
 
 describe('SaveNoteUseCase', () => {
   let useCase: SaveNoteUseCase;
   let repo: InMemoryNoteRepository;
-  let converter: MarkdownConverter;
+  let converter: MarkedMarkdownConverter;
 
   beforeEach(() => {
     repo = new InMemoryNoteRepository();
-    converter = new MarkdownConverter();
+    converter = new MarkedMarkdownConverter();
     useCase = new SaveNoteUseCase(repo, converter);
   });
 

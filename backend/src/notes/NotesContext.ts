@@ -1,8 +1,9 @@
 import { getConnection } from 'typeorm';
-import { MarkdownConverter } from './entities/MarkdownConverter';
+import { MarkedMarkdownConverter } from './adapters/markdownConverter/MarkedMarkdownConverter';
+import { InMemoryNoteRepository } from './adapters/repositories/InMemoryNoteRepository';
+import { TypeORMNoteRepository } from './adapters/repositories/TypeORMNoteRepository';
+import { MarkdownConverter } from './ports/MarkdownConverter';
 import { NoteRepository } from './ports/NoteRepository';
-import { InMemoryNoteRepository } from './repositories/InMemoryNoteRepository';
-import { TypeORMNoteRepository } from './repositories/TypeORMNoteRepository';
 import { GetNotesUseCase } from './useCases/GetNotesUseCase';
 import { GetNoteUseCase } from './useCases/GetNoteUseCase';
 import { RemoveNoteUseCase } from './useCases/RemoveNoteUseCase';
@@ -40,6 +41,6 @@ export class NotesContext {
   }
 
   public get markdownConverter(): MarkdownConverter {
-    return new MarkdownConverter();
+    return new MarkedMarkdownConverter();
   }
 }
