@@ -1,5 +1,4 @@
-import { FakePublisher } from '../../utils';
-import { InMemoryAuthenticationClient } from '../clients';
+import { InMemoryAuthenticationClient } from '../clients/InMemoryAuthenticationClient';
 import { SignUpInteractor, SignUpState } from './SignUpInteractor';
 
 describe('SignUpinteractor', () => {

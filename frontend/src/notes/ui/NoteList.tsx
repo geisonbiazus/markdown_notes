@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
-import { NewNoteButton } from './NewNoteButton';
-import { useNoteContext } from '../NoteReactContext';
-import { VerticalNav, NavItem, NavIcon, ConfirmModal, Loading } from '../../shared/components';
 import { useTranslation } from 'react-i18next';
+import { ConfirmModal } from '../../shared/components/ConfirmModal';
+import { Loading } from '../../shared/components/Loading';
+import { NavIcon, NavItem, VerticalNav } from '../../shared/components/Nav';
+import { useNoteContext } from '../NoteReactContext';
+import { NewNoteButton } from './NewNoteButton';
 
 export const NoteList: React.FC = () => {
   const { listNoteState, listNoteInteractor, removeNoteInteractor } = useNoteContext();

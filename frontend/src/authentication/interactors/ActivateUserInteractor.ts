@@ -1,4 +1,4 @@
-import { StateObservableInteractor } from '../../utils';
+import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
 import { AuthenticationClient } from '../entities';
 
 export interface ActivateUserState {

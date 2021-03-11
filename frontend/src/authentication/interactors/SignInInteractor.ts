@@ -1,11 +1,8 @@
 import bind from 'bind-decorator';
-import {
-  Errors,
-  isEmpty,
-  Publisher,
-  StateObservableInteractor,
-  validateRequired,
-} from '../../utils';
+import { isEmpty } from '../../utils/object';
+import { Publisher } from '../../utils/pub_sub/Publisher';
+import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
+import { Errors, validateRequired } from '../../utils/validations';
 import { AuthenticationClient, SessionRepository } from '../entities';
 import { USER_AUTHENTICATED_EVENT } from '../events';
 

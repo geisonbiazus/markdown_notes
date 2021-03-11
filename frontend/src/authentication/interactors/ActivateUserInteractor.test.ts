@@ -1,4 +1,4 @@
-import { InMemoryAuthenticationClient } from '../clients';
+import { InMemoryAuthenticationClient } from '../clients/InMemoryAuthenticationClient';
 import { ActivateUserInteractor, ActivateUserState } from './ActivateUserInteractor';
 
 describe('ActivateUserInteractor', () => {

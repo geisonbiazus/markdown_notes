@@ -1,4 +1,4 @@
-import { handleError, HTTPClient } from '../../utils';
+import { handleError, HTTPClient } from '../../utils/HTTPClient';
 import {
   ActivateUserResponse,
   AuthenticationClient,

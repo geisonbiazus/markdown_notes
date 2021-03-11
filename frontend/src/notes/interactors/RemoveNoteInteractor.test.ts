@@ -1,5 +1,6 @@
-import { FakePublisher, uuid } from '../../utils';
-import { InMemoryNoteClient } from '../clients';
+import { FakePublisher } from '../../utils/pub_sub/FakePublisher';
+import { uuid } from '../../utils/uuid';
+import { InMemoryNoteClient } from '../clients/InMemoryNoteClient';
 import { newNote } from '../entities';
 import { RemoveNoteInteractor } from './RemoveNoteInteractor';
 

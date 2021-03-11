@@ -1,12 +1,9 @@
 import bind from 'bind-decorator';
 import { ValidationErrorResponse } from '../../shared/entitites';
-import {
-  Errors,
-  isEmpty,
-  Publisher,
-  StateObservableInteractor,
-  validateRequired,
-} from '../../utils';
+import { isEmpty } from '../../utils/object';
+import { Publisher } from '../../utils/pub_sub/Publisher';
+import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
+import { Errors, validateRequired } from '../../utils/validations';
 import { newNote, Note, NoteClient } from '../entities';
 import { NoteSavedPayload, NOTE_LOADED_FOR_EDITING_EVENT, NOTE_SAVED_EVENT } from '../events';
 

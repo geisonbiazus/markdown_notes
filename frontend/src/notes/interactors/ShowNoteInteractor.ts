@@ -1,5 +1,6 @@
 import bind from 'bind-decorator';
-import { Publisher, StateObservableInteractor } from '../../utils';
+import { Publisher } from '../../utils/pub_sub/Publisher';
+import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
 import { Note, NoteClient } from '../entities';
 import { NOTE_LOADED_FOR_SHOWING_EVENT } from '../events';
 

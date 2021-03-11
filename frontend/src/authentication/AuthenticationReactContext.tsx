@@ -1,11 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useAppContext } from '../app';
-import {
-  ActivateUserInteractor,
-  ActivateUserState,
-  SignInInteractor,
-  SignInState,
-} from './interactors';
+import { useAppContext } from '../app/AppReactContext';
+import { ActivateUserInteractor, ActivateUserState } from './interactors/ActivateUserInteractor';
+import { SignInInteractor, SignInState } from './interactors/SignInInteractor';
 import { SignUpInteractor, SignUpState } from './interactors/SignUpInteractor';
 
 export interface AuthenticationContextValue {

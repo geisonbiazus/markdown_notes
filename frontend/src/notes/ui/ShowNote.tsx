@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, Link } from 'react-router-dom';
-import { Loading } from '../../shared/components';
+import { Link, useParams } from 'react-router-dom';
+import { Loading } from '../../shared/components/Loading';
 import { useNoteContext } from '../NoteReactContext';
 
 export const ShowNote: React.FC = () => {

@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
-import { useParams, Prompt, useHistory } from 'react-router-dom';
-import { useNoteContext } from '../NoteReactContext';
-import { Form, FormRow, TextField, TextArea, Button, Loading } from '../../shared/components';
 import { useTranslation } from 'react-i18next';
+import { Prompt, useHistory, useParams } from 'react-router-dom';
+import { Button } from '../../shared/components/Button';
+import { Form, FormRow, TextArea, TextField } from '../../shared/components/Form';
+import { Loading } from '../../shared/components/Loading';
+import { useNoteContext } from '../NoteReactContext';
 
 export const EditNote: React.FC = () => {
   const { editNoteState, editNoteInteractor } = useNoteContext();

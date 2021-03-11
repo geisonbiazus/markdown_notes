@@ -1,14 +1,9 @@
 import React, { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import {
-  Button,
-  CenteredContainer,
-  Form,
-  FormRow,
-  NarrowContainer,
-  TextField,
-} from '../../shared/components';
+import { Button } from '../../shared/components/Button';
+import { Form, FormRow, TextField } from '../../shared/components/Form';
+import { CenteredContainer, NarrowContainer } from '../../shared/components/Layout';
 import { useAuthenticationContext } from '../AuthenticationReactContext';
 
 export const SignUp: React.FC = () => {

@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import { CenteredContainer, Loading } from '../../shared/components';
+import { CenteredContainer } from '../../shared/components/Layout';
+import { Loading } from '../../shared/components/Loading';
 import { useAuthenticationContext } from '../AuthenticationReactContext';
 
 export const ActivateUser: React.FC = () => {
@@ -11,7 +12,7 @@ export const ActivateUser: React.FC = () => {
   useEffect(() => {
     activateUserInteractor.activate(token);
     return activateUserInteractor.cleanUp;
-  }, [activateUserInteractor]);
+  }, [activateUserInteractor, token]);
 
   switch (activateUserState.status) {
     case 'activated':

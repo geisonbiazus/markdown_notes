@@ -1,15 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useAppContext } from '../app';
-import {
-  EditNoteInteractor,
-  EditNoteState,
-  ListNoteInteractor,
-  ListNoteState,
-  RemoveNoteInteractor,
-  RemoveNoteState,
-  ShowNoteInteractor,
-  ShowNoteState,
-} from './interactors';
+import { useAppContext } from '../app/AppReactContext';
+import { EditNoteInteractor, EditNoteState } from './interactors/EditNoteInteractor';
+import { ListNoteInteractor, ListNoteState } from './interactors/ListNoteInteractor';
+import { RemoveNoteInteractor, RemoveNoteState } from './interactors/RemoveNoteInteractor';
+import { ShowNoteInteractor, ShowNoteState } from './interactors/ShowNoteInteractor';
 
 export interface NoteContextValue {
   listNoteState: ListNoteState;

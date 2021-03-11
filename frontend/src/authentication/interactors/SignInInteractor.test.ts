@@ -1,6 +1,6 @@
-import { FakePublisher } from '../../utils';
-import { InMemoryAuthenticationClient } from '../clients';
-import { InMemorySessionRepository } from '../repositories';
+import { FakePublisher } from '../../utils/pub_sub/FakePublisher';
+import { InMemoryAuthenticationClient } from '../clients/InMemoryAuthenticationClient';
+import { InMemorySessionRepository } from '../repositories/InMemorySessionRepository';
 import { SignInInteractor, SignInState } from './SignInInteractor';
 
 describe('SignInInteractor', () => {

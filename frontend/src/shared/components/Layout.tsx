@@ -1,7 +1,8 @@
 import React from 'react';
-import { Navbar, Container, Nav } from 'react-bootstrap';
+import { Container, Nav, Navbar } from 'react-bootstrap';
 import './Layout.css';
 
+export { Col, Row } from 'react-bootstrap';
 export interface AppBarProps {
   title: string;
   href: string;

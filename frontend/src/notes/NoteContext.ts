@@ -1,6 +1,9 @@
-import { AppConfig } from '../app';
-import { HTTPClient, PubSub, uuid } from '../utils';
-import { APINoteClient, InMemoryNoteClient } from './clients';
+import { AppConfig } from '../app/AppConfig';
+import { HTTPClient } from '../utils/HTTPClient';
+import { PubSub } from '../utils/pub_sub/PubSub';
+import { uuid } from '../utils/uuid';
+import { APINoteClient } from './clients/APINoteClient';
+import { InMemoryNoteClient } from './clients/InMemoryNoteClient';
 import { NoteClient } from './entities';
 import {
   NoteLoadedForEditingPayload,
@@ -11,12 +14,10 @@ import {
   NOTE_REMOVED_EVENT,
   NOTE_SAVED_EVENT,
 } from './events';
-import {
-  EditNoteInteractor,
-  ListNoteInteractor,
-  RemoveNoteInteractor,
-  ShowNoteInteractor,
-} from './interactors';
+import { EditNoteInteractor } from './interactors/EditNoteInteractor';
+import { ListNoteInteractor } from './interactors/ListNoteInteractor';
+import { RemoveNoteInteractor } from './interactors/RemoveNoteInteractor';
+import { ShowNoteInteractor } from './interactors/ShowNoteInteractor';
 
 export class NoteContext {
   private showNoteInteractorInstance?: ShowNoteInteractor;

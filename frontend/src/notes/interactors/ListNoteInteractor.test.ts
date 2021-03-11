@@ -1,5 +1,5 @@
-import { uuid } from '../../utils';
-import { InMemoryNoteClient } from '../clients';
+import { uuid } from '../../utils/uuid';
+import { InMemoryNoteClient } from '../clients/InMemoryNoteClient';
 import { newNote } from '../entities';
 import { ListNoteInteractor } from './ListNoteInteractor';
 

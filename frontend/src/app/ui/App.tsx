@@ -1,6 +1,6 @@
 import React from 'react';
+import { useAuthenticationContext } from '../../authentication/AuthenticationReactContext';
 import { AuthenticatedApp } from './AuthenticatedApp';
-import { useAuthenticationContext } from '../../authentication';
 import { UnauthenticatedApp } from './UnauthenticatedApp';
 
 export const App: React.FC = () => {

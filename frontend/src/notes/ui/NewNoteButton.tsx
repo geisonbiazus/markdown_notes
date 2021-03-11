@@ -1,8 +1,8 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
-import { uuid } from '../../utils';
-import { Button } from '../../shared/components';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
+import { Button } from '../../shared/components/Button';
+import { uuid } from '../../utils/uuid';
 import { useNoteContext } from '../NoteReactContext';
 
 export const NewNoteButton: React.FC = () => {

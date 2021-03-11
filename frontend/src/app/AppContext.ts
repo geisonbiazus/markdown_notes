@@ -1,10 +1,9 @@
-import {
-  AuthenticationContext,
-  UserAuthenticatedPayload,
-  USER_AUTHENTICATED_EVENT,
-} from '../authentication';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import { UserAuthenticatedPayload, USER_AUTHENTICATED_EVENT } from '../authentication/events';
 import { NoteContext } from '../notes/NoteContext';
-import { AuthenticatedHTTPClient, HTTPClient, PubSub } from '../utils';
+import { AuthenticatedHTTPClient } from '../utils/AuthenticatedHTTPClient';
+import { HTTPClient } from '../utils/HTTPClient';
+import { PubSub } from '../utils/pub_sub/PubSub';
 import { AppConfig, getAppConfig } from './AppConfig';
 
 export class AppContext {
