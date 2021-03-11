@@ -8,9 +8,9 @@ const defaultConfig = {
   synchronize: false,
   logging: true,
   entities: ['src/**/typeORM/entities/**/*'],
-  migrations: ['src/migrations/**/*'],
+  migrations: ['src/shared/migrations/**/*'],
   cli: {
-    migrationsDir: 'src/migrations',
+    migrationsDir: 'src/shared/migrations',
   },
 };
 
@@ -25,7 +25,7 @@ const envConfig =
   }) ||
   (process.env.NODE_ENV === 'production' && {
     entities: ['build/**/typeORM/entities/**/*'],
-    migrations: ['build/migrations/**/*'],
+    migrations: ['build/shared/migrations/**/*'],
   }) ||
   {};
 
