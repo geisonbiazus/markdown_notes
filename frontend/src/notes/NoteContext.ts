@@ -2,9 +2,9 @@ import { AppConfig } from '../app/AppConfig';
 import { HTTPClient } from '../utils/HTTPClient';
 import { PubSub } from '../utils/pub_sub/PubSub';
 import { uuid } from '../utils/uuid';
-import { APINoteClient } from './clients/APINoteClient';
-import { InMemoryNoteClient } from './clients/InMemoryNoteClient';
-import { NoteClient } from './entities';
+import { APINoteClient } from './adapters/noteClient/APINoteClient';
+import { InMemoryNoteClient } from './adapters/noteClient/InMemoryNoteClient';
+import { NoteClient } from './ports/NoteClient';
 import {
   NoteLoadedForEditingPayload,
   NoteLoadedForShowingPayload,

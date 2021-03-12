@@ -1,4 +1,4 @@
-import { Note } from './entities';
+import { Note } from './entitites/Note';
 
 export const NOTE_SAVED_EVENT = 'note_saved';
 export type NoteSavedPayload = Note;

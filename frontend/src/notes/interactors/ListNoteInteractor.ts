@@ -1,6 +1,7 @@
 import bind from 'bind-decorator';
 import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
-import { Note, NoteClient } from '../entities';
+import { NoteClient } from '../ports/NoteClient';
+import { Note } from '../entitites/Note';
 
 export interface ListNoteState {
   notes: Note[];

@@ -1,7 +1,7 @@
 import { FakePublisher } from '../../utils/pub_sub/FakePublisher';
 import { uuid } from '../../utils/uuid';
-import { InMemoryNoteClient } from '../clients/InMemoryNoteClient';
-import { newNote } from '../entities';
+import { InMemoryNoteClient } from '../adapters/noteClient/InMemoryNoteClient';
+import { newNote } from '../entitites/Note';
 import { RemoveNoteInteractor } from './RemoveNoteInteractor';
 
 describe('RemoveNoteInteractor', () => {

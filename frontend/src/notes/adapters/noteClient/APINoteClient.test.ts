@@ -1,7 +1,7 @@
 import nock from 'nock';
-import { HTTPClient } from '../../utils/HTTPClient';
-import { uuid } from '../../utils/uuid';
-import { newNote, Note } from '../entities';
+import { HTTPClient } from '../../../utils/HTTPClient';
+import { uuid } from '../../../utils/uuid';
+import { newNote, Note } from '../../entitites/Note';
 import { APINoteClient } from './APINoteClient';
 
 HTTPClient.useNodeAdapter();
