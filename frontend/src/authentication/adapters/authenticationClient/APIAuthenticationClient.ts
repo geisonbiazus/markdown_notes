@@ -1,11 +1,11 @@
-import { handleError, HTTPClient } from '../../utils/HTTPClient';
+import { handleError, HTTPClient } from '../../../utils/HTTPClient';
 import {
   ActivateUserResponse,
   AuthenticationClient,
   SignInResponse,
   SignUpRequest,
   SignUpResponse,
-} from '../entities';
+} from '../../ports/AuthenticationClient';
 
 export class APIAuthenticationClient implements AuthenticationClient {
   constructor(private httpClient: HTTPClient) {}

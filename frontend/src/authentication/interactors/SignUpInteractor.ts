@@ -1,5 +1,5 @@
 import bind from 'bind-decorator';
-import { ErrorResponse } from '../../shared/entitites';
+import { ErrorResponse } from '../../shared/entities';
 import { isEmpty } from '../../utils/object';
 import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
 import {
@@ -9,7 +9,7 @@ import {
   validateMinimumLength,
   validateRequired,
 } from '../../utils/validations';
-import { AuthenticationClient, SignUpResponse } from '../entities';
+import { AuthenticationClient, SignUpResponse } from '../ports/AuthenticationClient';
 
 export interface SignUpState {
   name: string;

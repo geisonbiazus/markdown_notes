@@ -1,6 +1,4 @@
-import { ErrorResponse, SuccessResponse } from '../shared/entitites';
-
-export type Token = string;
+import { ErrorResponse, SuccessResponse } from '../../shared/entities';
 
 export interface AuthenticationClient {
   activateUser(token: String): Promise<ActivateUserResponse>;
@@ -13,12 +11,6 @@ export type SignInResponse = SignInSuccessResponse | ErrorResponse;
 export interface SignInSuccessResponse {
   status: 'success';
   token: string;
-}
-
-export interface SessionRepository {
-  setToken(token: Token): void;
-  getToken(): string | null;
-  removeToken(): void;
 }
 
 export interface SignUpRequest {

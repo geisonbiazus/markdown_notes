@@ -1,13 +1,14 @@
 import { AppConfig } from '../app/AppConfig';
 import { HTTPClient } from '../utils/HTTPClient';
 import { PubSub } from '../utils/pub_sub/PubSub';
-import { APIAuthenticationClient } from './clients/APIAuthenticationClient';
-import { InMemoryAuthenticationClient } from './clients/InMemoryAuthenticationClient';
-import { AuthenticationClient, SessionRepository } from './entities';
+import { APIAuthenticationClient } from './adapters/authenticationClient/APIAuthenticationClient';
+import { InMemoryAuthenticationClient } from './adapters/authenticationClient/InMemoryAuthenticationClient';
+import { AuthenticationClient } from './ports/AuthenticationClient';
+import { SessionRepository } from './ports/SessionRepository';
 import { ActivateUserInteractor } from './interactors/ActivateUserInteractor';
 import { SignInInteractor } from './interactors/SignInInteractor';
 import { SignUpInteractor } from './interactors/SignUpInteractor';
-import { LocalStorageSessionRepository } from './repositories/LocalStorageSessionRepository';
+import { LocalStorageSessionRepository } from './adapters/sessionRepository/LocalStorageSessionRepository';
 
 export class AuthenticationContext {
   private signInInteractorInstance?: SignInInteractor;

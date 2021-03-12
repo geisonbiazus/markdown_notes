@@ -1,13 +1,13 @@
-import { SessionRepository, Token } from '../entities';
+import { SessionRepository } from '../../ports/SessionRepository';
 
 export class InMemorySessionRepository implements SessionRepository {
-  private token?: Token;
+  private token?: string;
 
-  public setToken(token: Token): void {
+  public setToken(token: string): void {
     this.token = token;
   }
 
-  public getToken(): Token | null {
+  public getToken(): string | null {
     return this.token || null;
   }
 

@@ -4,7 +4,7 @@ import {
   SignInResponse,
   SignUpRequest,
   SignUpResponse,
-} from '../entities';
+} from '../../ports/AuthenticationClient';
 
 interface User {
   name: string;

@@ -1,5 +1,5 @@
 import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
-import { AuthenticationClient } from '../entities';
+import { AuthenticationClient } from '../ports/AuthenticationClient';
 
 export interface ActivateUserState {
   status: 'idle' | 'pending' | 'activated' | 'not_found';

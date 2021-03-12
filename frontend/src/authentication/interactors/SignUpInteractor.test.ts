@@ -1,4 +1,4 @@
-import { InMemoryAuthenticationClient } from '../clients/InMemoryAuthenticationClient';
+import { InMemoryAuthenticationClient } from '../adapters/authenticationClient/InMemoryAuthenticationClient';
 import { SignUpInteractor, SignUpState } from './SignUpInteractor';
 
 describe('SignUpinteractor', () => {

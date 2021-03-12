@@ -1,5 +1,5 @@
 import bind from 'bind-decorator';
-import { ValidationErrorResponse } from '../../shared/entitites';
+import { ValidationErrorResponse } from '../../shared/entities';
 import { isEmpty } from '../../utils/object';
 import { Publisher } from '../../utils/pub_sub/Publisher';
 import { StateObservableInteractor } from '../../utils/StateObservableInteractor';

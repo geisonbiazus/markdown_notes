@@ -3,7 +3,8 @@ import { isEmpty } from '../../utils/object';
 import { Publisher } from '../../utils/pub_sub/Publisher';
 import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
 import { Errors, validateRequired } from '../../utils/validations';
-import { AuthenticationClient, SessionRepository } from '../entities';
+import { AuthenticationClient } from '../ports/AuthenticationClient';
+import { SessionRepository } from '../ports/SessionRepository';
 import { USER_AUTHENTICATED_EVENT } from '../events';
 
 export interface SignInState {
