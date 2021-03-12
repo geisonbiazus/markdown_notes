@@ -20,7 +20,7 @@ function newSignInState(): SignInState {
   return { email: '', password: '', errors: {}, token: '', authenticated: false, pending: false };
 }
 
-export class SignInInteractor extends StateObservableInteractor<SignInState> {
+export class SignInStore extends StateObservableInteractor<SignInState> {
   constructor(
     private authenticationClient: AuthenticationClient,
     private sessionRepository: SessionRepository,

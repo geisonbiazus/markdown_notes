@@ -1,9 +1,9 @@
 import { InMemoryAuthenticationClient } from '../adapters/authenticationClient/InMemoryAuthenticationClient';
-import { ActivateUserInteractor, ActivateUserState } from './ActivateUserInteractor';
+import { ActivateUserStore, ActivateUserState } from './ActivateUserStore';
 
-describe('ActivateUserInteractor', () => {
+describe('ActivateUserStore', () => {
   let client: InMemoryAuthenticationClient;
-  let interactor: ActivateUserInteractor;
+  let store: ActivateUserStore;
 
   const emptyState: ActivateUserState = {
     status: 'idle',
@@ -11,12 +11,12 @@ describe('ActivateUserInteractor', () => {
 
   beforeEach(() => {
     client = new InMemoryAuthenticationClient();
-    interactor = new ActivateUserInteractor(client);
+    store = new ActivateUserStore(client);
   });
 
   describe('constructor', () => {
     it('initializes with an empry state', () => {
-      expect(interactor.state).toEqual(emptyState);
+      expect(store.state).toEqual(emptyState);
     });
   });
 
@@ -26,15 +26,15 @@ describe('ActivateUserInteractor', () => {
 
       client.addPendingUser('name', 'email', 'password', token);
 
-      await interactor.activate(token);
+      await store.activate(token);
 
       expect(client.lastUser.status).toEqual('active');
-      expect(interactor.state.status).toEqual('activated');
+      expect(store.state.status).toEqual('activated');
     });
 
     it('sets notFound to true when token is not valid', async () => {
-      await interactor.activate('invalid_token');
-      expect(interactor.state.status).toEqual('not_found');
+      await store.activate('invalid_token');
+      expect(store.state.status).toEqual('not_found');
     });
   });
 });

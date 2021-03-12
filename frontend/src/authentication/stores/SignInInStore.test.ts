@@ -1,10 +1,10 @@
 import { FakePublisher } from '../../utils/pub_sub/FakePublisher';
 import { InMemoryAuthenticationClient } from '../adapters/authenticationClient/InMemoryAuthenticationClient';
 import { InMemorySessionRepository } from '../adapters/sessionRepository/InMemorySessionRepository';
-import { SignInInteractor, SignInState } from './SignInInteractor';
+import { SignInStore, SignInState } from './SignInStore';
 
-describe('SignInInteractor', () => {
-  let interactor: SignInInteractor;
+describe('SignInStore', () => {
+  let store: SignInStore;
   let authenticationClient: InMemoryAuthenticationClient;
   let sessionRepository: InMemorySessionRepository;
   let publisher: FakePublisher;
@@ -22,22 +22,22 @@ describe('SignInInteractor', () => {
     authenticationClient = new InMemoryAuthenticationClient();
     sessionRepository = new InMemorySessionRepository();
     publisher = new FakePublisher();
-    interactor = new SignInInteractor(authenticationClient, sessionRepository, publisher);
+    store = new SignInStore(authenticationClient, sessionRepository, publisher);
   });
 
   describe('constructor', () => {
     it('initializes with an empy state', () => {
-      expect(interactor.state).toEqual(emptyState);
+      expect(store.state).toEqual(emptyState);
     });
   });
 
   describe('cleanUp', () => {
     it('resets the state but keep', async () => {
-      interactor.setEmail('invalid');
-      await interactor.signIn();
-      interactor.cleanUp();
+      store.setEmail('invalid');
+      await store.signIn();
+      store.cleanUp();
 
-      expect(interactor.state).toEqual(emptyState);
+      expect(store.state).toEqual(emptyState);
     });
 
     it('keeps token and authenticated state', async () => {
@@ -46,30 +46,30 @@ describe('SignInInteractor', () => {
       const token = 'token';
       authenticationClient.addActiveUser('Name', email, password, token);
 
-      interactor.setEmail(email);
-      interactor.setPassword(password);
+      store.setEmail(email);
+      store.setPassword(password);
 
-      await interactor.signIn();
-      interactor.cleanUp();
+      await store.signIn();
+      store.cleanUp();
 
-      expect(interactor.state.token).toEqual(token);
-      expect(interactor.state.authenticated).toBeTruthy();
+      expect(store.state.token).toEqual(token);
+      expect(store.state.authenticated).toBeTruthy();
     });
   });
 
   describe('signIn', () => {
     it('validates required email and password', async () => {
-      await interactor.signIn();
-      expect(interactor.state.errors).toEqual({ email: 'required', password: 'required' });
+      await store.signIn();
+      expect(store.state.errors).toEqual({ email: 'required', password: 'required' });
     });
 
     it('returns error when authentication fails', async () => {
-      interactor.setEmail('user@example.com');
-      interactor.setPassword('password');
+      store.setEmail('user@example.com');
+      store.setPassword('password');
 
-      await interactor.signIn();
+      await store.signIn();
 
-      expect(interactor.state.errors).toEqual({ base: 'not_found' });
+      expect(store.state.errors).toEqual({ base: 'not_found' });
     });
 
     it('returns error when user is pending', async () => {
@@ -78,12 +78,12 @@ describe('SignInInteractor', () => {
       const token = 'token';
       authenticationClient.addPendingUser('Name', email, password, token);
 
-      interactor.setEmail(email);
-      interactor.setPassword(password);
+      store.setEmail(email);
+      store.setPassword(password);
 
-      await interactor.signIn();
+      await store.signIn();
 
-      expect(interactor.state.errors).toEqual({ base: 'pending_user' });
+      expect(store.state.errors).toEqual({ base: 'pending_user' });
     });
 
     it('saves the session data and sets success when authentication succeds', async () => {
@@ -92,14 +92,14 @@ describe('SignInInteractor', () => {
       const token = 'token';
       authenticationClient.addActiveUser('Name', email, password, token);
 
-      interactor.setEmail(email);
-      interactor.setPassword(password);
+      store.setEmail(email);
+      store.setPassword(password);
 
-      await interactor.signIn();
+      await store.signIn();
 
       expect(sessionRepository.getToken()).toEqual(token);
-      expect(interactor.state.authenticated).toEqual(true);
-      expect(interactor.state.token).toEqual(token);
+      expect(store.state.authenticated).toEqual(true);
+      expect(store.state.token).toEqual(token);
     });
 
     it('publishes user_authenticated event', async () => {
@@ -108,10 +108,10 @@ describe('SignInInteractor', () => {
       const token = 'token';
       authenticationClient.addActiveUser('Name', email, password, token);
 
-      interactor.setEmail(email);
-      interactor.setPassword(password);
+      store.setEmail(email);
+      store.setPassword(password);
 
-      await interactor.signIn();
+      await store.signIn();
 
       expect(publisher.events).toEqual([{ name: 'user_authenticated', payload: { token } }]);
     });
@@ -119,27 +119,27 @@ describe('SignInInteractor', () => {
 
   describe('checkAuthentication', () => {
     it('sets authenticated to false when token is note set', () => {
-      interactor.checkAuthentication();
+      store.checkAuthentication();
 
-      expect(interactor.state.authenticated).toBe(false);
-      expect(interactor.state.token).toEqual('');
+      expect(store.state.authenticated).toBe(false);
+      expect(store.state.token).toEqual('');
     });
 
     it('sets authenticated to true when token is set', () => {
       const token = 'token';
       sessionRepository.setToken(token);
 
-      interactor.checkAuthentication();
+      store.checkAuthentication();
 
-      expect(interactor.state.authenticated).toBe(true);
-      expect(interactor.state.token).toEqual(token);
+      expect(store.state.authenticated).toBe(true);
+      expect(store.state.token).toEqual(token);
     });
 
     it('publishes user_authenticated event', () => {
       const token = 'token';
       sessionRepository.setToken(token);
 
-      interactor.checkAuthentication();
+      store.checkAuthentication();
 
       expect(publisher.events).toEqual([{ name: 'user_authenticated', payload: { token } }]);
     });
@@ -151,21 +151,21 @@ describe('SignInInteractor', () => {
       const password = 'password';
       authenticationClient.addActiveUser('Name', email, password, 'token');
 
-      interactor.setEmail(email);
-      interactor.setPassword(password);
+      store.setEmail(email);
+      store.setPassword(password);
 
-      await interactor.signIn();
+      await store.signIn();
     });
 
     it('cleans the state', () => {
-      interactor.signOut();
-      expect(interactor.state.authenticated).toEqual(false);
-      expect(interactor.state.email).toEqual('');
-      expect(interactor.state.password).toEqual('');
+      store.signOut();
+      expect(store.state.authenticated).toEqual(false);
+      expect(store.state.email).toEqual('');
+      expect(store.state.password).toEqual('');
     });
 
     it('cleans the token from the session', () => {
-      interactor.signOut();
+      store.signOut();
       expect(sessionRepository.getToken()).toBeNull();
     });
   });

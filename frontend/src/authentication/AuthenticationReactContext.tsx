@@ -1,72 +1,72 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useAppContext } from '../app/AppReactContext';
-import { ActivateUserInteractor, ActivateUserState } from './interactors/ActivateUserInteractor';
-import { SignInInteractor, SignInState } from './interactors/SignInInteractor';
-import { SignUpInteractor, SignUpState } from './interactors/SignUpInteractor';
+import { ActivateUserStore, ActivateUserState } from './stores/ActivateUserStore';
+import { SignInStore, SignInState } from './stores/SignInStore';
+import { SignUpStore, SignUpState } from './stores/SignUpStore';
 
 export interface AuthenticationContextValue {
   signInState: SignInState;
-  signInInteractor: SignInInteractor;
+  signInStore: SignInStore;
   signUpState: SignUpState;
-  signUpInteractor: SignUpInteractor;
+  signUpStore: SignUpStore;
   activateUserState: ActivateUserState;
-  activateUserInteractor: ActivateUserInteractor;
+  activateUserStore: ActivateUserStore;
 }
 
 const AuthenticationReactContext = React.createContext<AuthenticationContextValue>(null!);
 
-function useSigninInteractor(): [SignInState, SignInInteractor] {
+function useSigninStore(): [SignInState, SignInStore] {
   const { authenticationContext } = useAppContext();
-  const { signInInteractor } = authenticationContext;
-  const [signInState, setSignInState] = useState(signInInteractor.state);
+  const { signInStore } = authenticationContext;
+  const [signInState, setSignInState] = useState(signInStore.state);
 
   useEffect(() => {
-    const dispose = signInInteractor.observe(setSignInState);
+    const dispose = signInStore.observe(setSignInState);
 
     return dispose;
-  }, [signInInteractor, setSignInState]);
+  }, [signInStore, setSignInState]);
 
-  return [signInState, signInInteractor];
+  return [signInState, signInStore];
 }
 
-function useSignUpInteractor(): [SignUpState, SignUpInteractor] {
+function useSignUpStore(): [SignUpState, SignUpStore] {
   const { authenticationContext } = useAppContext();
-  const { signUpInteractor } = authenticationContext;
-  const [signUpState, setSignUpState] = useState(signUpInteractor.state);
+  const { signUpStore } = authenticationContext;
+  const [signUpState, setSignUpState] = useState(signUpStore.state);
 
   useEffect(() => {
-    const dispose = signUpInteractor.observe(setSignUpState);
+    const dispose = signUpStore.observe(setSignUpState);
     return dispose;
-  }, [signUpInteractor, setSignUpState]);
+  }, [signUpStore, setSignUpState]);
 
-  return [signUpState, signUpInteractor];
+  return [signUpState, signUpStore];
 }
 
-function useActivateUserInteractor(): [ActivateUserState, ActivateUserInteractor] {
+function useActivateUserStore(): [ActivateUserState, ActivateUserStore] {
   const { authenticationContext } = useAppContext();
-  const { activateUserInteractor } = authenticationContext;
-  const [activateUserState, setActivateUserState] = useState(activateUserInteractor.state);
+  const { activateUserStore } = authenticationContext;
+  const [activateUserState, setActivateUserState] = useState(activateUserStore.state);
 
   useEffect(() => {
-    const dispose = activateUserInteractor.observe(setActivateUserState);
+    const dispose = activateUserStore.observe(setActivateUserState);
     return dispose;
-  }, [activateUserInteractor]);
+  }, [activateUserStore]);
 
-  return [activateUserState, activateUserInteractor];
+  return [activateUserState, activateUserStore];
 }
 
 export const AuthenticationProvider: React.FC = ({ children }) => {
-  const [signInState, signInInteractor] = useSigninInteractor();
-  const [signUpState, signUpInteractor] = useSignUpInteractor();
-  const [activateUserState, activateUserInteractor] = useActivateUserInteractor();
+  const [signInState, signInStore] = useSigninStore();
+  const [signUpState, signUpStore] = useSignUpStore();
+  const [activateUserState, activateUserStore] = useActivateUserStore();
 
-  const value = {
+  const value: AuthenticationContextValue = {
     signInState,
-    signInInteractor,
+    signInStore,
     signUpState,
-    signUpInteractor,
+    signUpStore,
     activateUserState,
-    activateUserInteractor,
+    activateUserStore,
   };
 
   return (

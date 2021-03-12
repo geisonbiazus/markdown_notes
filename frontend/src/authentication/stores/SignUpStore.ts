@@ -21,7 +21,7 @@ export interface SignUpState {
   pending: boolean;
 }
 
-export class SignUpInteractor extends StateObservableInteractor<SignUpState> {
+export class SignUpStore extends StateObservableInteractor<SignUpState> {
   constructor(private client: AuthenticationClient) {
     super({
       name: '',

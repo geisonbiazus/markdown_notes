@@ -9,23 +9,23 @@ import { useAuthenticationContext } from '../AuthenticationReactContext';
 
 export const SignIn: React.FC = () => {
   const { t } = useTranslation();
-  const { signInState, signInInteractor } = useAuthenticationContext();
+  const { signInState, signInStore } = useAuthenticationContext();
 
   useEffect(() => {
-    return signInInteractor.cleanUp;
-  }, [signInInteractor]);
+    return signInStore.cleanUp;
+  }, [signInStore]);
 
   return (
     <CenteredContainer>
       <NarrowContainer>
         <h3>{t('Please sign in')}</h3>
-        <Form onSubmit={signInInteractor.signIn}>
+        <Form onSubmit={signInStore.signIn}>
           <FormErrorMessage feature="sign_in" type={signInState.errors.base} />
           <FormRow>
             <TextField
               label={t('Email')}
               type="email"
-              onChange={signInInteractor.setEmail}
+              onChange={signInStore.setEmail}
               errorField="email"
               value={signInState.email}
               errorType={signInState.errors.email}
@@ -36,7 +36,7 @@ export const SignIn: React.FC = () => {
             <TextField
               label={t('Password')}
               type="password"
-              onChange={signInInteractor.setPassword}
+              onChange={signInStore.setPassword}
               errorField="password"
               value={signInState.password}
               errorType={signInState.errors.password}

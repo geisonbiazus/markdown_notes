@@ -7,12 +7,12 @@ import { CenteredContainer, NarrowContainer } from '../../shared/components/Layo
 import { useAuthenticationContext } from '../AuthenticationReactContext';
 
 export const SignUp: React.FC = () => {
-  const { signUpState, signUpInteractor } = useAuthenticationContext();
+  const { signUpState, signUpStore } = useAuthenticationContext();
   const { t } = useTranslation();
 
   useEffect(() => {
-    return signUpInteractor.cleanUp;
-  }, [signUpInteractor]);
+    return signUpStore.cleanUp;
+  }, [signUpStore]);
 
   if (signUpState.finished) {
     return <SignUpFinished email={signUpState.email || 'geisonbiazus@gmail.com'} />;
@@ -22,13 +22,13 @@ export const SignUp: React.FC = () => {
     <CenteredContainer>
       <NarrowContainer>
         <h3>{t('Create a new account')}</h3>
-        <Form onSubmit={signUpInteractor.signUp}>
+        <Form onSubmit={signUpStore.signUp}>
           <FormRow>
             <TextField
               label={t('Name')}
               type="text"
               value={signUpState.name}
-              onChange={signUpInteractor.setName}
+              onChange={signUpStore.setName}
               errorField="name"
               errorType={signUpState.errors.name}
               disabled={signUpState.pending}
@@ -39,7 +39,7 @@ export const SignUp: React.FC = () => {
               label={t('Email')}
               type="email"
               value={signUpState.email}
-              onChange={signUpInteractor.setEmail}
+              onChange={signUpStore.setEmail}
               errorField="email"
               errorType={signUpState.errors.email}
               disabled={signUpState.pending}
@@ -50,7 +50,7 @@ export const SignUp: React.FC = () => {
               label={t('Password')}
               type="password"
               value={signUpState.password}
-              onChange={signUpInteractor.setPassword}
+              onChange={signUpStore.setPassword}
               errorField="password"
               errorType={signUpState.errors.password}
               disabled={signUpState.pending}
@@ -61,7 +61,7 @@ export const SignUp: React.FC = () => {
               label={t('Confirm password')}
               type="password"
               value={signUpState.passwordConfirmation}
-              onChange={signUpInteractor.setPasswordConfirmation}
+              onChange={signUpStore.setPasswordConfirmation}
               errorField="passwordConfirmation"
               errorType={signUpState.errors.passwordConfirmation}
               disabled={signUpState.pending}

@@ -36,7 +36,7 @@ export const AuthenticatedApp: React.FC = () => (
 
 export const AuthenticatedAppBar: React.FC = () => {
   const { t } = useTranslation();
-  const { signInInteractor } = useAuthenticationContext();
+  const { signInStore: signInInteractor } = useAuthenticationContext();
 
   const signOutButton = (
     <Button variant="link" onClick={signInInteractor.signOut}>

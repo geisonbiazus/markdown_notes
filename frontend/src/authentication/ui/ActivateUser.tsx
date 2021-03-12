@@ -6,13 +6,13 @@ import { Loading } from '../../shared/components/Loading';
 import { useAuthenticationContext } from '../AuthenticationReactContext';
 
 export const ActivateUser: React.FC = () => {
-  const { activateUserState, activateUserInteractor } = useAuthenticationContext();
+  const { activateUserState, activateUserStore } = useAuthenticationContext();
   const { token } = useParams<{ token: string }>();
 
   useEffect(() => {
-    activateUserInteractor.activate(token);
-    return activateUserInteractor.cleanUp;
-  }, [activateUserInteractor, token]);
+    activateUserStore.activate(token);
+    return activateUserStore.cleanUp;
+  }, [activateUserStore, token]);
 
   switch (activateUserState.status) {
     case 'activated':

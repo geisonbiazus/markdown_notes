@@ -29,7 +29,7 @@ export class AppContext {
     if (!this.authenticatedHTTPClientInstance) {
       this.authenticatedHTTPClientInstance = new AuthenticatedHTTPClient(this.config.apiURL);
       this.authenticatedHTTPClientInstance.onUnauthorized(
-        this.authenticationContext.signInInteractor.signOut
+        this.authenticationContext.signInStore.signOut
       );
     }
     return this.authenticatedHTTPClientInstance;

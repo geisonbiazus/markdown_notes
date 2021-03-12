@@ -5,7 +5,7 @@ export interface ActivateUserState {
   status: 'idle' | 'pending' | 'activated' | 'not_found';
 }
 
-export class ActivateUserInteractor extends StateObservableInteractor<ActivateUserState> {
+export class ActivateUserStore extends StateObservableInteractor<ActivateUserState> {
   constructor(private client: AuthenticationClient) {
     super({ status: 'idle' });
   }

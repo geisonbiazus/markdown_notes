@@ -5,44 +5,44 @@ import { APIAuthenticationClient } from './adapters/authenticationClient/APIAuth
 import { InMemoryAuthenticationClient } from './adapters/authenticationClient/InMemoryAuthenticationClient';
 import { AuthenticationClient } from './ports/AuthenticationClient';
 import { SessionRepository } from './ports/SessionRepository';
-import { ActivateUserInteractor } from './interactors/ActivateUserInteractor';
-import { SignInInteractor } from './interactors/SignInInteractor';
-import { SignUpInteractor } from './interactors/SignUpInteractor';
+import { ActivateUserStore } from './stores/ActivateUserStore';
+import { SignInStore } from './stores/SignInStore';
+import { SignUpStore } from './stores/SignUpStore';
 import { LocalStorageSessionRepository } from './adapters/sessionRepository/LocalStorageSessionRepository';
 
 export class AuthenticationContext {
-  private signInInteractorInstance?: SignInInteractor;
-  private signUpInteractorInstance?: SignUpInteractor;
-  private activateUserInteractorInstance?: ActivateUserInteractor;
+  private signInStoreInstance?: SignInStore;
+  private signUpStoreInstance?: SignUpStore;
+  private activateUserStoreInstance?: ActivateUserStore;
   private authenticationClientInstance?: AuthenticationClient;
 
   constructor(private httpClient: HTTPClient, private pubSub: PubSub, private config: AppConfig) {}
 
-  public get signInInteractor(): SignInInteractor {
-    if (!this.signInInteractorInstance) {
-      this.signInInteractorInstance = new SignInInteractor(
+  public get signInStore(): SignInStore {
+    if (!this.signInStoreInstance) {
+      this.signInStoreInstance = new SignInStore(
         this.authenticationClient,
         this.sessionRepository,
         this.pubSub
       );
 
-      this.signInInteractorInstance.checkAuthentication();
+      this.signInStoreInstance.checkAuthentication();
     }
-    return this.signInInteractorInstance;
+    return this.signInStoreInstance;
   }
 
-  public get signUpInteractor(): SignUpInteractor {
-    if (!this.signUpInteractorInstance) {
-      this.signUpInteractorInstance = new SignUpInteractor(this.authenticationClient);
+  public get signUpStore(): SignUpStore {
+    if (!this.signUpStoreInstance) {
+      this.signUpStoreInstance = new SignUpStore(this.authenticationClient);
     }
-    return this.signUpInteractorInstance;
+    return this.signUpStoreInstance;
   }
 
-  public get activateUserInteractor(): ActivateUserInteractor {
-    if (!this.activateUserInteractorInstance) {
-      this.activateUserInteractorInstance = new ActivateUserInteractor(this.authenticationClient);
+  public get activateUserStore(): ActivateUserStore {
+    if (!this.activateUserStoreInstance) {
+      this.activateUserStoreInstance = new ActivateUserStore(this.authenticationClient);
     }
-    return this.activateUserInteractorInstance;
+    return this.activateUserStoreInstance;
   }
 
   public get sessionRepository(): SessionRepository {
