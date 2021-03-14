@@ -1,6 +1,6 @@
 import bind from 'bind-decorator';
-import { Publisher } from '../../utils/pub_sub/Publisher';
-import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
+import { Publisher } from '../../shared/ports/pubSub';
+import { StateObservableStore } from '../../shared/stores/StateObservableStore';
 import { NoteClient } from '../ports/NoteClient';
 import { Note } from '../entitites/Note';
 import { NOTE_LOADED_FOR_SHOWING_EVENT } from '../events';
@@ -18,7 +18,7 @@ function newShowNoteState(): ShowNoteState {
   };
 }
 
-export class ShowNoteStore extends StateObservableInteractor<ShowNoteState> {
+export class ShowNoteStore extends StateObservableStore<ShowNoteState> {
   constructor(private noteClient: NoteClient, private publisher: Publisher) {
     super(newShowNoteState());
   }

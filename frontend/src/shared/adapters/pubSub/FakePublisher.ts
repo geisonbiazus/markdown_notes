@@ -1,4 +1,4 @@
-import { Publisher } from './Publisher';
+import { Publisher } from '../../ports/pubSub';
 
 export interface PublishedEvent {
   name: string;

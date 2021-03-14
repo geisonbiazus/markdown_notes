@@ -1,5 +1,5 @@
-import { FakePublisher } from '../../utils/pub_sub/FakePublisher';
-import { uuid } from '../../utils/uuid';
+import { FakePublisher } from '../../shared/adapters/pubSub/FakePublisher';
+import { uuid } from '../../shared/utils/uuid';
 import { InMemoryNoteClient } from '../adapters/noteClient/InMemoryNoteClient';
 import { newNote } from '../entitites/Note';
 import { RemoveNoteStore } from './RemoveNoteStore';

@@ -1,5 +1,5 @@
-import { FakePublisher } from '../../utils/pub_sub/FakePublisher';
-import { uuid } from '../../utils/uuid';
+import { FakePublisher } from '../../shared/adapters/pubSub/FakePublisher';
+import { uuid } from '../../shared/utils/uuid';
 import { InMemoryNoteClient } from '../adapters/noteClient/InMemoryNoteClient';
 import { newNote, Note } from '../entitites/Note';
 import { NOTE_LOADED_FOR_EDITING_EVENT, NOTE_SAVED_EVENT } from '../events';

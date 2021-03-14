@@ -1,6 +1,6 @@
 import nock from 'nock';
-import { HTTPClient } from '../../../utils/HTTPClient';
-import { uuid } from '../../../utils/uuid';
+import { HTTPClient } from '../../../shared/adapters/httpClient/HTTPClient';
+import { uuid } from '../../../shared/utils/uuid';
 import { newNote, Note } from '../../entitites/Note';
 import { APINoteClient } from './APINoteClient';
 

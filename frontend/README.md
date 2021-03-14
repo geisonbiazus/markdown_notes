@@ -6,19 +6,12 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 - React
 - Receive state as props or hooks
-- Receive actions as props or hooks
+- Receive store as props or hooks
 
-### Store
+### Stores
 
-- MobX
 - Holds the state
-- Define actions that call the interactor
-- Just stores the state, does not mudate it
-
-### Interactor
-
 - Define the business rules
-- Receive a state and ruturn the new state
 - Perform validations
 - Knows when to call the client and to handle the response
 

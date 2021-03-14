@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ConfirmModal } from '../../shared/components/ConfirmModal';
-import { Loading } from '../../shared/components/Loading';
-import { NavIcon, NavItem, VerticalNav } from '../../shared/components/Nav';
+import { ConfirmModal } from '../../shared/ui/components/ConfirmModal';
+import { Loading } from '../../shared/ui/components/Loading';
+import { NavIcon, NavItem, VerticalNav } from '../../shared/ui/components/Nav';
 import { useNoteContext } from '../NoteReactContext';
 import { NewNoteButton } from './NewNoteButton';
 

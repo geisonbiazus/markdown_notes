@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import { CenteredContainer } from '../../shared/components/Layout';
-import { Loading } from '../../shared/components/Loading';
+import { CenteredContainer } from '../../shared/ui/components/Layout';
+import { Loading } from '../../shared/ui/components/Loading';
 import { useAuthenticationContext } from '../AuthenticationReactContext';
 
 export const ActivateUser: React.FC = () => {

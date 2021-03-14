@@ -1,5 +1,5 @@
 import bind from 'bind-decorator';
-import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
+import { StateObservableStore } from '../../shared/stores/StateObservableStore';
 import { NoteClient } from '../ports/NoteClient';
 import { Note } from '../entitites/Note';
 
@@ -9,7 +9,7 @@ export interface ListNoteState {
   activeNoteId?: string;
 }
 
-export class ListNoteStore extends StateObservableInteractor<ListNoteState> {
+export class ListNoteStore extends StateObservableStore<ListNoteState> {
   constructor(private noteClient: NoteClient) {
     super({ notes: [], getNotesPending: false });
   }

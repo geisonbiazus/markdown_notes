@@ -1,8 +1,8 @@
 import bind from 'bind-decorator';
-import { isEmpty } from '../../utils/object';
-import { Publisher } from '../../utils/pub_sub/Publisher';
-import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
-import { Errors, validateRequired } from '../../utils/validations';
+import { isEmpty } from '../../shared/utils/object';
+import { Publisher } from '../../shared/ports/pubSub';
+import { StateObservableStore } from '../../shared/stores/StateObservableStore';
+import { Errors, validateRequired } from '../../shared/utils/validations';
 import { AuthenticationClient } from '../ports/AuthenticationClient';
 import { SessionRepository } from '../ports/SessionRepository';
 import { USER_AUTHENTICATED_EVENT } from '../events';
@@ -20,7 +20,7 @@ function newSignInState(): SignInState {
   return { email: '', password: '', errors: {}, token: '', authenticated: false, pending: false };
 }
 
-export class SignInStore extends StateObservableInteractor<SignInState> {
+export class SignInStore extends StateObservableStore<SignInState> {
   constructor(
     private authenticationClient: AuthenticationClient,
     private sessionRepository: SessionRepository,

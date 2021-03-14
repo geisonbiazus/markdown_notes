@@ -6,8 +6,8 @@ import { NoteProvider } from '../../notes/NoteReactContext';
 import { EditNote } from '../../notes/ui/EditNote';
 import { NoteList } from '../../notes/ui/NoteList';
 import { ShowNote } from '../../notes/ui/ShowNote';
-import { Button } from '../../shared/components/Button';
-import { AppBar, AppContainer, Col, Row } from '../../shared/components/Layout';
+import { Button } from '../../shared/ui/components/Button';
+import { AppBar, AppContainer, Col, Row } from '../../shared/ui/components/Layout';
 
 export const AuthenticatedApp: React.FC = () => (
   <NoteProvider>

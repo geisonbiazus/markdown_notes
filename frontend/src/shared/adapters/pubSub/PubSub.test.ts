@@ -1,4 +1,4 @@
-import { sleep } from '../sleep';
+import { sleep } from '../../utils/sleep';
 import { PubSub } from './PubSub';
 
 describe('PubSub', () => {

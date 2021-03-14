@@ -1,9 +1,9 @@
 import bind from 'bind-decorator';
-import { ValidationErrorResponse } from '../../shared/entities';
-import { isEmpty } from '../../utils/object';
-import { Publisher } from '../../utils/pub_sub/Publisher';
-import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
-import { Errors, validateRequired } from '../../utils/validations';
+import { ValidationErrorResponse } from '../../shared/entitites/responses';
+import { isEmpty } from '../../shared/utils/object';
+import { Publisher } from '../../shared/ports/pubSub';
+import { StateObservableStore } from '../../shared/stores/StateObservableStore';
+import { Errors, validateRequired } from '../../shared/utils/validations';
 import { NoteClient } from '../ports/NoteClient';
 import { newNote, Note } from '../entitites/Note';
 import { NoteSavedPayload, NOTE_LOADED_FOR_EDITING_EVENT, NOTE_SAVED_EVENT } from '../events';
@@ -26,7 +26,7 @@ function newEditNoteState(): EditNoteState {
   };
 }
 
-export class EditNoteStore extends StateObservableInteractor<EditNoteState> {
+export class EditNoteStore extends StateObservableStore<EditNoteState> {
   constructor(private noteClient: NoteClient, private publiser: Publisher) {
     super(newEditNoteState());
   }

@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Prompt, useHistory, useParams } from 'react-router-dom';
-import { Button } from '../../shared/components/Button';
-import { Form, FormRow, TextArea, TextField } from '../../shared/components/Form';
-import { Loading } from '../../shared/components/Loading';
+import { Button } from '../../shared/ui/components/Button';
+import { Form, FormRow, TextArea, TextField } from '../../shared/ui/components/Form';
+import { Loading } from '../../shared/ui/components/Loading';
 import { useNoteContext } from '../NoteReactContext';
 
 export const EditNote: React.FC = () => {

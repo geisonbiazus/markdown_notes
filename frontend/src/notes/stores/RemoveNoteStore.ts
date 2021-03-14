@@ -1,6 +1,6 @@
 import bind from 'bind-decorator';
-import { Publisher } from '../../utils/pub_sub/Publisher';
-import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
+import { Publisher } from '../../shared/ports/pubSub';
+import { StateObservableStore } from '../../shared/stores/StateObservableStore';
 import { NoteClient } from '../ports/NoteClient';
 import { Note } from '../entitites/Note';
 import { NoteRemovedPayload, NOTE_REMOVED_EVENT } from '../events';
@@ -11,7 +11,7 @@ export interface RemoveNoteState {
   confirmNoteRemovalPending: boolean;
 }
 
-export class RemoveNoteStore extends StateObservableInteractor<RemoveNoteState> {
+export class RemoveNoteStore extends StateObservableStore<RemoveNoteState> {
   constructor(private client: NoteClient, private publisher: Publisher) {
     super({ note: undefined, promptConfirmation: false, confirmNoteRemovalPending: false });
   }

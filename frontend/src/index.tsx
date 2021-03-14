@@ -8,7 +8,7 @@ import { App } from './app/ui/App';
 import { AuthenticationProvider } from './authentication/AuthenticationReactContext';
 import './i18n';
 import * as serviceWorker from './serviceWorker';
-import './shared/components/helpers.css';
+import './shared/ui/components/helpers.css';
 
 const appContext = new AppContext();
 appContext.startSubscribers();

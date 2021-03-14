@@ -1,4 +1,4 @@
-import { uuid } from '../../utils/uuid';
+import { uuid } from '../../shared/utils/uuid';
 import { InMemoryNoteClient } from '../adapters/noteClient/InMemoryNoteClient';
 import { newNote } from '../entitites/Note';
 import { ListNoteStore } from './ListNoteStore';

@@ -1,11 +1,11 @@
-import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
+import { StateObservableStore } from '../../shared/stores/StateObservableStore';
 import { AuthenticationClient } from '../ports/AuthenticationClient';
 
 export interface ActivateUserState {
   status: 'idle' | 'pending' | 'activated' | 'not_found';
 }
 
-export class ActivateUserStore extends StateObservableInteractor<ActivateUserState> {
+export class ActivateUserStore extends StateObservableStore<ActivateUserState> {
   constructor(private client: AuthenticationClient) {
     super({ status: 'idle' });
   }

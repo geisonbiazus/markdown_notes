@@ -1,4 +1,4 @@
-import { Publisher } from './Publisher';
+import { Publisher } from '../../ports/pubSub';
 
 export type SubscriberCallback<T> = (payload: T) => void;
 export type DisposeFn = () => void;

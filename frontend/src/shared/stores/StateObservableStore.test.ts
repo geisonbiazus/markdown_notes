@@ -1,33 +1,33 @@
-import { StateObservableInteractor, BooleanKey } from './StateObservableInteractor';
+import { StateObservableStore, BooleanKey } from './StateObservableStore';
 
-describe('StateObservableInteractor', () => {
-  let interactor: TestInteractor;
+describe('StateObservableStore', () => {
+  let store: TestStore;
 
   beforeEach(() => {
-    interactor = new TestInteractor();
+    store = new TestStore();
   });
 
   it('contains a state', () => {
-    expect(interactor.state).toEqual(newTestState());
+    expect(store.state).toEqual(newTestState());
   });
 
   describe('updateState', () => {
     it('partially updates the state', () => {
-      interactor.updateState({ key2: 'new value' });
-      expect(interactor.state).toEqual({ ...newTestState(), key2: 'new value' });
+      store.updateState({ key2: 'new value' });
+      expect(store.state).toEqual({ ...newTestState(), key2: 'new value' });
     });
   });
 
   describe('withPendingState', () => {
     it('sets the given boolean as true before running the callback and reverts it after', async () => {
       let callbackCalled = false;
-      const result = await interactor.withPendingState('pending', async () => {
-        expect(interactor.state.pending).toBeTruthy();
+      const result = await store.withPendingState('pending', async () => {
+        expect(store.state.pending).toBeTruthy();
         callbackCalled = true;
         return 5;
       });
       expect(callbackCalled).toBeTruthy();
-      expect(interactor.state.pending).toBeFalsy();
+      expect(store.state.pending).toBeFalsy();
       expect(result).toEqual(5);
     });
   });
@@ -36,14 +36,14 @@ describe('StateObservableInteractor', () => {
     it('runs the given callback every time the state changes', () => {
       let observedState: TestState = newTestState();
 
-      interactor.observe((state: TestState) => {
+      store.observe((state: TestState) => {
         observedState = state;
       });
 
-      interactor.updateState({ key1: 'new key1 value' });
+      store.updateState({ key1: 'new key1 value' });
       expect(observedState).toEqual({ ...newTestState(), key1: 'new key1 value' });
 
-      interactor.updateState({ key2: 'new key2 value' });
+      store.updateState({ key2: 'new key2 value' });
       expect(observedState).toEqual({
         ...newTestState(),
         key1: 'new key1 value',
@@ -55,15 +55,15 @@ describe('StateObservableInteractor', () => {
       let observer1Called = false;
       let observer2Called = false;
 
-      interactor.observe(() => {
+      store.observe(() => {
         observer1Called = true;
       });
 
-      interactor.observe(() => {
+      store.observe(() => {
         observer2Called = true;
       });
 
-      interactor.updateState({ key1: 'new key1 value' });
+      store.updateState({ key1: 'new key1 value' });
 
       expect(observer1Called).toBeTruthy();
       expect(observer2Called).toBeTruthy();
@@ -73,23 +73,23 @@ describe('StateObservableInteractor', () => {
       let observer1TimesCalled = 0;
       let observer2TimesCalled = 0;
 
-      const dispose1 = interactor.observe(() => {
+      const dispose1 = store.observe(() => {
         observer1TimesCalled++;
       });
 
-      const dispose2 = interactor.observe(() => {
+      const dispose2 = store.observe(() => {
         observer2TimesCalled++;
       });
 
-      interactor.updateState({ key1: 'new key1 value' });
+      store.updateState({ key1: 'new key1 value' });
 
       dispose1();
 
-      interactor.updateState({ key2: 'new key2 value' });
+      store.updateState({ key2: 'new key2 value' });
 
       dispose2();
 
-      interactor.updateState({ key2: 'another key2 value' });
+      store.updateState({ key2: 'another key2 value' });
 
       expect(observer1TimesCalled).toEqual(1);
       expect(observer2TimesCalled).toEqual(2);
@@ -107,7 +107,7 @@ function newTestState(): TestState {
   return { key1: 'value 1', key2: 'value 2', pending: false };
 }
 
-class TestInteractor extends StateObservableInteractor<TestState> {
+class TestStore extends StateObservableStore<TestState> {
   constructor() {
     super(newTestState());
   }

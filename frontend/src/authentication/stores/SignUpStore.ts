@@ -1,14 +1,14 @@
 import bind from 'bind-decorator';
-import { ErrorResponse } from '../../shared/entities';
-import { isEmpty } from '../../utils/object';
-import { StateObservableInteractor } from '../../utils/StateObservableInteractor';
+import { ErrorResponse } from '../../shared/entitites/responses';
+import { isEmpty } from '../../shared/utils/object';
+import { StateObservableStore } from '../../shared/stores/StateObservableStore';
 import {
   Errors,
   validateConfirmation,
   validateEmail,
   validateMinimumLength,
   validateRequired,
-} from '../../utils/validations';
+} from '../../shared/utils/validations';
 import { AuthenticationClient, SignUpResponse } from '../ports/AuthenticationClient';
 
 export interface SignUpState {
@@ -21,7 +21,7 @@ export interface SignUpState {
   pending: boolean;
 }
 
-export class SignUpStore extends StateObservableInteractor<SignUpState> {
+export class SignUpStore extends StateObservableStore<SignUpState> {
   constructor(private client: AuthenticationClient) {
     super({
       name: '',

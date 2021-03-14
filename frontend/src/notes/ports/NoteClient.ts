@@ -1,4 +1,4 @@
-import { ErrorResponse, ValidationErrorResponse } from '../../shared/entities';
+import { ErrorResponse, ValidationErrorResponse } from '../../shared/entitites/responses';
 import { Note } from '../entitites/Note';
 
 export interface NoteClient {

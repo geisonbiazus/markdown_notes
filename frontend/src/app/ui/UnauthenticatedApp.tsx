@@ -3,7 +3,7 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import { ActivateUser } from '../../authentication/ui/ActivateUser';
 import { SignIn } from '../../authentication/ui/SignIn';
 import { SignUp } from '../../authentication/ui/SignUp';
-import { AppBar, AppContainer, Col, Row } from '../../shared/components/Layout';
+import { AppBar, AppContainer, Col, Row } from '../../shared/ui/components/Layout';
 
 export const UnauthenticatedApp: React.FC = () => (
   <>

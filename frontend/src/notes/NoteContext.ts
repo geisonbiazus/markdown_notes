@@ -1,7 +1,7 @@
 import { AppConfig } from '../app/AppConfig';
-import { HTTPClient } from '../utils/HTTPClient';
-import { PubSub } from '../utils/pub_sub/PubSub';
-import { uuid } from '../utils/uuid';
+import { HTTPClient } from '../shared/adapters/httpClient/HTTPClient';
+import { PubSub } from '../shared/adapters/pubSub/PubSub';
+import { uuid } from '../shared/utils/uuid';
 import { APINoteClient } from './adapters/noteClient/APINoteClient';
 import { InMemoryNoteClient } from './adapters/noteClient/InMemoryNoteClient';
 import { NoteClient } from './ports/NoteClient';

@@ -1,4 +1,4 @@
-import { handleError, HTTPClient } from '../../../utils/HTTPClient';
+import { handleError, HTTPClient } from '../../../shared/adapters/httpClient/HTTPClient';
 import { NoteClient, SaveNoteResponse } from '../../ports/NoteClient';
 import { Note } from '../../entitites/Note';
 

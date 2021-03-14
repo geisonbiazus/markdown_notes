@@ -1,5 +1,5 @@
 import nock from 'nock';
-import { HTTPClient } from '../../../utils/HTTPClient';
+import { HTTPClient } from '../../../shared/adapters/httpClient/HTTPClient';
 import { APIAuthenticationClient } from './APIAuthenticationClient';
 
 HTTPClient.useNodeAdapter();

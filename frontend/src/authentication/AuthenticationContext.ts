@@ -1,6 +1,6 @@
 import { AppConfig } from '../app/AppConfig';
-import { HTTPClient } from '../utils/HTTPClient';
-import { PubSub } from '../utils/pub_sub/PubSub';
+import { HTTPClient } from '../shared/adapters/httpClient/HTTPClient';
+import { PubSub } from '../shared/adapters/pubSub/PubSub';
 import { APIAuthenticationClient } from './adapters/authenticationClient/APIAuthenticationClient';
 import { InMemoryAuthenticationClient } from './adapters/authenticationClient/InMemoryAuthenticationClient';
 import { AuthenticationClient } from './ports/AuthenticationClient';

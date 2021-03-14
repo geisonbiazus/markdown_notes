@@ -1,4 +1,4 @@
-import { ErrorResponse, SuccessResponse } from '../../shared/entities';
+import { ErrorResponse, SuccessResponse } from '../../shared/entitites/responses';
 
 export interface AuthenticationClient {
   activateUser(token: String): Promise<ActivateUserResponse>;

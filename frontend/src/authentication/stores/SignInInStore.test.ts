@@ -1,4 +1,4 @@
-import { FakePublisher } from '../../utils/pub_sub/FakePublisher';
+import { FakePublisher } from '../../shared/adapters/pubSub/FakePublisher';
 import { InMemoryAuthenticationClient } from '../adapters/authenticationClient/InMemoryAuthenticationClient';
 import { InMemorySessionRepository } from '../adapters/sessionRepository/InMemorySessionRepository';
 import { SignInStore, SignInState } from './SignInStore';

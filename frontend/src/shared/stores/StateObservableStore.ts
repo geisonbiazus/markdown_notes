@@ -1,6 +1,6 @@
 import { bind } from 'bind-decorator';
 
-export abstract class StateObservableInteractor<T> {
+export abstract class StateObservableStore<T> {
   private initialState: T;
   private currentState: T;
   private observers: Observer<T>[] = [];
