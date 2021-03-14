@@ -14,63 +14,63 @@ import {
   NOTE_REMOVED_EVENT,
   NOTE_SAVED_EVENT,
 } from './events';
-import { EditNoteInteractor } from './interactors/EditNoteInteractor';
-import { ListNoteInteractor } from './interactors/ListNoteInteractor';
-import { RemoveNoteInteractor } from './interactors/RemoveNoteInteractor';
-import { ShowNoteInteractor } from './interactors/ShowNoteInteractor';
+import { EditNoteStore } from './stores/EditNoteStore';
+import { ListNoteStore } from './stores/ListNoteStore';
+import { RemoveNoteStore } from './stores/RemoveNoteStore';
+import { ShowNoteStore } from './stores/ShowNoteStore';
 
 export class NoteContext {
-  private showNoteInteractorInstance?: ShowNoteInteractor;
-  private editNoteInteractorInstance?: EditNoteInteractor;
-  private listNoteInteractorInstance?: ListNoteInteractor;
-  private removeNoteInteractorInstance?: RemoveNoteInteractor;
+  private showNoteStoreInstance?: ShowNoteStore;
+  private editNoteStoreInstance?: EditNoteStore;
+  private listNoteStoreInstance?: ListNoteStore;
+  private removeNoteStoreInstance?: RemoveNoteStore;
   private noteClientInstance?: NoteClient;
 
   constructor(private httpClient: HTTPClient, private pubSub: PubSub, private config: AppConfig) {}
 
   public startSubscribers(): void {
-    this.pubSub.subscribe(NOTE_SAVED_EVENT, () => this.listNoteInteractor.getNotes());
-    this.pubSub.subscribe(NOTE_REMOVED_EVENT, () => this.listNoteInteractor.getNotes());
+    this.pubSub.subscribe(NOTE_SAVED_EVENT, () => this.listNoteStore.getNotes());
+    this.pubSub.subscribe(NOTE_REMOVED_EVENT, () => this.listNoteStore.getNotes());
 
     this.pubSub.subscribe(NOTE_LOADED_FOR_SHOWING_EVENT, (payload: NoteLoadedForShowingPayload) =>
-      this.listNoteInteractor.setActiveNoteId(payload.id)
+      this.listNoteStore.setActiveNoteId(payload.id)
     );
 
     this.pubSub.subscribe(NOTE_LOADED_FOR_EDITING_EVENT, (payload: NoteLoadedForEditingPayload) =>
-      this.listNoteInteractor.setActiveNoteId(payload.id)
+      this.listNoteStore.setActiveNoteId(payload.id)
     );
 
     this.pubSub.subscribe(NOTE_SAVED_EVENT, (payload: NoteSavedPayload) =>
-      this.listNoteInteractor.setActiveNoteId(payload.id)
+      this.listNoteStore.setActiveNoteId(payload.id)
     );
   }
 
-  public get showNoteInteractor(): ShowNoteInteractor {
-    if (!this.showNoteInteractorInstance) {
-      this.showNoteInteractorInstance = new ShowNoteInteractor(this.noteClient, this.pubSub);
+  public get showNoteStore(): ShowNoteStore {
+    if (!this.showNoteStoreInstance) {
+      this.showNoteStoreInstance = new ShowNoteStore(this.noteClient, this.pubSub);
     }
-    return this.showNoteInteractorInstance;
+    return this.showNoteStoreInstance;
   }
 
-  public get editNoteInteractor(): EditNoteInteractor {
-    if (!this.editNoteInteractorInstance) {
-      this.editNoteInteractorInstance = new EditNoteInteractor(this.noteClient, this.pubSub);
+  public get editNoteStore(): EditNoteStore {
+    if (!this.editNoteStoreInstance) {
+      this.editNoteStoreInstance = new EditNoteStore(this.noteClient, this.pubSub);
     }
-    return this.editNoteInteractorInstance;
+    return this.editNoteStoreInstance;
   }
 
-  public get listNoteInteractor(): ListNoteInteractor {
-    if (!this.listNoteInteractorInstance) {
-      this.listNoteInteractorInstance = new ListNoteInteractor(this.noteClient);
+  public get listNoteStore(): ListNoteStore {
+    if (!this.listNoteStoreInstance) {
+      this.listNoteStoreInstance = new ListNoteStore(this.noteClient);
     }
-    return this.listNoteInteractorInstance;
+    return this.listNoteStoreInstance;
   }
 
-  public get removeNoteInteractor(): RemoveNoteInteractor {
-    if (!this.removeNoteInteractorInstance) {
-      this.removeNoteInteractorInstance = new RemoveNoteInteractor(this.noteClient, this.pubSub);
+  public get removeNoteStore(): RemoveNoteStore {
+    if (!this.removeNoteStoreInstance) {
+      this.removeNoteStoreInstance = new RemoveNoteStore(this.noteClient, this.pubSub);
     }
-    return this.removeNoteInteractorInstance;
+    return this.removeNoteStoreInstance;
   }
 
   public get noteClient(): NoteClient {

@@ -3,22 +3,22 @@ import { uuid } from '../../utils/uuid';
 import { InMemoryNoteClient } from '../adapters/noteClient/InMemoryNoteClient';
 import { newNote } from '../entitites/Note';
 import { NOTE_LOADED_FOR_SHOWING_EVENT } from '../events';
-import { ShowNoteInteractor } from './ShowNoteInteractor';
+import { ShowNoteStore } from './ShowNoteStore';
 
-describe('ShowNoteInteractor', () => {
+describe('ShowNoteStore', () => {
   let client: InMemoryNoteClient;
   let publisher: FakePublisher;
-  let interactor: ShowNoteInteractor;
+  let store: ShowNoteStore;
 
   beforeEach(() => {
     client = new InMemoryNoteClient();
     publisher = new FakePublisher();
-    interactor = new ShowNoteInteractor(client, publisher);
+    store = new ShowNoteStore(client, publisher);
   });
 
   describe('constructor', () => {
     it('initlializes with en empty state', () => {
-      expect(interactor.state).toEqual({
+      expect(store.state).toEqual({
         getNotePending: false,
         isFound: true,
       });
@@ -27,47 +27,47 @@ describe('ShowNoteInteractor', () => {
 
   describe('getNote', () => {
     it('sets notFound to true when note does not exist', async () => {
-      await interactor.getNote(uuid());
-      expect(interactor.state.isFound).toBeFalsy();
+      await store.getNote(uuid());
+      expect(store.state.isFound).toBeFalsy();
     });
 
     it('sets the note when note is found', async () => {
       const note = newNote({ id: uuid(), title: 'title', body: 'body', html: '<p>html</p>' });
       await client.saveNote(note);
 
-      await interactor.getNote(note.id);
+      await store.getNote(note.id);
 
-      expect(interactor.state.note).toEqual(note);
-      expect(interactor.state.isFound).toBeTruthy();
+      expect(store.state.note).toEqual(note);
+      expect(store.state.isFound).toBeTruthy();
     });
 
     it('sets is found to true when it was not found before', async () => {
       const note = newNote({ id: uuid(), title: 'title', body: 'body', html: '<p>html</p>' });
       await client.saveNote(note);
 
-      await interactor.getNote(uuid());
-      await interactor.getNote(note.id);
+      await store.getNote(uuid());
+      await store.getNote(note.id);
 
-      expect(interactor.state.note).toEqual(note);
-      expect(interactor.state.isFound).toBeTruthy();
+      expect(store.state.note).toEqual(note);
+      expect(store.state.isFound).toBeTruthy();
     });
 
     it('sets note to undefined when not was found before', async () => {
       const note = newNote({ id: uuid(), title: 'title', body: 'body', html: '<p>html</p>' });
       await client.saveNote(note);
 
-      await interactor.getNote(note.id);
-      await interactor.getNote(uuid());
+      await store.getNote(note.id);
+      await store.getNote(uuid());
 
-      expect(interactor.state.note).toBeUndefined();
-      expect(interactor.state.isFound).toBeFalsy();
+      expect(store.state.note).toBeUndefined();
+      expect(store.state.isFound).toBeFalsy();
     });
 
     it('publishes NOTE_LOADED_FOR_SHOWING_EVENT', async () => {
       const note = newNote({ id: uuid(), title: 'title', body: 'body', html: '<p>html</p>' });
       client.saveNote(note);
 
-      await interactor.getNote(note.id!);
+      await store.getNote(note.id!);
 
       expect(publisher.lastEvent).toEqual({ name: NOTE_LOADED_FOR_SHOWING_EVENT, payload: note });
     });

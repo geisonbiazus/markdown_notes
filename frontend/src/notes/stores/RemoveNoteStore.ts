@@ -11,7 +11,7 @@ export interface RemoveNoteState {
   confirmNoteRemovalPending: boolean;
 }
 
-export class RemoveNoteInteractor extends StateObservableInteractor<RemoveNoteState> {
+export class RemoveNoteStore extends StateObservableInteractor<RemoveNoteState> {
   constructor(private client: NoteClient, private publisher: Publisher) {
     super({ note: undefined, promptConfirmation: false, confirmNoteRemovalPending: false });
   }

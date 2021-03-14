@@ -26,7 +26,7 @@ function newEditNoteState(): EditNoteState {
   };
 }
 
-export class EditNoteInteractor extends StateObservableInteractor<EditNoteState> {
+export class EditNoteStore extends StateObservableInteractor<EditNoteState> {
   constructor(private noteClient: NoteClient, private publiser: Publisher) {
     super(newEditNoteState());
   }

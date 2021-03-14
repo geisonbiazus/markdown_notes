@@ -1,20 +1,20 @@
 import { uuid } from '../../utils/uuid';
 import { InMemoryNoteClient } from '../adapters/noteClient/InMemoryNoteClient';
 import { newNote } from '../entitites/Note';
-import { ListNoteInteractor } from './ListNoteInteractor';
+import { ListNoteStore } from './ListNoteStore';
 
-describe('ListNoteInteractor', () => {
+describe('ListNoteStore', () => {
   let client: InMemoryNoteClient;
-  let interactor: ListNoteInteractor;
+  let store: ListNoteStore;
 
   beforeEach(() => {
     client = new InMemoryNoteClient();
-    interactor = new ListNoteInteractor(client);
+    store = new ListNoteStore(client);
   });
 
   describe('constructor', () => {
     it('initializes with an empty state', () => {
-      expect(interactor.state).toEqual({
+      expect(store.state).toEqual({
         notes: [],
         getNotesPending: false,
       });
@@ -23,8 +23,8 @@ describe('ListNoteInteractor', () => {
 
   describe('getNotes', () => {
     it('returns empty when there is no note', async () => {
-      await interactor.getNotes();
-      expect(interactor.state.notes).toEqual([]);
+      await store.getNotes();
+      expect(store.state.notes).toEqual([]);
     });
 
     it('returns the note list when there are some notes', async () => {
@@ -34,18 +34,18 @@ describe('ListNoteInteractor', () => {
       client.saveNote(note1);
       client.saveNote(note2);
 
-      await interactor.getNotes();
+      await store.getNotes();
 
-      expect(interactor.state.notes).toEqual([note1, note2]);
+      expect(store.state.notes).toEqual([note1, note2]);
     });
   });
 
   describe('setActiveNoteId', () => {
     it('sets the active note ID', () => {
       const noteId = uuid();
-      interactor.setActiveNoteId(noteId);
+      store.setActiveNoteId(noteId);
 
-      expect(interactor.state.activeNoteId).toEqual(noteId);
+      expect(store.state.activeNoteId).toEqual(noteId);
     });
   });
 });

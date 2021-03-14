@@ -9,13 +9,13 @@ export const NewNoteButton: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
 
-  const { listNoteInteractor } = useNoteContext();
+  const { listNoteStore } = useNoteContext();
 
   const newNote = () => {
-    // TODO move this logic to an interactor
+    // TODO move this logic to a store
     const noteId = uuid();
     history.push(`/notes/${uuid()}/edit`);
-    listNoteInteractor.setActiveNoteId(noteId);
+    listNoteStore.setActiveNoteId(noteId);
   };
 
   return (

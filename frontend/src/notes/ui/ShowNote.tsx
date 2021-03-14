@@ -6,12 +6,12 @@ import { useNoteContext } from '../NoteReactContext';
 
 export const ShowNote: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { showNoteState, showNoteInteractor } = useNoteContext();
+  const { showNoteState, showNoteStore } = useNoteContext();
   const { t } = useTranslation();
 
   useEffect(() => {
-    showNoteInteractor.getNote(id);
-  }, [showNoteInteractor, id]);
+    showNoteStore.getNote(id);
+  }, [showNoteStore, id]);
 
   if (showNoteState.getNotePending) {
     return <Loading />;

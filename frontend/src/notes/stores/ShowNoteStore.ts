@@ -18,7 +18,7 @@ function newShowNoteState(): ShowNoteState {
   };
 }
 
-export class ShowNoteInteractor extends StateObservableInteractor<ShowNoteState> {
+export class ShowNoteStore extends StateObservableInteractor<ShowNoteState> {
   constructor(private noteClient: NoteClient, private publisher: Publisher) {
     super(newShowNoteState());
   }

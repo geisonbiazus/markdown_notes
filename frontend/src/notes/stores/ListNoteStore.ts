@@ -9,7 +9,7 @@ export interface ListNoteState {
   activeNoteId?: string;
 }
 
-export class ListNoteInteractor extends StateObservableInteractor<ListNoteState> {
+export class ListNoteStore extends StateObservableInteractor<ListNoteState> {
   constructor(private noteClient: NoteClient) {
     super({ notes: [], getNotesPending: false });
   }
