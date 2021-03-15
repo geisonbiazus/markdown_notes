@@ -1,26 +1,27 @@
+import bind from 'bind-decorator';
 import { Request, RequestHandler, Response } from 'express';
-import { AuthenticationInteractor, User } from '../../authentication';
+import { AuthenticationContext } from '../../authentication/AuthenticationContext';
+import { User } from '../../authentication/entities/User';
 
 export type AuthenticatedAction = (req: Request, res: Response, user: User) => Promise<void> | void;
 
 export class AuthenticationMiddleware {
-  constructor(private authenticationInteractor: AuthenticationInteractor) {}
+  constructor(private context: AuthenticationContext) {}
 
-  public authenticate = (action: AuthenticatedAction): RequestHandler => {
-    const authenticationInteractor = this.authenticationInteractor;
-
+  @bind
+  public authenticate(action: AuthenticatedAction): RequestHandler {
     return async (req: Request, res: Response) => {
       const token = this.getToken(req);
 
       if (!token) return this.unauthorized(res);
 
-      const user = await authenticationInteractor.getAuthenticatedUser(token);
+      const user = await this.context.getAuthenticatedUserUseCase.run(token);
 
       if (!user) return this.unauthorized(res);
 
       return action(req, res, user);
     };
-  };
+  }
 
   private getToken(req: Request): string | undefined {
     const header = req.header('Authorization');

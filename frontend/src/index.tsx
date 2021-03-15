@@ -2,11 +2,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
-import { App, AppContext, AppProvider } from './app';
-import { AuthenticationProvider } from './authentication';
+import { AppContext } from './app/AppContext';
+import { AppProvider } from './app/AppReactContext';
+import { App } from './app/ui/App';
+import { AuthenticationProvider } from './authentication/AuthenticationReactContext';
 import './i18n';
-import './shared/components/helpers.css';
 import * as serviceWorker from './serviceWorker';
+import './shared/ui/components/helpers.css';
 
 const appContext = new AppContext();
 appContext.startSubscribers();

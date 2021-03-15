@@ -1,36 +1,46 @@
-import { EntityManager, getConnection } from 'typeorm';
-import { MarkdownConverter } from './entities';
-import { NoteInteractor, NoteRepository } from './interactors';
-import { InMemoryNoteRepository, TypeORMNoteRepository } from './repositories';
+import { getConnection } from 'typeorm';
+import { MarkedMarkdownConverter } from './adapters/markdownConverter/MarkedMarkdownConverter';
+import { InMemoryNoteRepository } from './adapters/repositories/InMemoryNoteRepository';
+import { TypeORMNoteRepository } from './adapters/repositories/TypeORMNoteRepository';
+import { MarkdownConverter } from './ports/MarkdownConverter';
+import { NoteRepository } from './ports/NoteRepository';
+import { GetNotesUseCase } from './useCases/GetNotesUseCase';
+import { GetNoteUseCase } from './useCases/GetNoteUseCase';
+import { RemoveNoteUseCase } from './useCases/RemoveNoteUseCase';
+import { SaveNoteUseCase } from './useCases/SaveNoteUseCase';
 
 export interface Config {
   env: string;
 }
 
 export class NotesContext {
-  private noteRepo?: NoteRepository;
-
   constructor(public config: Config) {}
 
-  public get noteInteractor(): NoteInteractor {
-    return new NoteInteractor(this.noteRepository, new MarkdownConverter());
+  public get saveNoteUseCase(): SaveNoteUseCase {
+    return new SaveNoteUseCase(this.repository, this.markdownConverter);
   }
 
-  public get noteRepository(): NoteRepository {
-    if (!this.noteRepo) {
-      this.noteRepo = this.isTest
-        ? new InMemoryNoteRepository()
-        : new TypeORMNoteRepository(this.entityManager);
-    }
-
-    return this.noteRepo;
+  public get getNoteUseCase(): GetNoteUseCase {
+    return new GetNoteUseCase(this.repository);
   }
 
-  private get isTest(): boolean {
-    return this.config.env == 'test';
+  public get getNotesUseCase(): GetNotesUseCase {
+    return new GetNotesUseCase(this.repository);
   }
 
-  private get entityManager(): EntityManager {
-    return getConnection().manager;
+  public get removeNoteUseCase(): RemoveNoteUseCase {
+    return new RemoveNoteUseCase(this.repository);
+  }
+
+  private repositoryInstance?: NoteRepository;
+
+  public get repository(): NoteRepository {
+    if (this.config.env !== 'test') return new TypeORMNoteRepository(getConnection().manager);
+    if (!this.repositoryInstance) this.repositoryInstance = new InMemoryNoteRepository();
+    return this.repositoryInstance;
+  }
+
+  public get markdownConverter(): MarkdownConverter {
+    return new MarkedMarkdownConverter();
   }
 }

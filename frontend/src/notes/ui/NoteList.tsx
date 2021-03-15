@@ -1,15 +1,17 @@
 import React, { useEffect } from 'react';
-import { NewNoteButton } from './NewNoteButton';
-import { useNoteContext } from '../NoteReactContext';
-import { VerticalNav, NavItem, NavIcon, ConfirmModal, Loading } from '../../shared/components';
 import { useTranslation } from 'react-i18next';
+import { ConfirmModal } from '../../shared/ui/components/ConfirmModal';
+import { Loading } from '../../shared/ui/components/Loading';
+import { NavIcon, NavItem, VerticalNav } from '../../shared/ui/components/Nav';
+import { useNoteContext } from '../NoteReactContext';
+import { NewNoteButton } from './NewNoteButton';
 
 export const NoteList: React.FC = () => {
-  const { listNoteState, listNoteInteractor, removeNoteInteractor } = useNoteContext();
+  const { listNoteState, listNoteStore, removeNoteStore } = useNoteContext();
 
   useEffect(() => {
-    listNoteInteractor.getNotes();
-  }, [listNoteInteractor]);
+    listNoteStore.getNotes();
+  }, [listNoteStore]);
 
   return (
     <>
@@ -26,7 +28,7 @@ export const NoteList: React.FC = () => {
               href={`/notes/${note.id}`}
               active={note.id === listNoteState.activeNoteId}
             >
-              <NavIcon onClick={() => removeNoteInteractor.requestNoteRemoval(note)} />
+              <NavIcon onClick={() => removeNoteStore.requestNoteRemoval(note)} />
             </NavItem>
           ))
         )}
@@ -39,7 +41,7 @@ export interface RemoveNoteConfirmModalProps {}
 
 export const RemoveNoteConfirmModal: React.FC = () => {
   const { t } = useTranslation();
-  const { removeNoteState, removeNoteInteractor } = useNoteContext();
+  const { removeNoteState, removeNoteStore } = useNoteContext();
 
   return (
     <ConfirmModal
@@ -49,8 +51,8 @@ export const RemoveNoteConfirmModal: React.FC = () => {
         name: removeNoteState.note?.title,
       })}
       confirmLabel={t('Remove note')}
-      onCancel={removeNoteInteractor.cancelNoteRemoval}
-      onConfirm={removeNoteInteractor.confirmNoteRemoval}
+      onCancel={removeNoteStore.cancelNoteRemoval}
+      onConfirm={removeNoteStore.confirmNoteRemoval}
       confirmPending={removeNoteState.confirmNoteRemovalPending}
     />
   );

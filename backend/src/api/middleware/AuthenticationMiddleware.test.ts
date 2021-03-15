@@ -1,12 +1,12 @@
 import { Express, Request, Response } from 'express';
 import request from 'supertest';
-
-import { Server } from '../server';
 import { AppContext } from '../../AppContext';
+import { User } from '../../authentication/entities/User';
+import { json } from '../../shared/utils/json';
+import { uuid } from '../../shared/utils/uuid';
+import { authenticate, createUser } from '../helpers/testHelpers';
+import { Server } from '../server';
 import { AuthenticationMiddleware } from './AuthenticationMiddleware';
-import { User } from '../../authentication';
-import { json, uuid } from '../../utils';
-import { authenticate, createUser } from '../helpers';
 
 describe('authentication', () => {
   let context: AppContext;
@@ -16,7 +16,7 @@ describe('authentication', () => {
   beforeEach(() => {
     context = new AppContext();
     server = new Server(context).server;
-    middleware = new AuthenticationMiddleware(context.authentication.authenticationInteractor);
+    middleware = new AuthenticationMiddleware(context.authentication);
 
     server.get(
       '/protected',

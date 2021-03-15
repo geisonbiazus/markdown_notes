@@ -1,6 +1,7 @@
-import { uuid } from '../utils';
-import { PasswordManager, User, UserParams } from './entities';
-import { AuthenticationRepository } from './interactors';
+import { uuid } from '../shared/utils/uuid';
+import { User, UserParams } from './entities/User';
+import { AuthenticationRepository } from './ports/AuthenticationRepository';
+import { PasswordManager } from './ports/PasswordManager';
 
 export class EntityFactory {
   constructor(
@@ -12,7 +13,7 @@ export class EntityFactory {
     const userParams: UserParams = {
       id: uuid(),
       name: 'User Name',
-      email: 'user@exmaple.com',
+      email: 'user@example.com',
       password: 'password',
       status: 'active',
       ...params,

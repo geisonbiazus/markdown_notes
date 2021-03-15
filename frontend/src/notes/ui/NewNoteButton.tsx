@@ -1,21 +1,21 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
-import { uuid } from '../../utils';
-import { Button } from '../../shared/components';
 import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router-dom';
+import { Button } from '../../shared/ui/components/Button';
+import { uuid } from '../../shared/utils/uuid';
 import { useNoteContext } from '../NoteReactContext';
 
 export const NewNoteButton: React.FC = () => {
   const history = useHistory();
   const { t } = useTranslation();
 
-  const { listNoteInteractor } = useNoteContext();
+  const { listNoteStore } = useNoteContext();
 
   const newNote = () => {
-    // TODO move this logic to an interactor
+    // TODO move this logic to a store
     const noteId = uuid();
     history.push(`/notes/${uuid()}/edit`);
-    listNoteInteractor.setActiveNoteId(noteId);
+    listNoteStore.setActiveNoteId(noteId);
   };
 
   return (

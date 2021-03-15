@@ -1,17 +1,18 @@
 import React, { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { Link, useParams } from 'react-router-dom';
-import { CenteredContainer, Loading } from '../../shared/components';
+import { CenteredContainer } from '../../shared/ui/components/Layout';
+import { Loading } from '../../shared/ui/components/Loading';
 import { useAuthenticationContext } from '../AuthenticationReactContext';
 
 export const ActivateUser: React.FC = () => {
-  const { activateUserState, activateUserInteractor } = useAuthenticationContext();
+  const { activateUserState, activateUserStore } = useAuthenticationContext();
   const { token } = useParams<{ token: string }>();
 
   useEffect(() => {
-    activateUserInteractor.activate(token);
-    return activateUserInteractor.cleanUp;
-  }, [activateUserInteractor]);
+    activateUserStore.activate(token);
+    return activateUserStore.cleanUp;
+  }, [activateUserStore, token]);
 
   switch (activateUserState.status) {
     case 'activated':

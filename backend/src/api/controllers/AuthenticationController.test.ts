@@ -1,7 +1,7 @@
 import { Express } from 'express';
 import request from 'supertest';
-import { Server } from '../index';
 import { AppContext } from '../../AppContext';
+import { Server } from '../server';
 
 describe('AuthenticationController', () => {
   let context: AppContext;

@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
-import { useParams, Prompt, useHistory } from 'react-router-dom';
-import { useNoteContext } from '../NoteReactContext';
-import { Form, FormRow, TextField, TextArea, Button, Loading } from '../../shared/components';
 import { useTranslation } from 'react-i18next';
+import { Prompt, useHistory, useParams } from 'react-router-dom';
+import { Button } from '../../shared/ui/components/Button';
+import { Form, FormRow, TextArea, TextField } from '../../shared/ui/components/Form';
+import { Loading } from '../../shared/ui/components/Loading';
+import { useNoteContext } from '../NoteReactContext';
 
 export const EditNote: React.FC = () => {
-  const { editNoteState, editNoteInteractor } = useNoteContext();
+  const { editNoteState, editNoteStore } = useNoteContext();
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
   const history = useHistory();
@@ -13,11 +15,11 @@ export const EditNote: React.FC = () => {
   const { title, body } = editNoteState.note;
 
   useEffect(() => {
-    editNoteInteractor.getNote(id);
-  }, [editNoteInteractor, id]);
+    editNoteStore.getNote(id);
+  }, [editNoteStore, id]);
 
   const saveAndClose = async () => {
-    if (await editNoteInteractor.saveNote()) {
+    if (await editNoteStore.saveNote()) {
       history.push(`/notes/${id}`);
     }
   };
@@ -32,13 +34,13 @@ export const EditNote: React.FC = () => {
         when={editNoteState.isDirty}
         message={t('You have unsaved data, do you want to leave?')}
       />
-      <Form onSubmit={editNoteInteractor.saveNote}>
+      <Form onSubmit={editNoteStore.saveNote}>
         <FormRow>
           <TextField
             label={t('Title')}
             placeholder={t('Enter title')}
             value={title}
-            onChange={editNoteInteractor.setTitle}
+            onChange={editNoteStore.setTitle}
             errorField="title"
             errorType={editNoteState.errors.title}
             disabled={editNoteState.saveNotePending}
@@ -49,7 +51,7 @@ export const EditNote: React.FC = () => {
             label={t('Content')}
             placeholder={t('Enter content')}
             value={body}
-            onChange={editNoteInteractor.setBody}
+            onChange={editNoteStore.setBody}
             rows={20}
             errorField="body"
             errorType={editNoteState.errors.body}

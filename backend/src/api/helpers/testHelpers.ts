@@ -1,5 +1,5 @@
 import { AppContext } from '../../AppContext';
-import { User } from '../../authentication';
+import { User } from '../../authentication/entities/User';
 
 export async function createUser(context: AppContext): Promise<User> {
   return await context.authentication.entityFactory.createUser();

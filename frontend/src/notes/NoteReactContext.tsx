@@ -1,98 +1,92 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useAppContext } from '../app';
-import {
-  EditNoteInteractor,
-  EditNoteState,
-  ListNoteInteractor,
-  ListNoteState,
-  RemoveNoteInteractor,
-  RemoveNoteState,
-  ShowNoteInteractor,
-  ShowNoteState,
-} from './interactors';
+import { useAppContext } from '../app/AppReactContext';
+import { EditNoteStore, EditNoteState } from './stores/EditNoteStore';
+import { ListNoteStore, ListNoteState } from './stores/ListNoteStore';
+import { RemoveNoteStore, RemoveNoteState } from './stores/RemoveNoteStore';
+import { ShowNoteStore, ShowNoteState } from './stores/ShowNoteStore';
 
 export interface NoteContextValue {
   listNoteState: ListNoteState;
-  listNoteInteractor: ListNoteInteractor;
+  listNoteStore: ListNoteStore;
   showNoteState: ShowNoteState;
-  showNoteInteractor: ShowNoteInteractor;
+  showNoteStore: ShowNoteStore;
   editNoteState: EditNoteState;
-  editNoteInteractor: EditNoteInteractor;
+  editNoteStore: EditNoteStore;
   removeNoteState: RemoveNoteState;
-  removeNoteInteractor: RemoveNoteInteractor;
+  removeNoteStore: RemoveNoteStore;
 }
 
 const NoteReactContext = React.createContext<NoteContextValue>(null!);
 
-function useListNoteInteractor(): [ListNoteState, ListNoteInteractor] {
+function useListNoteStore(): [ListNoteState, ListNoteStore] {
   const { pubSub, noteContext } = useAppContext();
-  const { listNoteInteractor } = noteContext;
-  const [listNoteState, setListNoteState] = useState(listNoteInteractor.state);
+  const { listNoteStore } = noteContext;
+  const [listNoteState, setListNoteState] = useState(listNoteStore.state);
 
   useEffect(() => {
-    const dispose = listNoteInteractor.observe(setListNoteState);
+    const dispose = listNoteStore.observe(setListNoteState);
     return dispose;
-  }, [listNoteInteractor, pubSub]);
+  }, [listNoteStore, pubSub]);
 
-  return [listNoteState, listNoteInteractor];
+  return [listNoteState, listNoteStore];
 }
 
-function useRemoveNoteInteractor(): [RemoveNoteState, RemoveNoteInteractor] {
+function useRemoveNoteStore(): [RemoveNoteState, RemoveNoteStore] {
   const { noteContext } = useAppContext();
-  const { removeNoteInteractor } = noteContext;
-  const [removeNoteState, setRemoveNoteState] = useState(removeNoteInteractor.state);
+  const { removeNoteStore } = noteContext;
+  const [removeNoteState, setRemoveNoteState] = useState(removeNoteStore.state);
 
   useEffect(() => {
-    const dispose = removeNoteInteractor.observe(setRemoveNoteState);
+    const dispose = removeNoteStore.observe(setRemoveNoteState);
     return dispose;
-  }, [removeNoteInteractor]);
+  }, [removeNoteStore]);
 
-  return [removeNoteState, removeNoteInteractor];
+  return [removeNoteState, removeNoteStore];
 }
 
-function useEditNoteInteractor(): [EditNoteState, EditNoteInteractor] {
+function useEditNoteStore(): [EditNoteState, EditNoteStore] {
   const { noteContext } = useAppContext();
-  const { editNoteInteractor } = noteContext;
-  const [editNoteState, setEditNoteState] = useState(editNoteInteractor.state);
+  const { editNoteStore } = noteContext;
+  const [editNoteState, setEditNoteState] = useState(editNoteStore.state);
 
   useEffect(() => {
-    const dispose = editNoteInteractor.observe(setEditNoteState);
+    const dispose = editNoteStore.observe(setEditNoteState);
     return dispose;
-  }, [editNoteInteractor]);
+  }, [editNoteStore]);
 
-  return [editNoteState, editNoteInteractor];
+  return [editNoteState, editNoteStore];
 }
 
-function useShowNoteInteractor(): [ShowNoteState, ShowNoteInteractor] {
+function useShowNoteStore(): [ShowNoteState, ShowNoteStore] {
   const { noteContext } = useAppContext();
-  const { showNoteInteractor } = noteContext;
-  const [showNoteState, setShowNoteState] = useState(showNoteInteractor.state);
+  const { showNoteStore } = noteContext;
+  const [showNoteState, setShowNoteState] = useState(showNoteStore.state);
 
   useEffect(() => {
-    const dispose = showNoteInteractor.observe(setShowNoteState);
+    const dispose = showNoteStore.observe(setShowNoteState);
     return dispose;
-  }, [showNoteState, showNoteInteractor]);
+  }, [showNoteState, showNoteStore]);
 
-  return [showNoteState, showNoteInteractor];
+  return [showNoteState, showNoteStore];
 }
 
 export const NoteProvider: React.FC = ({ children }) => {
-  const [listNoteState, listNoteInteractor] = useListNoteInteractor();
-  const [removeNoteState, removeNoteInteractor] = useRemoveNoteInteractor();
-  const [editNoteState, editNoteInteractor] = useEditNoteInteractor();
-  const [showNoteState, showNoteInteractor] = useShowNoteInteractor();
+  const [listNoteState, listNoteStore] = useListNoteStore();
+  const [removeNoteState, removeNoteStore] = useRemoveNoteStore();
+  const [editNoteState, editNoteStore] = useEditNoteStore();
+  const [showNoteState, showNoteStore] = useShowNoteStore();
 
   return (
     <NoteReactContext.Provider
       value={{
         listNoteState,
-        listNoteInteractor,
+        listNoteStore,
         showNoteState,
-        showNoteInteractor,
+        showNoteStore,
         editNoteState,
-        editNoteInteractor,
+        editNoteStore,
         removeNoteState,
-        removeNoteInteractor,
+        removeNoteStore,
       }}
     >
       {children}

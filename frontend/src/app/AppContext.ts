@@ -1,10 +1,9 @@
-import {
-  AuthenticationContext,
-  UserAuthenticatedPayload,
-  USER_AUTHENTICATED_EVENT,
-} from '../authentication';
+import { AuthenticationContext } from '../authentication/AuthenticationContext';
+import { UserAuthenticatedPayload, USER_AUTHENTICATED_EVENT } from '../authentication/events';
 import { NoteContext } from '../notes/NoteContext';
-import { AuthenticatedHTTPClient, HTTPClient, PubSub } from '../utils';
+import { AuthenticatedHTTPClient } from '../shared/adapters/httpClient/AuthenticatedHTTPClient';
+import { HTTPClient } from '../shared/adapters/httpClient/HTTPClient';
+import { PubSub } from '../shared/adapters/pubSub/PubSub';
 import { AppConfig, getAppConfig } from './AppConfig';
 
 export class AppContext {
@@ -30,7 +29,7 @@ export class AppContext {
     if (!this.authenticatedHTTPClientInstance) {
       this.authenticatedHTTPClientInstance = new AuthenticatedHTTPClient(this.config.apiURL);
       this.authenticatedHTTPClientInstance.onUnauthorized(
-        this.authenticationContext.signInInteractor.signOut
+        this.authenticationContext.signInStore.signOut
       );
     }
     return this.authenticatedHTTPClientInstance;

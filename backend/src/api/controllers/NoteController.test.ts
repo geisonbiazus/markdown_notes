@@ -1,11 +1,12 @@
 import { Express } from 'express';
 import request from 'supertest';
 import { AppContext } from '../../AppContext';
-import { User } from '../../authentication';
-import { Note, NoteRepository } from '../../notes';
-import { uuid } from '../../utils';
-import { authenticate, createUser } from '../helpers';
-import { Server } from '../index';
+import { User } from '../../authentication/entities/User';
+import { Note } from '../../notes/entities/Note';
+import { NoteRepository } from '../../notes/ports/NoteRepository';
+import { uuid } from '../../shared/utils/uuid';
+import { authenticate, createUser } from '../helpers/testHelpers';
+import { Server } from '../server';
 
 describe('NoteController', () => {
   let context: AppContext;
@@ -16,7 +17,7 @@ describe('NoteController', () => {
 
   beforeEach(async () => {
     context = new AppContext();
-    repo = context.notes.noteRepository;
+    repo = context.notes.repository;
     server = new Server(context).server;
 
     user = await createUser(context);
