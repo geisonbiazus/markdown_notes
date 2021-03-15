@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { Server } from './api/Server';
+import { Server } from './api/server';
 import { AppContext } from './AppContext';
 
 const context = new AppContext();

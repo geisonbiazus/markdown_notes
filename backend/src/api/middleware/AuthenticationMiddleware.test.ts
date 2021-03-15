@@ -5,7 +5,7 @@ import { User } from '../../authentication/entities/User';
 import { json } from '../../shared/utils/json';
 import { uuid } from '../../shared/utils/uuid';
 import { authenticate, createUser } from '../helpers/testHelpers';
-import { Server } from '../Server';
+import { Server } from '../server';
 import { AuthenticationMiddleware } from './AuthenticationMiddleware';
 
 describe('authentication', () => {

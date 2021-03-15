@@ -6,7 +6,7 @@ import { Note } from '../../notes/entities/Note';
 import { NoteRepository } from '../../notes/ports/NoteRepository';
 import { uuid } from '../../shared/utils/uuid';
 import { authenticate, createUser } from '../helpers/testHelpers';
-import { Server } from '../Server';
+import { Server } from '../server';
 
 describe('NoteController', () => {
   let context: AppContext;
