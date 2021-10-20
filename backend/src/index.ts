@@ -4,8 +4,18 @@ import { AppContext } from './AppContext';
 
 const context = new AppContext();
 
-context.initialize().then(() => {
-  context.startSubscribers().then(() => {
-    new Server(context).start();
+context
+  .initialize()
+  .then(() => {
+    context
+      .startSubscribers()
+      .then(() => {
+        new Server(context).start();
+      })
+      .catch((reason) => {
+        console.log(reason);
+      });
+  })
+  .catch((reason) => {
+    console.log(reason);
   });
-});
