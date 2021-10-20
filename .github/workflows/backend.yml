@@ -39,11 +39,7 @@ jobs:
           - 5672:5672
 
     env:
-      DB_TEST_HOST: postgres
-      DB_TEST_PORT: 5432
-      DB_TEST_USERNAME: postgres
-      DB_TEST_PASSWORD: postgres
-      DB_TEST_NAME: markdown_notes_test
+      DB_TEST_URL: postgres://postgres:postgres@postgres:5432/markdown_notes_test
       RABBITMQ_URL: amqp://rabbitmq
 
     steps:
