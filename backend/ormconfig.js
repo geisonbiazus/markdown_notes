@@ -1,7 +1,7 @@
 const defaultConfig = {
   type: 'postgres',
   url: process.env.DB_URL || 'postgres://postgres:postgres@localhost:5434/markdown_notes',
-  ssl: process.env.DB_SSL === 'true',
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
   synchronize: false,
   logging: true,
   entities: ['src/**/typeORM/entities/**/*'],
