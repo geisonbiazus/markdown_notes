@@ -1,10 +1,7 @@
 const defaultConfig = {
   type: 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  port: process.env.DB_PORT || 5434,
-  username: process.env.DB_USERNAME || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
-  database: process.env.DB_NAME || 'markdown_notes',
+  url: process.env.DB_URL || 'postgres://postgres:postgres@localhost:5434/markdown_notes',
+  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
   synchronize: false,
   logging: true,
   entities: ['src/**/typeORM/entities/**/*'],
@@ -16,11 +13,7 @@ const defaultConfig = {
 
 const envConfig =
   (process.env.NODE_ENV === 'test' && {
-    host: process.env.DB_TEST_HOST || 'localhost',
-    port: process.env.DB_TEST_PORT || 5435,
-    username: process.env.DB_TEST_USERNAME || 'postgres',
-    password: process.env.DB_TEST_PASSWORD || 'postgres',
-    database: process.env.DB_TEST_NAME || 'markdown_notes_test',
+    url: process.env.DB_TEST_URL || 'postgres://postgres:postgres@localhost:5435/markdown_notes_test',
     logging: false,
   }) ||
   (process.env.NODE_ENV === 'production' && {
