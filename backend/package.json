@@ -27,7 +27,7 @@
     "jest": "^26.1.0",
     "jsdom": "^16.4.0",
     "jsonwebtoken": "^8.5.1",
-    "marked": "^2.0.0",
+    "marked": "^4.0.10",
     "pg": "^8.3.3",
     "reflect-metadata": "^0.1.13",
     "supertest": "^4.0.2",
